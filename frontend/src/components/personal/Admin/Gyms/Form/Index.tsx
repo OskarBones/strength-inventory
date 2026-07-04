@@ -20,7 +20,8 @@ import { CgGym } from 'react-icons/cg';
 import { LuSave } from 'react-icons/lu';
 
 import { AuthContext, IconContext } from '../../../../../utils/contexts';
-import { getGym, postGym, putGym } from '../../../../../utils/api';
+import { getCities, getDistricts, getGym, postGym, putGym }
+  from '../../../../../utils/api';
 import handleSubmitError from '../../../../../utils/handleSubmitError';
 
 import GymEquipment from './GymEquipment/Index';
@@ -33,6 +34,7 @@ import ReturnButton from '../../ReturnButton';
 import { FORM_INPUT_CLASSES } from '../../../../../constants/theme';
 
 import {
+  type District,
   type GymPost,
   type GymPostFrontend,
   GymPostFrontendSchema,
@@ -62,10 +64,11 @@ export default function Form (
 ) {
   interface formatSubmitProps {
     req: GymPostFrontend;
+    country: string;
     exceptions: OpeningHoursException[];
   }
 
-  function formatSubmit ({ req, exceptions }: formatSubmitProps) {
+  function formatSubmit ({ req, country, exceptions }: formatSubmitProps) {
     const weekdays = [
       'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
     ] as const;
@@ -90,7 +93,8 @@ export default function Form (
       streetNumber,
       district,
       city,
-      country,
+      latitude,
+      longitude,
       url,
       location,
       equipmentVisibility,
@@ -129,6 +133,8 @@ export default function Form (
       district: district,
       city: city,
       country: country,
+      latitude: Number(latitude),
+      longitude: Number(longitude),
       openingHoursEveryone: openingHoursEveryone,
       openingHoursMembers: openingHoursMembers,
       openingHoursExceptions: { data: exceptions },
@@ -153,6 +159,16 @@ export default function Form (
     queryFn: selectedGymId
       ? () => getGym({ id: selectedGymId })
       : skipToken  // disable this query when creating a new gym
+  });
+
+  const citiesQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => getCities()
+  });
+
+  const districtsQuery = useQuery({
+    queryKey: ['districts'],
+    queryFn: () => getDistricts()
   });
 
   const postMutation = useMutation({
@@ -199,6 +215,8 @@ export default function Form (
     district: '',
     city: '',
     country: '',
+    latitude: '',
+    longitude: '',
     url: '',
     location: '',
     equipmentVisible: false,
@@ -214,6 +232,8 @@ export default function Form (
     district: '',
     city: '',
     country: '',
+    latitude: '',
+    longitude: '',
     url: '',
     location: '',
     equipmentVisible: false,
@@ -258,7 +278,7 @@ export default function Form (
     try {
       const validatedReq = GymPostFrontendSchema.parse(req);
       const formattedGym = formatSubmit({
-        req: validatedReq, exceptions: exceptions
+        req: validatedReq, country: gym.country, exceptions: exceptions
       });
       if (formMode === 'create') {
         try {
@@ -288,12 +308,22 @@ export default function Form (
     }
   }
 
-  if (selectedGymId && gymQuery.isPending) {
+  if ((selectedGymId && gymQuery.isPending)
+    || citiesQuery.isPending
+    || districtsQuery.isPending) {
     return <p>Loading...</p>;
   }
 
   if (selectedGymId && gymQuery.isError) {
     return <p>Error: {gymQuery.error.message}</p>;
+  }
+
+  if (citiesQuery.isError) {
+    return <p>Error: {citiesQuery.error.message}</p>;
+  }
+
+  if (districtsQuery.isError) {
+    return <p>Error: {districtsQuery.error.message}</p>;
   }
 
   /* Initialize the form fields when opened in edit mode.
@@ -307,6 +337,8 @@ export default function Form (
       district,
       city,
       country,
+      latitude,
+      longitude,
       openingHoursExceptions,
       url,
       location,
@@ -324,6 +356,12 @@ export default function Form (
       district: district,
       city: city,
       country: country,
+      latitude: latitude
+        ? String(latitude)
+        : '',
+      longitude: longitude
+        ? String(longitude)
+        : '',
       url: url ?? '',
       location: location,
       equipmentVisible: equipmentVisible,
@@ -339,6 +377,12 @@ export default function Form (
       district: district,
       city: city,
       country: country,
+      latitude: latitude
+        ? String(latitude)
+        : '',
+      longitude: longitude
+        ? String(longitude)
+        : '',
       url: url ?? '',
       location: location,
       equipmentVisible: equipmentVisible,
@@ -351,6 +395,13 @@ export default function Form (
 
     setFirstRender(false);
     setOriginalName(name);
+  }
+
+  // set districts for the district <select>
+  const selectedCity = citiesQuery.data.find((city) => city.name === gym.city);
+  let filteredDistricts: District[] = [];
+  if (selectedCity) {
+    filteredDistricts = selectedCity.districts;
   }
 
   if (editForm === 'equipment') {
@@ -431,6 +482,65 @@ export default function Form (
             </div>
 
             <div className='flex flex-col'>
+              <label htmlFor='city'>city*</label>
+              <select
+                id='city'
+                name='city'
+                value={gym.city}
+                required
+                className={`${FORM_INPUT_CLASSES} cursor-pointer`}
+                onChange={(event) => {
+                  const selectedCity = citiesQuery.data
+                    .find((city) => city.name === event.target.value);
+                  // truthy when the -- please select -- option is not selected
+                  if (selectedCity) {
+                    setGym({
+                      ...gym,
+                      city: event.target.value,
+                      country: selectedCity.country,
+                      district: ''
+                    });
+                  } else {
+                    setGym({
+                      ...gym, city: '', country: '', district: ''
+                    });
+                  }
+                }}
+              >
+                <option value=''>-- please select a city --</option>
+                {citiesQuery.data.map((city) => (
+                  <option key={city.id} value={city.name}>{city.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className='flex flex-col'>
+              <label htmlFor='district'>district*</label>
+              <select
+                id='district'
+                name='district'
+                value={gym.district}
+                disabled={gym.city === ''}
+                required
+                className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+                onChange={(event) => {
+                  setGym({ ...gym, district: event.target.value });
+                }}
+              >
+                <option value=''>
+                  {gym.city
+                    ? '-- please select a district --'
+                    : '-- please select a city --'}
+                </option>
+                {filteredDistricts.map((district) => (
+                  <option key={district.name} value={district.name}>
+                    {district.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className='flex flex-col'>
               <label htmlFor='street'>street*</label>
               <input
                 id='street'
@@ -462,52 +572,44 @@ export default function Form (
               />
             </div>
 
-            <div className='flex flex-col'>
-              <label htmlFor='city'>city*</label>
-              <input
-                id='city'
-                name='city'
-                type='text'
-                value={gym.city}
-                required
-                maxLength={60}
-                className={FORM_INPUT_CLASSES}
-                onChange={(event) => {
-                  setGym({ ...gym, city: event.target.value });
-                }}
-              />
-            </div>
+            <div className='flex gap-3'>
+              <div className='flex flex-col'>
+                <label htmlFor='latitude'>latitude*</label>
+                <input
+                  id='latitude'
+                  name='latitude'
+                  type='number'
+                  value={gym.latitude}
+                  placeholder='D.DDDDD'
+                  required
+                  min={-90}
+                  max={90}
+                  step={0.00001}
+                  className={`${FORM_INPUT_CLASSES} w-20`}
+                  onChange={(event) => {
+                    setGym({ ...gym, latitude: event.target.value });
+                  }}
+                />
+              </div>
 
-            <div className='flex flex-col'>
-              <label htmlFor='district'>district*</label>
-              <input
-                id='district'
-                name='district'
-                type='text'
-                value={gym.district}
-                required
-                maxLength={60}
-                className={FORM_INPUT_CLASSES}
-                onChange={(event) => {
-                  setGym({ ...gym, district: event.target.value });
-                }}
-              />
-            </div>
-
-            <div className='flex flex-col'>
-              <label htmlFor='country'>country*</label>
-              <input
-                id='country'
-                name='country'
-                type='text'
-                value={gym.country}
-                required
-                maxLength={40}
-                className={FORM_INPUT_CLASSES}
-                onChange={(event) => {
-                  setGym({ ...gym, country: event.target.value });
-                }}
-              />
+              <div className='flex flex-col'>
+                <label htmlFor='longitude'>longitude*</label>
+                <input
+                  id='longitude'
+                  name='longitude'
+                  type='number'
+                  value={gym.longitude}
+                  placeholder='D.DDDDD'
+                  required
+                  min={-180}
+                  max={180}
+                  step={0.00001}
+                  className={`${FORM_INPUT_CLASSES} w-22`}
+                  onChange={(event) => {
+                    setGym({ ...gym, longitude: event.target.value });
+                  }}
+                />
+              </div>
             </div>
 
             <div className='flex flex-col'>

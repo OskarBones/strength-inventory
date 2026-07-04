@@ -5,7 +5,7 @@ z.string().min(1) = required string
 z.string() = optional string i.e. empty strings accepted */
 
 
-// utility schemas for opening hours
+// shared utility schemas
 
 const TimeSchema = z.array(z.number().min(0).max(24).optional()).length(2);
 const ExceptionTimeSchema = z.array(z.number().min(0).max(24).nullish()).length(2);
@@ -19,8 +19,21 @@ export const HoursSchema = z.object({
   SA: TimeSchema.optional(),
   SU: TimeSchema.optional()
 });
-export type Hours = z.infer<typeof HoursSchema>;  // Used in gym and membership
+export type Hours = z.infer<typeof HoursSchema>;  // used in gym and membership
 
+// used in gym and locations
+const LatitudeSchema = z.preprocess((val) => {
+  if (typeof val === 'string') {
+    return Number(Number.parseFloat(val).toFixed(5))
+  }
+  return val;
+}, z.number().gte(-90).lte(90))
+const LongitudeSchema = z.preprocess((val) => {
+  if (typeof val === 'string') {
+    return Number(Number.parseFloat(val).toFixed(5))
+  }
+  return val;
+}, z.number().gte(-90).lte(90))
 
 // membership
 
@@ -586,6 +599,8 @@ export const GymSchema = z.object({
   district: z.string().min(1).max(60),
   city: z.string().min(1).max(60),
   country: z.string().min(1).max(40),
+  latitude: LatitudeSchema,
+  longitude: LongitudeSchema,
   openingHoursEveryone: HoursSchema,
   openingHoursMembers: HoursSchema,
   openingHoursExceptions: HoursExceptionsSchema,
@@ -635,6 +650,8 @@ export const GymPostSchema = GymSchema.pick({
   district: true,
   city: true,
   country: true,
+  latitude: true,
+  longitude: true,
   openingHoursEveryone: true,
   openingHoursMembers: true,
   openingHoursExceptions: true,
@@ -655,11 +672,12 @@ export const GymPostFrontendSchema = GymSchema.pick({
   streetNumber: true,
   district: true,
   city: true,
-  country: true,
   url: true,
   location: true,
   notes: true
 }).extend({
+  latitude: z.string().min(1),
+  longitude: z.string().min(1),
   equipmentVisibility: z.string().optional(),
   membershipsVisibility: z.string().optional(),
   openingHoursVisibility: z.string().optional(),
@@ -708,6 +726,8 @@ export const GymPatchSchema = GymSchema.pick({
   streetNumber: true,
   district: true,
   city: true,
+  latitude: true,
+  longitude: true,
   url: true,
   location: true,
   equipmentVisible: true,
@@ -751,3 +771,50 @@ export const LoginRefreshResponseSchema = z.object({
   token: z.jwt()
 })
 export type LoginRefreshResponse = z.infer<typeof LoginRefreshResponseSchema>;
+
+
+// locations
+
+const LocationBaseSchema = z.object({
+  id: z.uuidv4(),
+  name: z.string().min(1).max(60),
+  referencePoint: z.string().min(1),
+  latitude: LatitudeSchema,
+  longitude: LongitudeSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date()
+})
+
+export const CitySchema = LocationBaseSchema.extend({
+  country: z.string().min(1)
+})
+export type City = z.infer<typeof CitySchema>;
+
+export const CityPostAndPutSchema = CitySchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+})
+export type CityPostAndPut = z.infer<typeof CityPostAndPutSchema>;
+
+export const DistrictSchema = LocationBaseSchema.extend({
+  cityId: z.uuidv4()
+})
+export type District = z.infer<typeof DistrictSchema>;
+
+export const DistrictPostAndPutSchema = DistrictSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+})
+export type DistrictPostAndPut = z.infer<typeof DistrictPostAndPutSchema>;
+
+export const CityGetSchema = CitySchema.extend({
+  districts: z.array(DistrictSchema)
+})
+export type CityGet = z.infer<typeof CityGetSchema>;
+
+export const DistrictGetSchema = DistrictSchema.extend({
+  city: CitySchema
+})
+export type DistrictGet = z.infer<typeof DistrictGetSchema>;

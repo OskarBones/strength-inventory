@@ -8,6 +8,8 @@ import { JWT_ACCESS_SECRET } from './config.ts';
 import type { NextFunction, Request, Response } from 'express';
 
 import {
+  City,
+  District,
   Equipment,
   Gym,
   GymEquipment,
@@ -570,6 +572,62 @@ const targetGymMembershipExtractor = async (
 };
 
 
+// city
+
+const targetCityExtractor = async (
+  req: Request<{ id: string; }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ error: 'ID missing from request.' });
+    return;
+  }
+
+  const city = await City.findByPk(id, {
+    include: [
+      {
+        model: District
+      }
+    ]
+  });
+  if (!city) {
+    res.status(404).json({ error: `City with ID ${id} not found.` });
+    return;
+  }
+
+  req.targetCity = city;
+  next();
+};
+
+
+// district
+
+const targetDistrictExtractor = async (
+  req: Request<{ id: string; }>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ error: 'ID missing from request.' });
+    return;
+  }
+
+  const district = await District.findByPk(id, { include: City });
+  if (!district) {
+    res.status(404).json({ error: `District with ID ${id} not found.` });
+    return;
+  }
+
+  req.targetDistrict = district;
+  next();
+};
+
+
 export {
   unknownEndpoint,
   errorHandler,
@@ -594,5 +652,7 @@ export {
   targetGymEquipmentExtractor,
   targetGymManagerExtractor,
   adjustUserRole,
-  targetGymMembershipExtractor
+  targetGymMembershipExtractor,
+  targetCityExtractor,
+  targetDistrictExtractor
 };

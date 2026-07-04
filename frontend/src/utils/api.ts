@@ -3,6 +3,12 @@ import { z } from 'zod';
 import syncToken from './syncToken';
 
 import {
+  CityGetSchema,
+  type CityPostAndPut,
+  CitySchema,
+  DistrictGetSchema,
+  type DistrictPostAndPut,
+  DistrictSchema,
   type EquipmentPostAndPut,
   EquipmentSchema,
   GymEquipmentSchema,
@@ -83,12 +89,12 @@ export const getGymMemberships = async ({ gymId }: { gymId: string }) => {
   return validatedData;
 };
 
-interface postGymProps extends TokenValidationProps {
+interface PostGymProps extends TokenValidationProps {
   gym: GymPost
 }
 
 // input has been validated before this function is called
-export const postGym = async ({ gym, refresh, logout }: postGymProps) => {
+export const postGym = async ({ gym, refresh, logout }: PostGymProps) => {
   /* only admins have permission */
   const token = await syncToken({ refresh, logout });
   if (token) {
@@ -114,14 +120,14 @@ export const postGym = async ({ gym, refresh, logout }: postGymProps) => {
   }
 };
 
-interface PostGymEquipmentProps extends TokenValidationProps {
+interface postGymEquipmentProps extends TokenValidationProps {
   gymId: string
   equipmentId: string
   count: number
 }
 
 export const postGymEquipment = async (
-  { gymId, equipmentId, count, refresh, logout }: PostGymEquipmentProps
+  { gymId, equipmentId, count, refresh, logout }: postGymEquipmentProps
 ) => {
   /* only admins and managers have permission */
   const token = await syncToken({ refresh, logout });
@@ -573,3 +579,225 @@ export const deleteMembership
       throw Error('Login expired.');
     }
   };
+
+
+// cities
+
+export const getCities = async () => {
+  const res = await fetch(`${baseUrl}/cities`);
+  if (!res.ok) {
+    throw Error(`Response status: ${res.statusText}`);
+  }
+
+  const data: unknown = await res.json();
+  const validatedData = z.array(CityGetSchema).parse(data);
+  return validatedData;
+};
+
+export const getCity = async ({ id }: { id: string }) => {
+  const res = await fetch(`${baseUrl}/cities/${id}`);
+  if (!res.ok) {
+    throw Error(`Response status: ${res.statusText}`);
+  }
+
+  const data: unknown = await res.json();
+  const validatedData = CityGetSchema.parse(data);
+  return validatedData;
+};
+
+interface postCityProps extends TokenValidationProps {
+  city: CityPostAndPut
+}
+
+// input has been validated before this function is called
+export const postCity = async ({ city, refresh, logout }: postCityProps) => {
+  /* only admins have permission */
+  const token = await syncToken({ refresh, logout });
+  if (token) {
+    const res = await fetch(`${baseUrl}/cities`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${token}`
+      },
+      body: JSON.stringify(city),
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      throw Error(`Response status: ${res.statusText}`);
+    }
+
+    const data: unknown = await res.json();
+    const validatedData = CitySchema.parse(data);
+    return validatedData;
+  } else {
+    throw Error('Login expired.');
+  }
+};
+
+interface putCityProps extends TokenValidationProps {
+  id: string
+  city: CityPostAndPut
+}
+
+// input has been validated before this function is called
+export const putCity
+  = async ({ id, city, refresh, logout }: putCityProps) => {
+  /* only admins have permission */
+    const token = await syncToken({ refresh, logout });
+    if (token) {
+      const res = await fetch(`${baseUrl}/cities/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `bearer ${token}`
+        },
+        body: JSON.stringify(city),
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        throw Error(`Response status: ${res.statusText}`);
+      }
+
+      const data: unknown = await res.json();
+      const validatedData = CitySchema.parse(data);
+      return validatedData;
+    } else {
+      throw Error('Login expired.');
+    }
+  };
+
+export const deleteCity = async ({ id, refresh, logout }: deleteItemProps) => {
+  /* only admins have permission */
+  const token = await syncToken({ refresh, logout });
+  if (token) {
+    const res = await fetch(`${baseUrl}/cities/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `bearer ${token}`
+      },
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      throw Error(`Response status: ${res.statusText}`);
+    }
+  } else {
+    throw Error('Login expired.');
+  }
+};
+
+
+// districts
+
+export const getDistricts = async () => {
+  const res = await fetch(`${baseUrl}/districts`);
+  if (!res.ok) {
+    throw Error(`Response status: ${res.statusText}`);
+  }
+
+  const data: unknown = await res.json();
+  const validatedData = z.array(DistrictGetSchema).parse(data);
+  return validatedData;
+};
+
+export const getDistrict = async ({ id }: { id: string }) => {
+  const res = await fetch(`${baseUrl}/districts/${id}`);
+  if (!res.ok) {
+    throw Error(`Response status: ${res.statusText}`);
+  }
+
+  const data: unknown = await res.json();
+  const validatedData = DistrictGetSchema.parse(data);
+  return validatedData;
+};
+
+interface postDistrictProps extends TokenValidationProps {
+  district: DistrictPostAndPut
+}
+
+// input has been validated before this function is called
+export const postDistrict = async ({
+  district, refresh, logout
+}: postDistrictProps) => {
+  /* only admins have permission */
+  const token = await syncToken({ refresh, logout });
+  if (token) {
+    const res = await fetch(`${baseUrl}/districts`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `bearer ${token}`
+      },
+      body: JSON.stringify(district),
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      throw Error(`Response status: ${res.statusText}`);
+    }
+
+    const data: unknown = await res.json();
+    const validatedData = DistrictSchema.parse(data);
+    return validatedData;
+  } else {
+    throw Error('Login expired.');
+  }
+};
+
+interface putDistrictProps extends TokenValidationProps {
+  id: string
+  district: DistrictPostAndPut
+}
+
+// input has been validated before this function is called
+export const putDistrict
+  = async ({ id, district, refresh, logout }: putDistrictProps) => {
+  /* only admins have permission */
+    const token = await syncToken({ refresh, logout });
+    if (token) {
+      const res = await fetch(`${baseUrl}/districts/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `bearer ${token}`
+        },
+        body: JSON.stringify(district),
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        throw Error(`Response status: ${res.statusText}`);
+      }
+
+      const data: unknown = await res.json();
+      const validatedData = DistrictSchema.parse(data);
+      return validatedData;
+    } else {
+      throw Error('Login expired.');
+    }
+  };
+
+export const deleteDistrict = async ({
+  id, refresh, logout
+}: deleteItemProps) => {
+  /* only admins have permission */
+  const token = await syncToken({ refresh, logout });
+  if (token) {
+    const res = await fetch(`${baseUrl}/districts/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `bearer ${token}`
+      },
+      credentials: 'include'
+    });
+
+    if (!res.ok) {
+      throw Error(`Response status: ${res.statusText}`);
+    }
+  } else {
+    throw Error('Login expired.');
+  }
+};

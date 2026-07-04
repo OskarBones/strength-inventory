@@ -1,4 +1,6 @@
 import type {
+  City,
+  District,
   Equipment,
   Gym,
   GymEquipment,
@@ -14,6 +16,8 @@ declare global {
       token?: string,
       user?: User,
       targetUser?: User,
+      targetCity?: City,
+      targetDistrict?: District,
       targetGym?: Gym,
       targetEquipment?: Equipment,
       targetMembership?: Membership,

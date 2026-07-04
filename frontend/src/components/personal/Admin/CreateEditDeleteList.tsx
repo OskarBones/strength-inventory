@@ -12,7 +12,7 @@ import SimpleList from './SimpleList';
 
 import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../constants/theme';
 
-interface CreateEditDeleteList {
+interface CreateEditDeleteListProps {
   scrollTopRef: RefObject<number>
   data: { id: string, name: string }[] | undefined
   selectedItemId: string
@@ -29,7 +29,7 @@ export default function CreateEditDeleteList ({
   setSelectedItemId,
   setFormMode,
   deleteMutationOptions
-}: CreateEditDeleteList) {
+}: CreateEditDeleteListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
   // reference [2]

@@ -9,6 +9,8 @@ import { errorHandler, unknownEndpoint } from './utils/middleware.js';
 import { connectToDatabase } from './utils/db.js';
 import { PORT } from './utils/config.js';
 
+import citiesRouter from './controllers/cities.ts';
+import districtsRouter from './controllers/districts.ts';
 import equipmentRouter from './controllers/equipment.js';
 import gymEquipmentRouter from './controllers/gymequipment.ts';
 import gymManagersRouter from './controllers/gymmanagers.ts';
@@ -31,6 +33,8 @@ app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+app.use('/api/cities', citiesRouter);
+app.use('/api/districts', districtsRouter);
 app.use('/api/equipment', equipmentRouter);
 app.use('/api/gyms', gymsRouter);
 app.use('/api/gymequipment', gymEquipmentRouter);

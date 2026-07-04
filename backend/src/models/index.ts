@@ -1,3 +1,5 @@
+import City from './city.ts';
+import District from './district.ts';
 import Equipment from './equipment.ts';
 import Gym from './gym.ts';
 import Membership from './membership.ts';
@@ -18,6 +20,10 @@ Session.belongsTo(User);
 User.belongsToMany(Gym, { through: GymManagers });
 Gym.belongsToMany(User, { as: 'managers', through: GymManagers });
 
+// One-To-Many
+City.hasMany(District);
+District.belongsTo(City, { onDelete: 'RESTRICT' });
+
 // Many-To-Many
 // Gyms have many equipment and eqipment are typically not unique.
 Gym.belongsToMany(Equipment, { through: GymEquipment });
@@ -29,6 +35,8 @@ Gym.belongsToMany(Membership, { through: GymMemberships });
 Membership.belongsToMany(Gym, { through: GymMemberships });
 
 export {
+  City,
+  District,
   Equipment,
   Gym,
   GymEquipment,

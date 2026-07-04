@@ -30,6 +30,8 @@ class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare district: string;
   declare city: string;
   declare country: string;
+  declare latitude: number;
+  declare longitude: number;
   declare openingHoursEveryone: CreationOptional<Hours>;
   declare openingHoursMembers: CreationOptional<Hours>;
   declare openingHoursExceptions: CreationOptional<HoursExceptions>;
@@ -100,6 +102,14 @@ Gym.init({
     validate: {
       len: [1, 40]
     }
+  },
+  latitude: {
+    type: DataTypes.DECIMAL(8, 5),
+    allowNull: false
+  },
+  longitude: {
+    type: DataTypes.DECIMAL(8, 5),
+    allowNull: false
   },
   openingHoursEveryone: {
     type: DataTypes.JSON,
