@@ -76,7 +76,7 @@ export default function AdminLayoutComponent () {
   return (
     <div
       className='
-        flex flex-1 justify-center items-stretch w-full overflow-hidden'
+        flex flex-1 justify-center w-full overflow-hidden'
     >
       <div className='flex flex-1 flex-col gap-1 p-3 min-w-90 max-w-145'>
         <nav className='flex justify-evenly gap-1'>

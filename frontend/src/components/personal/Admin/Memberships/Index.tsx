@@ -29,8 +29,7 @@ export default function AdminMemberships () {
       <div
         className='
           flex flex-1 flex-col gap-1 border rounded-sm
-          bg-secondary dark:bg-secondary-dark p-3 overflow-y-scroll
-          text-primary-text dark:text-primary-text-dark'
+          bg-secondary dark:bg-secondary-dark p-3 overflow-y-scroll'
       >
         <h2 className='self-center font-bold'>
           {iconMode

@@ -32,6 +32,7 @@ import OpeningHoursExceptions from './OpeningHoursExceptions/Index';
 import ReturnButton from '../../ReturnButton';
 
 import { FORM_INPUT_CLASSES } from '../../../../../constants/theme';
+import { WEEKDAYS } from '../../../../../constants/values';
 
 import {
   type District,
@@ -69,21 +70,30 @@ export default function Form (
   }
 
   function formatSubmit ({ req, country, exceptions }: formatSubmitProps) {
-    const weekdays = [
-      'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
-    ] as const;
-    const openingHoursEveryone: Hours = {};
-    const openingHoursMembers: Hours = {};
+    const openingHoursEveryone: Hours = {
+      MO: ['', ''],
+      TU: ['', ''],
+      WE: ['', ''],
+      TH: ['', ''],
+      FR: ['', ''],
+      SA: ['', ''],
+      SU: ['', '']
+    };
+    const openingHoursMembers: Hours = {
+      MO: ['', ''],
+      TU: ['', ''],
+      WE: ['', ''],
+      TH: ['', ''],
+      FR: ['', ''],
+      SA: ['', ''],
+      SU: ['', '']
+    };
 
-    weekdays.forEach((weekday) => {
-      if (req[`everyone${weekday}Open`] || req[`everyone${weekday}Close`]) {
-        openingHoursEveryone[weekday]
-          = [req[`everyone${weekday}Open`], req[`everyone${weekday}Close`]];
-      }
-      if (req[`members${weekday}Open`] || req[`members${weekday}Close`]) {
-        openingHoursMembers[weekday]
-          = [req[`members${weekday}Open`], req[`members${weekday}Close`]];
-      }
+    WEEKDAYS.forEach((weekday) => {
+      openingHoursEveryone[weekday]
+        = [req[`everyone${weekday}Open`], req[`everyone${weekday}Close`]];
+      openingHoursMembers[weekday]
+        = [req[`members${weekday}Open`], req[`members${weekday}Close`]];
     });
 
     const {
@@ -667,7 +677,8 @@ export default function Form (
                   </span>
                 )}
             </h4>
-            <div>
+
+            <div className='flex flex-col gap-1'>
               <h5>
                 {iconMode
                   ? <BsPeople className='text-base' />
@@ -722,7 +733,8 @@ export default function Form (
                 </div>
               </div>
             </div>
-            <div>
+
+            <div className='flex flex-col gap-1'>
               <h5>
                 {iconMode
                   ? <FaRegAddressCard className='text-base' />

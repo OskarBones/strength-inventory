@@ -9,15 +9,29 @@ import ModeButton from './ModeButton';
 import NextSevenDays from './NextSevenDays';
 import RegularHours from './RegularHours';
 
-import type { GymGet } from '@strength-inventory/schemas';
+import { WEEKDAYS } from '../../../../constants/values';
+
+import type { GymGet, Hours } from '@strength-inventory/schemas';
 
 export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
+  function noHours (hours: Hours) {
+    let hoursFound = true;
+
+    WEEKDAYS.forEach((weekday) => {
+      if (hours[weekday][0] || hours[weekday][1]) {
+        hoursFound = false;
+      }
+    });
+
+    return hoursFound;
+  }
+
   const iconMode = use(IconContext);
 
   const [hoursMode, setHoursMode] = useState('regular');
   const [membersOnly, setMembersOnly] = useState(
     () => {
-      if (Object.keys(gym.openingHoursEveryone).length === 0) {
+      if (noHours(gym.openingHoursEveryone)) {
         return true;
       } else {
         return false;
@@ -28,8 +42,8 @@ export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
 
   let disableMembersOnlySwitch: boolean;
   if (
-    Object.keys(gym.openingHoursEveryone).length === 0
-    || Object.keys(gym.openingHoursMembers).length === 0
+    noHours(gym.openingHoursEveryone)
+    || noHours(gym.openingHoursMembers)
   ) {
     disableMembersOnlySwitch = true;
   } else {

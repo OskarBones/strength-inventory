@@ -20,7 +20,7 @@ export default function Gym ({ gym }: { gym: GymGet; }) {
   return (
     <div
       className='
-        flex flex-col mb-3
+        flex flex-col
         text-primary-text dark:text-primary-text-dark'
     >
       {/* Adapt the placement of the extension buttons to the screen size */}

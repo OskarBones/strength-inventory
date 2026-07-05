@@ -6,7 +6,7 @@ import { IconContext } from '../../../../utils/contexts';
 
 interface DayProps {
   day: string,
-  hours: string | undefined
+  hours: string
   highlighted: boolean
   exception: string | undefined
   setExceptionReason: React.Dispatch<React.SetStateAction<string>>
@@ -19,7 +19,7 @@ export default function Day ({
 
   return (
     <button
-      className={`rounded-md px-2 w-24
+      className={`rounded-md px-2 w-29 text-sm md:w-32 md:text-base
         ${highlighted
       ? 'bg-secondary dark:bg-secondary-dark'
       : ''
@@ -35,10 +35,11 @@ export default function Day ({
         }
       }}
     >
-      {hours
+      {hours !== '-'
         ? (
-          <p className='flex justify-between w-full'>
-            <span>{day}</span> <span>{hours}</span>
+          <p className='flex justify-between items-center w-full'>
+            <span className='text-xs md:text-sm'>{day}</span>
+            <span>{hours}</span>
           </p>
         )
         : iconMode

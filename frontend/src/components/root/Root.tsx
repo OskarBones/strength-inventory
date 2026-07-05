@@ -70,7 +70,7 @@ export default function Root () {
           <div
             className='
               flex flex-1 flex-col bg-background dark:bg-background-dark
-              overflow-y-auto'
+              overflow-y-auto text-primary-text dark:text-primary-text-dark'
           >
             <Outlet />
           </div>

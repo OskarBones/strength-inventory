@@ -7,17 +7,17 @@ z.string() = optional string i.e. empty strings accepted */
 
 // shared utility schemas
 
-const TimeSchema = z.array(z.number().min(0).max(24).optional()).length(2);
-const ExceptionTimeSchema = z.array(z.number().min(0).max(24).nullish()).length(2);
+const TimeSchema = z.array(z.iso.time().nullable()).length(2);
+const ExceptionTimeSchema = z.array(z.iso.time().nullish()).length(2);
 
 export const HoursSchema = z.object({
-  MO: TimeSchema.optional(),
-  TU: TimeSchema.optional(),
-  WE: TimeSchema.optional(),
-  TH: TimeSchema.optional(),
-  FR: TimeSchema.optional(),
-  SA: TimeSchema.optional(),
-  SU: TimeSchema.optional()
+  MO: TimeSchema,
+  TU: TimeSchema,
+  WE: TimeSchema,
+  TH: TimeSchema,
+  FR: TimeSchema,
+  SA: TimeSchema,
+  SU: TimeSchema
 });
 export type Hours = z.infer<typeof HoursSchema>;  // used in gym and membership
 
@@ -664,7 +664,10 @@ export const GymPostSchema = GymSchema.pick({
 });
 export type GymPost = z.infer<typeof GymPostSchema>;
 
-const GymPostFrontendHour = z.coerce.number().min(0).max(24).optional()
+const GymPostFrontendHour = z.preprocess(
+  (val) => (val === '' ? null : val),
+  z.iso.time().nullable()
+)
 export const GymPostFrontendSchema = GymSchema.pick({
   name: true,
   chain: true,

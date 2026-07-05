@@ -13,13 +13,13 @@ export default function OpeningHoursDayInput (
   { group, day, editedHours, setHoursChanged }: OpeningHoursDayInputProps
 ) {
   const [openTime, setOpenTime] = useState(editedHours?.[day]
-    ? editedHours[day][0] !== undefined
-      ? String(editedHours[day][0])
+    ? editedHours[day][0]
+      ? editedHours[day][0]
       : ''
     : '');
   const [closeTime, setCloseTime] = useState(editedHours?.[day]
-    ? editedHours[day][1] !== undefined
-      ? String(editedHours[day][1])
+    ? editedHours[day][1]
+      ? editedHours[day][1]
       : ''
     : '');
 
@@ -29,13 +29,12 @@ export default function OpeningHoursDayInput (
       <input
         id={`${group}${day}Open`}
         name={`${group}${day}Open`}
-        type='number'
+        type='time'
         value={openTime}
-        min='0'
         max={closeTime}
         className='
-          flex bg-background dark:bg-background-dark w-10
-          invalid:text-red-dark dark:invalid:text-red'
+          flex bg-background dark:bg-background-dark w-11
+          invalid:text-red-dark dark:invalid:text-red text-center'
         onChange={(event) => {
           setOpenTime(event.target.value);
           setHoursChanged(true);
@@ -45,13 +44,12 @@ export default function OpeningHoursDayInput (
       <input
         id={`${group}${day}Close`}
         name={`${group}${day}Close`}
-        type='number'
+        type='time'
         value={closeTime}
         min={openTime}
-        max='24'
         className='
-          flex bg-background dark:bg-background-dark w-10
-          invalid:text-red-dark dark:invalid:text-red'
+          flex bg-background dark:bg-background-dark w-11
+          invalid:text-red-dark dark:invalid:text-red text-center'
         onChange={(event) => {
           setCloseTime(event.target.value);
           setHoursChanged(true);

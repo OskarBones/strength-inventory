@@ -51,8 +51,7 @@ export default function Login () {
     <div
       className='
         flex flex-col self-center items-stretch mt-3 border
-        bg-tertiary dark:bg-tertiary-dark w-85 md:w-135
-        text-primary-text dark:text-primary-text-dark'
+        bg-tertiary dark:bg-tertiary-dark w-85 md:w-135'
     >
       <div
         className='

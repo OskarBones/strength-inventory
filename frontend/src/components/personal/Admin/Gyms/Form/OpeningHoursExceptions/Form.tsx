@@ -28,12 +28,12 @@ export default function Form ({
     : '');
   const [from, setFrom] = useState(exception
     ? exception.hours[0]
-      ? String(exception.hours[0])
+      ? exception.hours[0]
       : ''
     : '');
   const [to, setTo] = useState(exception
     ? exception.hours[1]
-      ? String(exception.hours[1])
+      ? exception.hours[1]
       : ''
     : '');
   const [concerns, setConcerns] = useState<string>(exception
@@ -50,12 +50,12 @@ export default function Form ({
     }
 
     event.preventDefault();
-    const hours: (number | undefined)[] = [undefined, undefined];
+    const hours: (string | null)[] = [null, null];
     if (from) {
-      hours[0] = Number(from);
+      hours[0] = from;
     }
     if (to) {
-      hours[1] = Number(to);
+      hours[1] = to;
     }
 
     try {
@@ -163,10 +163,9 @@ export default function Form ({
           <input
             id='from'
             name='from'
-            type='number'
+            type='time'
             value={from}
             placeholder='from'
-            min='0'
             max={to}
             className={`
               w-12 invalid:text-red-dark dark:invalid:text-red
@@ -182,11 +181,10 @@ export default function Form ({
           <input
             id='to'
             name='to'
-            type='number'
+            type='time'
             value={to}
             placeholder='to'
             min={from}
-            max='24'
             className={`
               w-12 invalid:text-red-dark dark:invalid:text-red
               ${exception
