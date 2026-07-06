@@ -297,6 +297,7 @@ export default function Form ({
                 type='text'
                 value={district.referencePoint}
                 required
+                maxLength={23}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setDistrict({

@@ -168,7 +168,7 @@ export default function Form ({
             placeholder='from'
             max={to}
             className={`
-              w-12 invalid:text-red-dark dark:invalid:text-red
+              w-12 invalid:text-red-dark dark:invalid:text-red text-center
               ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'
@@ -186,7 +186,7 @@ export default function Form ({
             placeholder='to'
             min={from}
             className={`
-              w-12 invalid:text-red-dark dark:invalid:text-red
+              w-12 invalid:text-red-dark dark:invalid:text-red text-center
               ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'

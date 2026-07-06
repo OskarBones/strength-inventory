@@ -1,3 +1,5 @@
+import { BiInfinite } from 'react-icons/bi';
+import { MdAutorenew } from 'react-icons/md';
 import { TbWorldWww } from 'react-icons/tb';
 
 import type { Membership } from '@strength-inventory/schemas';
@@ -61,11 +63,13 @@ export default function Membership (
     name,
     feeCurrency,
     membershipFee,
+    visits,
     validity,
     validityUnit,
     commitment,
     commitmentUnit,
     initiationFee,
+    autoRenewal,
     availability,
     url,
     notes
@@ -79,10 +83,10 @@ export default function Membership (
   return (
     <div
       className='
-        flex gap-3
-        border bg-secondary dark:bg-secondary-dark p-3 w-63 min-h-45 text-sm'
+        flex gap-3 divide-x border rounded-sm
+        bg-secondary dark:bg-secondary-dark p-3 w-63 min-h-50 text-sm'
     >
-      <div className='flex flex-col gap-1 wrap-break-word basis-2/3 min-w-0'>
+      <div className='flex flex-col gap-1 wrap-break-word pr-2 w-2/3 min-w-0'>
         {notNullUrl
           ? (
             <a
@@ -92,7 +96,10 @@ export default function Membership (
                 flex items-center gap-1
                 font-bold hover:text-blue-600 dark:hover:text-blue-400'
             >
-              <h3>{name} <TbWorldWww className='text-xl' /></h3>
+              <h3 className='flex flex-1 items-center gap-1'>
+                <span className='flex-1'>{name}</span>
+                <span className='w-5'><TbWorldWww className='text-xl' /></span>
+              </h3>
             </a>
           )
           : <p className='font-bold'>{name}</p>}
@@ -122,18 +129,33 @@ export default function Membership (
           <p className='wrap-break-word text-xs'>
             {notes
               ? notes
-              : 'none'}
+              : '-'}
           </p>
         </div>
       </div>
+
       <div className='flex flex-col gap-1 basis-1/3'>
-        <Price fee={membershipFee} currency={feeCurrency} />
+        <div className='flex items-center gap-3 h-5'>
+          <Price fee={membershipFee} currency={feeCurrency} />
+          {autoRenewal
+            ? <MdAutorenew className='mt-0.5 text-xl' />
+            : null}
+        </div>
+
+        <div className='flex items-center gap-1'>
+          <h4>Visits:</h4>
+          {!visits
+            ? <BiInfinite className='mt-1' />
+            : <p className='mt-0.5 text-xs'>{visits}</p>}
+        </div>
+
         <div>
           <h4>Valid for:</h4>
           {validity === 1
             ? <p className='text-xs'>{validity} {validityUnit}</p>
             : <p className='text-xs'>{validity} {validityUnit}s</p>}
         </div>
+
         <div>
           <h4>Commitment:</h4>
           <div className='text-xs'>
@@ -144,6 +166,7 @@ export default function Membership (
               : <p>none</p>}
           </div>
         </div>
+
         <div>
           <h4>Initiation fee:</h4>
           <div className='text-xs'>

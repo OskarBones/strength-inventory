@@ -150,34 +150,60 @@ export default function MembershipList ({
                   <span className='flex mr-1'>
                     {membership.feeCurrency} {membership.membershipFee}
                   </span>
-                  {membership.validity > 1
-                    ? (
-                      <span>
-                        / {membership.validity} {membership.validityUnit}s
-                      </span>
-                    )
-                    : (
-                      <span>
-                        / {membership.validity} {membership.validityUnit}
-                      </span>
-                    )}
+                  {!membership.visits
+                    ? membership.validity > 1
+                      ? (
+                        <span>
+                          / {membership.validity} {membership.validityUnit}s
+                        </span>
+                      )
+                      : (
+                        <span>
+                          / {membership.validity} {membership.validityUnit}
+                        </span>
+                      )
+                    : membership.visits > 1
+                      ? (
+                        <span>
+                          / {membership.visits} visits
+                        </span>
+                      )
+                      : (
+                        <span>
+                          / {membership.visits} visit
+                        </span>
+                      )}
                 </div>
 
-                {membership.commitment
-                  ? membership.commitment > 1
+                {!membership.visits
+                  ? membership.commitment
+                    ? membership.commitment > 1
+                      ? (
+                        <span className='flex truncate'>
+                          {/* eslint-disable-next-line @stylistic/max-len */}
+                          commitment: {membership.commitment} {membership.commitmentUnit}s
+                        </span>
+                      )
+                      : (
+                        <span className='flex truncate'>
+                          {/* eslint-disable-next-line @stylistic/max-len */}
+                          commitment: {membership.commitment} {membership.commitmentUnit}
+                        </span>
+                      )
+                    : null
+                  : membership.validity > 1
                     ? (
-                      <span className='flex truncate'>
+                      <span>
                         {/* eslint-disable-next-line @stylistic/max-len */}
-                        commitment: {membership.commitment} {membership.commitmentUnit}s
+                        validity: {membership.validity} {membership.validityUnit}s
                       </span>
                     )
                     : (
-                      <span className='flex truncate'>
+                      <span>
                         {/* eslint-disable-next-line @stylistic/max-len */}
-                        commitment: {membership.commitment} {membership.commitmentUnit}
+                        validity: {membership.validity} {membership.validityUnit}
                       </span>
-                    )
-                  : null}
+                    )}
               </div>
             </div>
           </button>

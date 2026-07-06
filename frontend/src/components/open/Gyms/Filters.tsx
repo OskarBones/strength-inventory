@@ -63,7 +63,7 @@ export default function Filters ({
       <div
         className={`
           flex flex-col items-center gap-1 h-15
-          transition-transform ease-out duration-300
+          transition-transform ease-in-out duration-500
           ${selectedCity
       ? '-translate-y-18'
       : ''

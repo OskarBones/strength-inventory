@@ -27,10 +27,12 @@ class Membership extends Model<
   declare initiationFee: number | null | undefined;
   declare membershipFee: number;
   declare feeCurrency: string;
+  declare visits: number | null | undefined;
   declare validity: number;
   declare validityUnit: MembershipTimeUnit;
   declare commitment: number | null | undefined;
   declare commitmentUnit: MembershipTimeUnit | null | undefined;
+  declare autoRenewal: boolean;
   declare availability: MembershipAvailability;
   declare url: string | null | undefined;
   declare notes: string;
@@ -67,6 +69,9 @@ Membership.init({
     type: DataTypes.STRING,
     allowNull: false
   },
+  visits: {
+    type: DataTypes.INTEGER
+  },
   validity: {
     type: DataTypes.INTEGER,
     allowNull: false
@@ -81,6 +86,10 @@ Membership.init({
   commitmentUnit: {
     type: DataTypes.ENUM('year', 'month', 'week', 'day', 'hour')
     // As per customValidator(), this field is required if commitment !== null.
+  },
+  autoRenewal: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false
   },
   availability: {
     type: DataTypes.JSON,

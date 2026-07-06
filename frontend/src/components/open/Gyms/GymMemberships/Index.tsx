@@ -18,7 +18,7 @@ function LeftArrow ({ membershipIndex, setMembershipIndex }: LeftArrowProps) {
         disabled
         className='
           flex justify-end
-          border border-primary dark:border-primary-dark
+          border rounded-sm border-primary dark:border-primary-dark
           bg-secondary dark:bg-secondary-dark w-25
           text-primary dark:text-primary-dark'
       >
@@ -30,7 +30,7 @@ function LeftArrow ({ membershipIndex, setMembershipIndex }: LeftArrowProps) {
   return (
     <button
       className='
-        flex justify-end border
+        flex justify-end border rounded-sm
         bg-secondary dark:bg-secondary-dark w-25 cursor-pointer
         hover:inset-ring active:scale-95'
       onClick={() => {
@@ -58,7 +58,7 @@ function RightArrow ({
       <button
         disabled
         className='
-          flex border border-primary dark:border-primary-dark
+          flex border rounded-sm border-primary dark:border-primary-dark
           bg-secondary dark:bg-secondary-dark w-25
           text-primary dark:text-primary-dark'
       >
@@ -70,8 +70,8 @@ function RightArrow ({
   return (
     <button
       className='
-        flex border bg-secondary dark:bg-secondary-dark w-25 cursor-pointer
-        hover:inset-ring active:scale-95'
+        flex border rounded-sm bg-secondary dark:bg-secondary-dark w-25
+        cursor-pointer hover:inset-ring active:scale-95'
       onClick={() => {
         setMembershipIndex(membershipIndex + 1);
       }}

@@ -7,9 +7,36 @@ import { getGyms } from '../../../utils/api';
 import Filters from './Filters';
 import Gym from './Gym';
 
-import type { CityGet, DistrictGet, GymGet } from '@strength-inventory/schemas';
+import type { CityGet, DistrictGet, GymWithDistance }
+  from '@strength-inventory/schemas';
 
 export default function Gyms () {
+  function deg2rad (deg: number) {
+    return deg * (Math.PI / 180);
+  }
+
+  interface calcDistanceInKmProps {
+    lat1: number
+    lon1: number
+    lat2: number
+    lon2: number
+  }
+
+  // reference [3]
+  function calcDistanceInKm ({ lat1, lon1, lat2, lon2 }:
+  calcDistanceInKmProps) {
+    const R = 6371; // radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);  // deg2rad above
+    const dLon = deg2rad(lon2 - lon1);
+    const a
+      = (Math.sin(dLat / 2) * Math.sin(dLat / 2))
+        + (Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
+          * Math.sin(dLon / 2) * Math.sin(dLon / 2));
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return Number(d.toFixed(1));
+  }
+
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['gyms'],
     queryFn: () => getGyms()
@@ -27,16 +54,40 @@ export default function Gyms () {
     return <p>Error: {error.message} </p>;
   }
 
-  let filteredGyms: GymGet[] = [];
-  if (selectedCity) {
-    filteredGyms = data.filter((gym) => gym.city === selectedCity.name);
+  const filteredGyms = data.filter((gym) => gym.city === selectedCity?.name);
+
+  let gymsWithDistance: GymWithDistance[] = [];
+  if (selectedDistrict) {
+    gymsWithDistance = filteredGyms.map((gym) => {
+      return {
+        ...gym,
+        distance: calcDistanceInKm({
+          lat1: gym.latitude,
+          lon1: gym.longitude,
+          lat2: selectedDistrict.latitude,
+          lon2: selectedDistrict.longitude
+        }),
+        referencePoint: selectedDistrict.referencePoint
+      };
+    });
+  } else if (selectedCity) {
+    gymsWithDistance = filteredGyms.map((gym) => {
+      return {
+        ...gym,
+        distance: calcDistanceInKm({
+          lat1: gym.latitude,
+          lon1: gym.longitude,
+          lat2: selectedCity.latitude,
+          lon2: selectedCity.longitude
+        }),
+        referencePoint: selectedCity.referencePoint
+      };
+    });
   }
 
-  if (selectedDistrict) {
-    console.log('sort around district ref point');
-  } else {
-    console.log('sort around city ref point');
-  }
+  gymsWithDistance.sort((a, b) => (a.distance > b.distance
+    ? 1
+    : -1));
 
   return (
     <div
@@ -56,7 +107,7 @@ export default function Gyms () {
           filteredGyms.length > 0
             ? (
               <ol className='flex flex-col gap-3'>
-                {filteredGyms.map((gym) =>
+                {gymsWithDistance.map((gym) =>
                   <li key={gym.id}><Gym gym={gym} /></li>)}
               </ol>
             )

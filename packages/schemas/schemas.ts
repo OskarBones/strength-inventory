@@ -58,10 +58,21 @@ const MembershipBaseSchema = z.object({
     return(Number(val))
   }, z.number()),
   feeCurrency: z.string().min(1),
+  visits: z.preprocess((val) => {
+    if (typeof val === 'string') {
+      if (val) {
+        return Number(val)
+      } else {
+        return null
+      }
+    }
+    return val;
+  }, z.int().nullable()),
   validity: z.preprocess((val) => {
     return(Number(val))
   }, z.int()),
   validityUnit: MembershipTimeUnitEnum,
+  autoRenewal: z.boolean(),
   availability: MembershipAvailabilitySchema,
   url: z.preprocess(
     (val) => (val === '' ? null : val),
@@ -637,6 +648,12 @@ export const GymGetSchema = GymSchema.extend({
 })
 export type GymGet = z.infer<typeof GymGetSchema>;
 
+export const GymWithDistanceSchema = GymGetSchema.extend({
+  distance: z.number(),
+  referencePoint: z.string()
+})
+export type GymWithDistance = z.infer<typeof GymWithDistanceSchema>;
+
 export const GymGetMembershipsSchema = z.intersection(
   MembershipBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
   MembershipUnions)
@@ -781,7 +798,7 @@ export type LoginRefreshResponse = z.infer<typeof LoginRefreshResponseSchema>;
 const LocationBaseSchema = z.object({
   id: z.uuidv4(),
   name: z.string().min(1).max(60),
-  referencePoint: z.string().min(1),
+  referencePoint: z.string().min(1).max(23),
   latitude: LatitudeSchema,
   longitude: LongitudeSchema,
   createdAt: z.coerce.date(),

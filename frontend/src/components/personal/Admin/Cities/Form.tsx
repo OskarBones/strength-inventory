@@ -280,6 +280,7 @@ export default function Form ({
                 type='text'
                 value={city.referencePoint}
                 required
+                maxLength={23}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setCity({ ...city, referencePoint: event.target.value });

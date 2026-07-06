@@ -6,9 +6,9 @@ import { TbWorldWww } from 'react-icons/tb';
 import GymExtension from './GymExtension';
 import GymExtensionButton from './GymExtensionButton';
 
-import { type GymGet } from '@strength-inventory/schemas';
+import { type GymWithDistance } from '@strength-inventory/schemas';
 
-export default function Gym ({ gym }: { gym: GymGet; }) {
+export default function Gym ({ gym }: { gym: GymWithDistance }) {
   const [activeExtension, setActiveExtension] = useState<string | null>(null);
 
   function handleToggle (title: string) {
@@ -18,51 +18,62 @@ export default function Gym ({ gym }: { gym: GymGet; }) {
   }
 
   return (
-    <div
-      className='
-        flex flex-col
-        text-primary-text dark:text-primary-text-dark'
-    >
+    <div className='flex flex-col'>
       {/* Adapt the placement of the extension buttons to the screen size */}
       <div className='flex flex-col md:flex-row'>
         <div
           className='
-            flex flex-col border-x border-t rounded-t-sm
+            flex md:flex-col border-x border-t rounded-t-sm
             md:border-x-0 md:border-l md:border-y md:rounded-l-sm
-            md:rounded-tr-none bg-primary dark:bg-primary-dark p-3 md:w-4/9
-            min-h-18'
+            md:rounded-tr-none bg-primary dark:bg-primary-dark p-3 md:w-14/30'
         >
-          <h2 className='font-bold'>
-            {gym.url
-              ? (
-                <a
-                  href={gym.url}
-                  target='_blank'
-                  className='
-                    flex items-center gap-1
-                    hover:text-blue-600 dark:hover:text-blue-400'
-                >
-                  {gym.name} <TbWorldWww />
-                </a>
-              )
-              : <span>{gym.name}</span>}
-          </h2>
-          <a
-            href={gym.location}
-            target='_blank'
+          <div className='flex flex-col w-1/2 md:w-full'>
+            <h2 className='font-bold'>
+              {gym.url
+                ? (
+                  <a
+                    href={gym.url}
+                    target='_blank'
+                    className='
+                      flex items-center gap-1
+                      hover:text-blue-600 dark:hover:text-blue-400'
+                  >
+                    <span className='truncate'>{gym.name}</span>
+                    <TbWorldWww className='w-5' />
+                  </a>
+                )
+                : <span>{gym.name}</span>}
+            </h2>
+            <a
+              href={gym.location}
+              target='_blank'
+              className='
+                flex items-center gap-1 text-sm
+                hover:text-blue-600 dark:hover:text-blue-400'
+            >
+              <IoNavigateCircle className='text-base' />
+              <span className='truncate'>{gym.street}</span>
+              <span>{gym.streetNumber}</span>
+            </a>
+          </div>
+
+          <div
             className='
-              flex items-center gap-1 text-sm
-              hover:text-blue-600 dark:hover:text-blue-400'
+              flex flex-1 flex-col md:flex-row items-center gap-1
+              md:mt-1 text-sm'
           >
-            <IoNavigateCircle className='text-xl' />
-            {gym.street} {gym.streetNumber}, {gym.city}
-          </a>
+            <p className='flex items-center gap-1'>
+              {gym.distance} km
+              <span className='mt-0.5 text-xs'>from</span>
+            </p>
+            {gym.referencePoint}
+          </div>
         </div>
+
         <div
           className='
             flex flex-1 border rounded-b-sm md:rounded-r-sm md:rounded-bl-none
-            divide-x bg-secondary dark:bg-secondary-dark
-            min-h-18'
+            divide-x bg-secondary dark:bg-secondary-dark'
         >
           <GymExtensionButton
             activeExtension={activeExtension}

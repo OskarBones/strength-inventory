@@ -54,10 +54,12 @@ export interface FormMembership {
   initiationFee: string,
   membershipFee: string,
   feeCurrency: string,
+  visits: string,
   validity: string,
   validityUnit: string,
   commitment: string,
   commitmentUnit: string,
+  autoRenewal: boolean,
   availability: {
     Desk: boolean,
     Web: boolean,
@@ -93,10 +95,12 @@ export function Form (
     initiationFee: '',
     membershipFee: '',
     feeCurrency: '',
+    visits: '',
     validity: '',
     validityUnit: '',
     commitment: '',
     commitmentUnit: '',
+    autoRenewal: false,
     availability: {
       Desk: false,
       Web: false,
@@ -113,10 +117,12 @@ export function Form (
     initiationFee: '',
     membershipFee: '',
     feeCurrency: '',
+    visits: '',
     validity: '',
     validityUnit: '',
     commitment: '',
     commitmentUnit: '',
+    autoRenewal: false,
     availability: {
       Desk: false,
       Web: false,
@@ -282,6 +288,7 @@ export function Form (
       const unvalidatedMembership = {
         ...req,
         commitmentUnit: preprocessedCommitmentUnit,
+        autoRenewal: membership.autoRenewal,
         country: membership.country,
         chain: membership.chain,
         availability: membership.availability
@@ -339,10 +346,12 @@ export function Form (
       initiationFee,
       membershipFee,
       feeCurrency,
+      visits,
       validity,
       validityUnit,
       commitment,
       commitmentUnit,
+      autoRenewal,
       availability,
       url,
       notes
@@ -359,6 +368,9 @@ export function Form (
         ? String(membershipFee)
         : '',
       feeCurrency: feeCurrency,
+      visits: visits
+        ? String(visits)
+        : '',
       validity: validity
         ? String(validity)
         : '',
@@ -367,6 +379,7 @@ export function Form (
         ? String(commitment)
         : '',
       commitmentUnit: commitmentUnit ?? '',
+      autoRenewal: autoRenewal,
       availability: availability,
       url: url ?? '',
       notes: notes
@@ -382,6 +395,9 @@ export function Form (
         ? String(membershipFee)
         : '',
       feeCurrency: feeCurrency,
+      visits: visits
+        ? String(visits)
+        : '',
       validity: validity
         ? String(validity)
         : '',
@@ -390,6 +406,7 @@ export function Form (
         ? String(commitment)
         : '',
       commitmentUnit: commitmentUnit ?? '',
+      autoRenewal: autoRenewal,
       availability: availability,
       url: url ?? '',
       notes: notes
@@ -551,6 +568,23 @@ export function Form (
             </div>
 
             <div className='flex gap-3'>
+              <div className='flex flex-col'>
+                <label htmlFor='visits'>visits</label>
+                <input
+                  id='visits'
+                  name='visits'
+                  type='number'
+                  value={membership.visits}
+                  placeholder='unlimited'
+                  className={`${FORM_INPUT_CLASSES} w-20`}
+                  onChange={(event) => {
+                    setMembership(
+                      { ...membership, visits: event.target.value }
+                    );
+                  }}
+                />
+              </div>
+
               <div className='flex gap-1'>
                 <div className='flex flex-col'>
                   <label htmlFor='validity'>validity*</label>
@@ -595,51 +629,67 @@ export function Form (
                   <option value='year'>year(s)</option>
                 </select>
               </div>
+            </div>
 
-              <div className='flex gap-1'>
-                <div className='flex flex-col'>
-                  <label>commitment</label>
-                  <div className='flex gap-1'>
-                    <input
-                      id='commitment'
-                      name='commitment'
-                      type='number'
-                      value={membership.commitment}
-                      disabled={readOnly}
-                      required={membership.commitmentUnit !== ''}
-                      min={1}
-                      step={1}
-                      className={`${FORM_INPUT_CLASSES} w-15`}
-                      onChange={(event) => {
-                        setMembership(
-                          { ...membership, commitment: event.target.value }
-                        );
-                      }}
-                    />
-                    <select
-                      id='commitmentUnit'
-                      name='commitmentUnit'
-                      value={membership.commitmentUnit}
-                      disabled={readOnly}
-                      required={membership.commitment !== ''}
-                      className={
-                        `${FORM_INPUT_CLASSES} self-end enabled:cursor-pointer`
-                      }
-                      onChange={(event) => {
-                        setMembership(
-                          { ...membership, commitmentUnit: event.target.value }
-                        );
-                      }}
-                    >
-                      <option value=''>-- unit --</option>
-                      <option value='hour'>hour(s)</option>
-                      <option value='day'>day(s)</option>
-                      <option value='week'>week(s)</option>
-                      <option value='month'>month(s)</option>
-                      <option value='year'>year(s)</option>
-                    </select>
-                  </div>
+            <div className='flex gap-8'>
+              <div className='flex flex-col'>
+                <label>commitment</label>
+                <div className='flex gap-1'>
+                  <input
+                    id='commitment'
+                    name='commitment'
+                    type='number'
+                    value={membership.commitment}
+                    disabled={readOnly}
+                    required={membership.commitmentUnit !== ''}
+                    min={1}
+                    step={1}
+                    className={`${FORM_INPUT_CLASSES} w-15`}
+                    onChange={(event) => {
+                      setMembership(
+                        { ...membership, commitment: event.target.value }
+                      );
+                    }}
+                  />
+                  <select
+                    id='commitmentUnit'
+                    name='commitmentUnit'
+                    value={membership.commitmentUnit}
+                    disabled={readOnly}
+                    required={membership.commitment !== ''}
+                    className={
+                      `${FORM_INPUT_CLASSES} self-end enabled:cursor-pointer`
+                    }
+                    onChange={(event) => {
+                      setMembership(
+                        { ...membership, commitmentUnit: event.target.value }
+                      );
+                    }}
+                  >
+                    <option value=''>-- unit --</option>
+                    <option value='hour'>hour(s)</option>
+                    <option value='day'>day(s)</option>
+                    <option value='week'>week(s)</option>
+                    <option value='month'>month(s)</option>
+                    <option value='year'>year(s)</option>
+                  </select>
                 </div>
+              </div>
+
+              <div className='flex self-end items-center gap-1'>
+                <label htmlFor='autoRenewal'>auto-renewal</label>
+                <input
+                  id='autoRenewal'
+                  name='autoRenewal'
+                  type='checkbox'
+                  value='autoRenewal'
+                  checked={membership.autoRenewal}
+                  onChange={() => {
+                    setMembership({
+                      ...membership, autoRenewal: !membership.autoRenewal
+                    });
+                  }}
+                />
               </div>
             </div>
 
