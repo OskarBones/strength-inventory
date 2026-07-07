@@ -16,8 +16,12 @@ import SubmitButton from '../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '../../../../constants/theme';
 
-import { type CityPostAndPut, CityPostAndPutSchema }
-  from '@strength-inventory/schemas';
+import {
+  type CityPostAndPut,
+  CityPostAndPutSchema,
+  LOCATION_MAX_LEN,
+  REF_POINT_MAX_LEN
+} from '@strength-inventory/schemas';
 
 interface FormProps {
   formMode: string;
@@ -264,7 +268,7 @@ export default function Form ({
                 type='text'
                 value={city.name}
                 required
-                maxLength={60}
+                maxLength={LOCATION_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setCity({ ...city, name: event.target.value });
@@ -280,7 +284,7 @@ export default function Form ({
                 type='text'
                 value={city.referencePoint}
                 required
-                maxLength={23}
+                maxLength={REF_POINT_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setCity({ ...city, referencePoint: event.target.value });

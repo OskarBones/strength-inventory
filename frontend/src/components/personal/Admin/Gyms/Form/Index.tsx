@@ -40,7 +40,9 @@ import {
   type GymPostFrontend,
   GymPostFrontendSchema,
   type Hours,
-  type OpeningHoursException
+  LOCATION_MAX_LEN,
+  type OpeningHoursException,
+  STREET_NO_MAX_LEN
 } from '@strength-inventory/schemas';
 
 interface FormProps {
@@ -558,7 +560,7 @@ export default function Form (
                 type='text'
                 value={gym.street}
                 required
-                maxLength={60}
+                maxLength={LOCATION_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setGym({ ...gym, street: event.target.value });
@@ -574,7 +576,7 @@ export default function Form (
                 type='text'
                 value={gym.streetNumber}
                 required
-                maxLength={20}
+                maxLength={STREET_NO_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setGym({ ...gym, streetNumber: event.target.value });

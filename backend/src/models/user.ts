@@ -28,6 +28,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare getGyms: BelongsToManyGetAssociationsMixin<Gym>;
 }
 
+import { USERNAME_MAX_LEN, USERS_NAME_MAX_LEN }
+  from '@strength-inventory/schemas';
+
 User.init({
   id: {
     type: DataTypes.UUID,  // CHAR(36) for MySQL
@@ -39,7 +42,7 @@ User.init({
     unique: true,
     allowNull: false,
     validate: {
-      len: [1, 30]
+      len: [1, USERNAME_MAX_LEN]
     }
   },
   email: {
@@ -62,7 +65,7 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 100]
+      len: [1, USERS_NAME_MAX_LEN]
     }
   },
   role: {

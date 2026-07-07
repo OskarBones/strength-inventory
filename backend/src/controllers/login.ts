@@ -122,7 +122,6 @@ interface RequestWithRefreshToken extends Request {
   cookies: { refreshToken?: string };
 }
 
-
 loginRouter.post('/refresh', async (
   req: RequestWithRefreshToken,
   res: Response<LoginRefreshResponse>

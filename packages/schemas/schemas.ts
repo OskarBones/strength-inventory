@@ -21,7 +21,7 @@ export const HoursSchema = z.object({
 });
 export type Hours = z.infer<typeof HoursSchema>;  // used in gym and membership
 
-// used in gym and locations
+// used in gym, city and district
 const LatitudeSchema = z.preprocess((val) => {
   if (typeof val === 'string') {
     return Number(Number.parseFloat(val).toFixed(5))
@@ -34,6 +34,15 @@ const LongitudeSchema = z.preprocess((val) => {
   }
   return val;
 }, z.number().gte(-90).lte(90))
+
+// used in gym and city
+export const COUNTRY_MAX_LEN = 40
+const CountrySchema = z.string().min(1).max(COUNTRY_MAX_LEN)
+
+// used in gym, city and district
+export const LOCATION_MAX_LEN = 60
+const SubLocationNameSchema = z.string().min(1).max(LOCATION_MAX_LEN)
+
 
 // membership
 
@@ -168,13 +177,15 @@ export const PasswordSchema = z
 export const UserRoleEnum = z.enum(['SUPERUSER', 'ADMIN', 'MANAGER', 'GYM-GOER']);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
+export const USERNAME_MAX_LEN = 30
+export const USERS_NAME_MAX_LEN = 100
 export const UserSchema = z.object({
   id: z.uuidv4(),
-  username: z.string().min(1).max(30),
+  username: z.string().min(1).max(USERNAME_MAX_LEN),
   email: z.email(),
   emailVerified: z.boolean(),
   passwordHash: z.string().min(1),
-  name: z.string().min(1).max(100),
+  name: z.string().min(1).max(USERS_NAME_MAX_LEN),
   role: UserRoleEnum,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
@@ -438,6 +449,8 @@ const EquipmentCategorySchema = z.discriminatedUnion('category', [
   CardioSchema
 ])
 
+const WeightSchema = z.float32().positive().lte(MAX_WEIGHT)
+
 const EquipmentWithWeightsSchema = z.object({
   weightUnit: EquipmentWeightUnitEnum,
   weight: z.preprocess((val) => {
@@ -452,7 +465,7 @@ const EquipmentWithWeightsSchema = z.object({
       }
     }
     return val;
-  }, z.float32().nullish()),
+  }, WeightSchema.nullish()),
   startingWeight: z.preprocess((val) => {
     if (typeof val === 'string') {
       if (val) {
@@ -462,8 +475,8 @@ const EquipmentWithWeightsSchema = z.object({
       }
     }
     return val;
-  }, z.float32().nullish()),
-  availableWeights: z.array(z.float32()),
+  }, WeightSchema.nullish()),
+  availableWeights: z.array(WeightSchema),
   maximumWeight: z.preprocess((val) => {
     if (typeof val === 'string') {
       if (val) {
@@ -473,7 +486,7 @@ const EquipmentWithWeightsSchema = z.object({
       }
     }
     return val;
-  }, z.float32().nullish()),
+  }, WeightSchema.nullish()),
 })
 .refine((data) => {
   if (data.startingWeight && data.maximumWeight) {
@@ -564,8 +577,15 @@ export type GymEquipment = z.infer<typeof GymEquipmentSchema>;
 
 export const GymEquipmentPostSchema = GymEquipmentSchema.pick({
   equipmentId: true
+}).extend({
+  count: z.int().min(1).optional()
 });
 export type GymEquipmentPost = z.infer<typeof GymEquipmentPostSchema>;
+
+export const GymEquipmentDeleteSchema = GymEquipmentSchema.pick({
+  equipmentId: true
+})
+export type GymEquipmentDelete = z.infer<typeof GymEquipmentDeleteSchema>;
 
 
 // gymmemberships
@@ -579,10 +599,10 @@ export const GymMembershipSchema = z.object({
 });
 export type GymMembership = z.infer<typeof GymMembershipSchema>;
 
-export const GymMembershipPostSchema = GymMembershipSchema.pick({
+export const GymMembershipPostAndDeleteSchema = GymMembershipSchema.pick({
   membershipId: true
 });
-export type GymMembershipPost = z.infer<typeof GymMembershipPostSchema>;
+export type GymMembershipPostAndDelete = z.infer<typeof GymMembershipPostAndDeleteSchema>;
 
 
 // gym
@@ -601,15 +621,16 @@ export const HoursExceptionsSchema = z.object({
   })
 export type HoursExceptions = z.infer<typeof HoursExceptionsSchema>;
 
+export const STREET_NO_MAX_LEN = 20
 export const GymSchema = z.object({
   id: z.uuidv4(),
   name: z.string().min(1),
   chain: z.string(),
-  street: z.string().min(1).max(60),
-  streetNumber: z.string().min(1).max(20),
-  district: z.string().min(1).max(60),
-  city: z.string().min(1).max(60),
-  country: z.string().min(1).max(40),
+  street: SubLocationNameSchema,
+  streetNumber: z.string().min(1).max(STREET_NO_MAX_LEN),
+  district: SubLocationNameSchema,
+  city: SubLocationNameSchema,
+  country: CountrySchema,
   latitude: LatitudeSchema,
   longitude: LongitudeSchema,
   openingHoursEveryone: HoursSchema,
@@ -659,7 +680,7 @@ export const GymGetMembershipsSchema = z.intersection(
   MembershipUnions)
 export type GymGetMemberships = z.infer<typeof GymGetMembershipsSchema>;
 
-export const GymPostSchema = GymSchema.pick({
+export const GymPostAndPutSchema = GymSchema.pick({
   name: true,
   chain: true,
   street: true,
@@ -679,7 +700,7 @@ export const GymPostSchema = GymSchema.pick({
   openingHoursVisible: true,
   notes: true
 });
-export type GymPost = z.infer<typeof GymPostSchema>;
+export type GymPostAndPut = z.infer<typeof GymPostAndPutSchema>;
 
 const GymPostFrontendHour = z.preprocess(
   (val) => (val === '' ? null : val),
@@ -739,24 +760,6 @@ export const GymPatchHoursSchema = GymSchema.pick({
 })
 export type GymPatchHours = z.infer<typeof GymPatchHoursSchema>;
 
-export const GymPatchSchema = GymSchema.pick({
-  name: true,
-  chain: true,
-  street: true,
-  streetNumber: true,
-  district: true,
-  city: true,
-  latitude: true,
-  longitude: true,
-  url: true,
-  location: true,
-  equipmentVisible: true,
-  membershipsVisible: true,
-  openingHoursVisible: true,
-  notes: true
-});
-export type GymPatch = z.infer<typeof GymPatchSchema>;
-
 
 // login
 
@@ -795,10 +798,12 @@ export type LoginRefreshResponse = z.infer<typeof LoginRefreshResponseSchema>;
 
 // locations
 
+export const REF_POINT_MAX_LEN = 23;
+
 const LocationBaseSchema = z.object({
   id: z.uuidv4(),
-  name: z.string().min(1).max(60),
-  referencePoint: z.string().min(1).max(23),
+  name: SubLocationNameSchema,
+  referencePoint: z.string().min(1).max(REF_POINT_MAX_LEN),
   latitude: LatitudeSchema,
   longitude: LongitudeSchema,
   createdAt: z.coerce.date(),
@@ -806,7 +811,7 @@ const LocationBaseSchema = z.object({
 })
 
 export const CitySchema = LocationBaseSchema.extend({
-  country: z.string().min(1)
+  country: CountrySchema
 })
 export type City = z.infer<typeof CitySchema>;
 

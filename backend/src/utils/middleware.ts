@@ -22,7 +22,13 @@ import {
 
 import {
   type Gym as FullGym,
+  GymEquipmentDeleteSchema,
+  GymEquipmentPostSchema,
+  GymMembershipPostAndDeleteSchema,
+  GymPatchHoursSchema,
+  GymPostAndPutSchema,
   LoginRequestSchema,
+  MembershipPostAndPutSchema,
   PasswordSchema,
   UserNamesSchema,
   UserPostSchema,
@@ -31,17 +37,17 @@ import {
   type UserTokenPayload
 } from '@strength-inventory/schemas';
 
-const unknownEndpoint = (_req: Request, res: Response) => {
+export function unknownEndpoint (_req: Request, res: Response) {
   res.status(404).send({ error: 'unknown endpoint' });
   return;
-};
+}
 
-const errorHandler = (
+export function errorHandler (
   err: unknown,
   _req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): void {
   if (err instanceof z.ZodError) {
     console.error(err.name);
     const messages = err.issues.map((issue) => issue.message);
@@ -63,13 +69,13 @@ const errorHandler = (
     console.error('Unhandled error type.');
     next(err);  // err passed to the Express built-in error handler
   }
-};
+}
 
-const tokenExtractor = (
+export function tokenExtractor (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): void {
   const authorization = req.get('authorization');
   if (authorization?.toLowerCase().startsWith('bearer ')) {
     req.token = authorization.replace(/bearer /gi, '');
@@ -78,17 +84,17 @@ const tokenExtractor = (
     return;
   }
   next();
-};
+}
 
 interface RequestWithUserContext extends Request {
   cookies: { userContext?: string };
 }
 
-const userExtractor = async (
+export async function userExtractor (
   req: RequestWithUserContext,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   if (req.token && req.cookies.userContext) {
     const decodedToken = jwt.verify(
       req.token,
@@ -142,9 +148,13 @@ const userExtractor = async (
     return;
   }
   next();
-};
+}
 
-const isUserAdmin = (req: Request, res: Response, next: NextFunction): void => {
+export function isUserAdmin (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (!req.user) {
     res.status(401).json({ error: 'User missing from request.' });
     return;
@@ -155,15 +165,15 @@ const isUserAdmin = (req: Request, res: Response, next: NextFunction): void => {
     return;
   }
   next();
-};
+}
 
-const isAdmin = [tokenExtractor, userExtractor, isUserAdmin];
+export const isAdmin = [tokenExtractor, userExtractor, isUserAdmin];
 
-const isUserManager = async (
+export async function isUserManager (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   if (!req.user) {
     res.status(401).json({ error: 'User missing from request.' });
     return;
@@ -199,16 +209,16 @@ const isUserManager = async (
   }
 
   next();
-};
+}
 
 // Will throw an error if there is no preceding target extractor.
-const isManager = [tokenExtractor, userExtractor, isUserManager];
+export const isManager = [tokenExtractor, userExtractor, isUserManager];
 
-const isUserAdminOrManager = async (
+export async function isUserAdminOrManager (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   if (!req.user) {
     res.status(401).json({ error: 'User missing from request.' });
     return;
@@ -250,19 +260,23 @@ const isUserAdminOrManager = async (
   }
 
   next();
-};
+}
 
 // Will throw an error for managers if there is no preceding target extractor.
-const isAdminOrManager = [tokenExtractor, userExtractor, isUserAdminOrManager];
+export const isAdminOrManager = [
+  tokenExtractor,
+  userExtractor,
+  isUserAdminOrManager
+];
 
 
 // user
 
-const targetUserExtractor = async (
+export async function targetUserExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -278,27 +292,39 @@ const targetUserExtractor = async (
 
   req.targetUser = user;
   next();
-};
+}
 
-const newNamesParser = (req: Request, _res: Response, next: NextFunction) => {
+export function newNamesParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
   try {
     UserNamesSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const newUserParser = (req: Request, _res: Response, next: NextFunction) => {
+export function newUserParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
   try {
     UserPostSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const newEmailParser = (req: Request, _res: Response, next: NextFunction) => {
+export function newEmailParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
   try {
     UserSchema.pick({ email: true }).parse(req.body);
     z.object({ email: z.email() }).parse(req.body);
@@ -306,52 +332,60 @@ const newEmailParser = (req: Request, _res: Response, next: NextFunction) => {
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const newPasswordParser = (
+export function newPasswordParser (
   req: Request<{ id: string; }, unknown, { password: string; }>,
   _res: Response,
   next: NextFunction
-) => {
+) {
   try {
     PasswordSchema.parse(req.body.password);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const roleParser = (req: Request, _res: Response, next: NextFunction) => {
+export function roleParser (req: Request, _res: Response, next: NextFunction) {
   try {
     UserSchema.pick({ role: true }).parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const putUserParser = (req: Request, _res: Response, next: NextFunction) => {
+export function putUserParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
   try {
     UserPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
-const isUserSelf = (req: Request, res: Response, next: NextFunction): void => {
+export function isUserSelf (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
   if (!req.user || req.user.id !== req.params['id']) {
     res.status(403).json({ error: 'You can only modify your own data.' });
     return;
   }
   next();
-};
+}
 
-const isUserSelfOrAdmin = (
+export function isUserSelfOrAdmin (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): void {
   if (
     !req.user
     || (
@@ -362,19 +396,19 @@ const isUserSelfOrAdmin = (
     res.status(403).json({ error: 'You can only modify your own data.' });
   }
   next();
-};
+}
 
-const isSelf = [tokenExtractor, userExtractor, isUserSelf];
-const isSelfOrAdmin = [tokenExtractor, userExtractor, isUserSelfOrAdmin];
+export const isSelf = [tokenExtractor, userExtractor, isUserSelf];
+export const isSelfOrAdmin = [tokenExtractor, userExtractor, isUserSelfOrAdmin];
 
 
 // gym
 
-const targetGymExtractor = async (
+export async function targetGymExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -406,16 +440,81 @@ const targetGymExtractor = async (
 
   req.targetGym = gym;
   next();
-};
+}
+
+export function gymParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymPostAndPutSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function gymPostEquipmentParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymEquipmentPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function gymDeleteEquipmentParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymEquipmentDeleteSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function gymMembershipParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymMembershipPostAndDeleteSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function gymHoursParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymPatchHoursSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
 
 
-// membership
+// equipment
 
-const targetEquipmentExtractor = async (
+export async function targetEquipmentExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -431,16 +530,16 @@ const targetEquipmentExtractor = async (
 
   req.targetEquipment = equipment;
   next();
-};
+}
 
 
 // membership
 
-const targetMembershipExtractor = async (
+export async function targetMembershipExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -456,28 +555,41 @@ const targetMembershipExtractor = async (
 
   req.targetMembership = membership;
   next();
-};
+}
+
+export function membershipParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    MembershipPostAndPutSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
 
 
 // login
 
-const loginParser = (req: Request, _res: Response, next: NextFunction) => {
+export function loginParser (req: Request, _res: Response, next: NextFunction) {
   try {
     LoginRequestSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
   }
-};
+}
 
 
 // gymequipment
 
-const targetGymEquipmentExtractor = async (
+export async function targetGymEquipmentExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -493,16 +605,16 @@ const targetGymEquipmentExtractor = async (
 
   req.targetGymEquipment = junction;
   next();
-};
+}
 
 
 // gymmanagers
 
-const targetGymManagerExtractor = async (
+export async function targetGymManagerExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -518,12 +630,12 @@ const targetGymManagerExtractor = async (
 
   req.targetGymManager = junction;
   next();
-};
+}
 
-const adjustUserRole = async (
+export async function adjustUserRole (
   userId: string,
   emptyLength: number
-): Promise<void> => {
+): Promise<void> {
   const user = await User.findByPk(userId);
   if (!user) {
     throw Error(`User with ID ${userId} not found.`);
@@ -544,16 +656,16 @@ const adjustUserRole = async (
     }
     return;
   }
-};
+}
 
 
 // gymmemberhsips
 
-const targetGymMembershipExtractor = async (
+export async function targetGymMembershipExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -569,16 +681,16 @@ const targetGymMembershipExtractor = async (
 
   req.targetGymMembership = junction;
   next();
-};
+}
 
 
 // city
 
-const targetCityExtractor = async (
+export async function targetCityExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -600,16 +712,16 @@ const targetCityExtractor = async (
 
   req.targetCity = city;
   next();
-};
+}
 
 
 // district
 
-const targetDistrictExtractor = async (
+export async function targetDistrictExtractor (
   req: Request<{ id: string; }>,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
@@ -625,34 +737,5 @@ const targetDistrictExtractor = async (
 
   req.targetDistrict = district;
   next();
-};
+}
 
-
-export {
-  unknownEndpoint,
-  errorHandler,
-  tokenExtractor,
-  userExtractor,
-  isAdmin,
-  isManager,
-  isAdminOrManager,
-  targetUserExtractor,
-  newNamesParser,
-  newUserParser,
-  newEmailParser,
-  newPasswordParser,
-  roleParser,
-  putUserParser,
-  isSelf,
-  isSelfOrAdmin,
-  targetGymExtractor,
-  targetEquipmentExtractor,
-  targetMembershipExtractor,
-  loginParser,
-  targetGymEquipmentExtractor,
-  targetGymManagerExtractor,
-  adjustUserRole,
-  targetGymMembershipExtractor,
-  targetCityExtractor,
-  targetDistrictExtractor
-};

@@ -21,6 +21,9 @@ import { sequelize } from '../utils/db.js';
 
 import { Equipment, Membership, User } from './index.ts';
 
+import { COUNTRY_MAX_LEN, LOCATION_MAX_LEN, STREET_NO_MAX_LEN }
+  from '@strength-inventory/schemas';
+
 class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare id: CreationOptional<string>;
   declare name: string;
@@ -72,35 +75,35 @@ Gym.init({
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 60]
+      len: [1, LOCATION_MAX_LEN]
     }
   },
   streetNumber: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 20]
+      len: [1, STREET_NO_MAX_LEN]
     }
   },
   district: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 60]
+      len: [1, LOCATION_MAX_LEN]
     }
   },
   city: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 60]
+      len: [1, LOCATION_MAX_LEN]
     }
   },
   country: {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      len: [1, 40]
+      len: [1, COUNTRY_MAX_LEN]
     }
   },
   latitude: {

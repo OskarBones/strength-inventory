@@ -1,6 +1,10 @@
 import Express, { type Request, type Response } from 'express';
 
-import { isAdmin, targetMembershipExtractor } from '../utils/middleware.ts';
+import {
+  isAdmin,
+  membershipParser,
+  targetMembershipExtractor
+} from '../utils/middleware.ts';
 
 import { Membership } from '../models/index.ts';
 
@@ -42,6 +46,7 @@ membershipsRouter.get('/:id', targetMembershipExtractor, (req, res) => {
 // POST for admins to create a new membership
 membershipsRouter.post(
   '/',
+  membershipParser,
   ...isAdmin,
   async (
     req: Request<unknown, unknown, MembershipPostAndPut>,
@@ -92,6 +97,7 @@ membershipsRouter.post(
 // PUT for admins to modify everything except id and timestamps
 membershipsRouter.put(
   '/:id',
+  membershipParser,
   ...isAdmin,
   targetMembershipExtractor,
   async (

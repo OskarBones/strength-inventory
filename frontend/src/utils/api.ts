@@ -1,3 +1,6 @@
+// NOTE
+// inputs are validated in components
+
 import { z } from 'zod';
 
 import syncToken from './syncToken';
@@ -15,7 +18,7 @@ import {
   GymGetEquipmentSchema,
   GymGetMembershipsSchema,
   GymGetSchema,
-  type GymPost,
+  type GymPostAndPut,
   GymSchema,
   type MembershipPostAndPut,
   MembershipSchema
@@ -90,10 +93,9 @@ export const getGymMemberships = async ({ gymId }: { gymId: string }) => {
 };
 
 interface PostGymProps extends TokenValidationProps {
-  gym: GymPost
+  gym: GymPostAndPut
 }
 
-// input has been validated before this function is called
 export const postGym = async ({ gym, refresh, logout }: PostGymProps) => {
   /* only admins have permission */
   const token = await syncToken({ refresh, logout });
@@ -193,10 +195,9 @@ export const postGymMembership = async (
 
 interface putGymProps extends TokenValidationProps {
   id: string
-  gym: GymPost
+  gym: GymPostAndPut
 }
 
-// input has been validated before this function is called
 export const putGym
   = async ({ id, gym, refresh, logout }: putGymProps) => {
   /* only admins have permission */
@@ -386,7 +387,6 @@ interface postEquipmentProps extends TokenValidationProps {
   piece: EquipmentPostAndPut
 }
 
-// input has been validated before this function is called
 export const postEquipment
   = async ({ piece, refresh, logout }: postEquipmentProps) => {
     /* only admins have permission */
@@ -419,7 +419,6 @@ interface putEquipmentProps extends TokenValidationProps {
   piece: EquipmentPostAndPut
 }
 
-// input has been validated before this function is called
 export const putEquipment
   = async ({ id, piece, refresh, logout }: putEquipmentProps) => {
     /* only admins have permission */
@@ -498,7 +497,6 @@ interface postMembershipProps extends TokenValidationProps {
   membership: MembershipPostAndPut
 }
 
-// input has been validated before this function is called
 export const postMembership
   = async ({ membership, refresh, logout }: postMembershipProps) => {
     /* only admins have permission */
@@ -531,7 +529,6 @@ interface putMembershipProps extends TokenValidationProps {
   membership: MembershipPostAndPut
 }
 
-// input has been validated before this function is called
 export const putMembership
   = async ({ id, membership, refresh, logout }: putMembershipProps) => {
     /* only admins have permission */
@@ -609,7 +606,6 @@ interface postCityProps extends TokenValidationProps {
   city: CityPostAndPut
 }
 
-// input has been validated before this function is called
 export const postCity = async ({ city, refresh, logout }: postCityProps) => {
   /* only admins have permission */
   const token = await syncToken({ refresh, logout });
@@ -641,7 +637,6 @@ interface putCityProps extends TokenValidationProps {
   city: CityPostAndPut
 }
 
-// input has been validated before this function is called
 export const putCity
   = async ({ id, city, refresh, logout }: putCityProps) => {
   /* only admins have permission */
@@ -718,7 +713,6 @@ interface postDistrictProps extends TokenValidationProps {
   district: DistrictPostAndPut
 }
 
-// input has been validated before this function is called
 export const postDistrict = async ({
   district, refresh, logout
 }: postDistrictProps) => {
@@ -752,7 +746,6 @@ interface putDistrictProps extends TokenValidationProps {
   district: DistrictPostAndPut
 }
 
-// input has been validated before this function is called
 export const putDistrict
   = async ({ id, district, refresh, logout }: putDistrictProps) => {
   /* only admins have permission */

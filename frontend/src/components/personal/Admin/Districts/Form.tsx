@@ -16,8 +16,12 @@ import SubmitButton from '../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '../../../../constants/theme';
 
-import { type DistrictPostAndPut, DistrictPostAndPutSchema }
-  from '@strength-inventory/schemas';
+import {
+  type DistrictPostAndPut,
+  DistrictPostAndPutSchema,
+  LOCATION_MAX_LEN,
+  REF_POINT_MAX_LEN
+} from '@strength-inventory/schemas';
 
 interface FormProps {
   formMode: string;
@@ -281,7 +285,7 @@ export default function Form ({
                 type='text'
                 value={district.name}
                 required
-                maxLength={60}
+                maxLength={LOCATION_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setDistrict({ ...district, name: event.target.value });
@@ -297,7 +301,7 @@ export default function Form ({
                 type='text'
                 value={district.referencePoint}
                 required
-                maxLength={23}
+                maxLength={REF_POINT_MAX_LEN}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setDistrict({

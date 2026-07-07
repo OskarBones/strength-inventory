@@ -8,10 +8,11 @@ import {
   Model
 } from 'sequelize';
 
-import type {
-  EquipmentCategory,
-  EquipmentMaximumWeightType,
-  EquipmentWeightUnit
+import {
+  type EquipmentCategory,
+  type EquipmentMaximumWeightType,
+  type EquipmentWeightUnit,
+  MAX_WEIGHT
 } from '@strength-inventory/schemas';
 
 import { sequelize } from '../utils/db.js';
@@ -65,8 +66,8 @@ Equipment.init({
       ),
     allowNull: false
   },
-  /* at db level, subcategory is only enforced as a string instead of an enum
-  because the set of accepted subcategories
+  /* at the db level, subcategory is only enforced as a string
+  instead of an enum because the set of accepted subcategories
   is subject to many small changes in the future */
   subcategory: {
     type: DataTypes.STRING,
@@ -85,20 +86,32 @@ Equipment.init({
     type: DataTypes.ENUM('kg', 'lbs')
   },
   weight: {
-    type: DataTypes.DECIMAL(5, 2)
-    // As per customValidator(), using this field requires weightUnit !== null.
+    type: DataTypes.DECIMAL(5, 2),
+    // as per customValidator(), using this field requires weightUnit !== null
+    validate: {
+      max: MAX_WEIGHT,
+      min: 0.01
+    }
   },
   startingWeight: {
-    type: DataTypes.DECIMAL(5, 2)
-    // As per customValidator(), using this field requires weightUnit !== null.
+    type: DataTypes.DECIMAL(5, 2),
+    // as per customValidator(), using this field requires weightUnit !== null
+    validate: {
+      max: MAX_WEIGHT,
+      min: 0.01
+    }
   },
   availableWeights: {
     type: DataTypes.JSON
-    // As per customValidator(), using this field requires weightUnit !== null.
+    // as per customValidator(), using this field requires weightUnit !== null
   },
   maximumWeight: {
-    type: DataTypes.DECIMAL(5, 2)
-    // As per customValidator(), using this field requires weightUnit !== null.
+    type: DataTypes.DECIMAL(5, 2),
+    // as per customValidator(), using this field requires weightUnit !== null
+    validate: {
+      max: MAX_WEIGHT,
+      min: 0.01
+    }
   },
   maximumWeightType: {
     type: DataTypes.ENUM('load', 'weight')

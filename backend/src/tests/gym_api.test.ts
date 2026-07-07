@@ -12,16 +12,15 @@ import request from 'supertest';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
 import app from '../index.js';
+import { login } from './test_utils.ts';
 
 import { Gym, User } from '../models/index.ts';
 
-import {
-  type Gym as FullGym,
-  type LoginResponse
-} from '@strength-inventory/schemas';
+import { type Gym as FullGym } from '@strength-inventory/schemas';
 
-const initialGymCount = 2;  // The number of gyms created in beforeEach
+const initialGymCount = 2;  // the number of gyms created in beforeEach
 let token: string;
+let cookies: string;
 let gymToPatch: FullGym | null;
 
 beforeAll(async () => {
@@ -46,6 +45,15 @@ beforeAll(async () => {
     name: 'The Gym Owner',
     role: 'MANAGER'
   });
+
+  passwordHash = hashSync('ILiftThereforeIAm', salt);
+  await User.create({
+    username: 'LashaTalakhadze',
+    email: 'lasha@talakhadze.ge',
+    emailVerified: true,
+    passwordHash,
+    name: 'Lasha Talakhadze'
+  });
 });
 
 beforeEach(async () => {
@@ -58,9 +66,25 @@ beforeEach(async () => {
     streetNumber: '29',
     district: 'Punavuori',
     city: 'Helsinki',
+    country: 'FIN',
+    latitude: 60.16478,
+    longitude: 24.93285,
+    // eslint-disable-next-line @stylistic/max-len
+    url: 'https://fi.fitness24seven.com/kuntokeskuksemme/etsi-salisi/helsinki-punavuori',
+    // eslint-disable-next-line @stylistic/max-len
+    location: 'https://www.google.com/maps/place/Fitness24Seven+Helsinki+Punavuori/@60.1647969,24.9326237,19.01z/data=!4m6!3m5!1s0x46920bcaeb2bc167:0xbedf5caef2f05ba3!8m2!3d60.1647997!4d24.9328236!16s%2Fg%2F1pv1c151d?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
+    openingHoursMembers: {
+      MO: ['00:00', '23:59'],
+      TU: ['00:00', '23:59'],
+      WE: ['00:00', '23:59'],
+      TH: ['00:00', '23:59'],
+      FR: ['00:00', '23:59'],
+      SA: ['00:00', '23:59'],
+      SU: ['00:00', '23:59']
+    },
     equipmentVisible: false,
     membershipsVisible: false,
-    openingHoursVisible: false,
+    openingHoursVisible: true,
     notes: ''
   });
 
@@ -71,19 +95,26 @@ beforeEach(async () => {
     streetNumber: '48',
     district: 'Kamppi',
     city: 'Helsinki',
-    openingHoursMembers: {
-      MO: [6, 22],
-      TU: [6, 22],
-      WE: [6, 22],
-      TH: [6, 22],
-      FR: [6, 21],
-      SA: [8, 20],
-      SU: [8, 20]
+    country: 'FIN',
+    latitude: 60.16933,
+    longitude: 24.92966,
+    // eslint-disable-next-line @stylistic/max-len
+    url: 'https://www.elixia.fi/kuntosali/helsinki/kamppi?clubId=727&utm_source=google&utm_medium=organic_location&utm_campaign=pinmeto&utm_id=728',
+    // eslint-disable-next-line @stylistic/max-len
+    location: 'https://www.google.com/maps/place/ELIXIA+Kamppi/@60.1694856,24.9268664,17z/data=!3m1!4b1!4m6!3m5!1s0x46920a3485cc265d:0xace8b112832c5729!8m2!3d60.169483!4d24.929436!16s%2Fg%2F1q67ml5y5?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
+    openingHoursEveryone: {
+      MO: ['06:00', '22:00'],
+      TU: ['06:00', '22:00'],
+      WE: ['06:00', '22:00'],
+      TH: ['06:00', '22:00'],
+      FR: ['06:00', '21:00'],
+      SA: ['08:00', '20:00'],
+      SU: ['08:00', '20:00']
     },
     equipmentVisible: false,
     membershipsVisible: false,
-    openingHoursVisible: false,
-    notes: 'A lot of natural light'
+    openingHoursVisible: true,
+    notes: 'A lot of natural light.'
   });
 });
 
@@ -104,166 +135,328 @@ test('GET all gyms correctly returns a json', async () => {
 describe('POST a new gym', () => {
   describe('as an admin', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({
-          username: 'TheAdmin',
-          password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-        })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'TheAdmin',
+        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+      }));
     });
 
     test('succeeds with valid required fields', async () => {
       const newGym = {
-        name: 'Mayors Gym',
+        name: 'Mayor\'s Gym',
         street: 'Porkkalankatu',
-        streetNumber: '13',
+        streetNumber: '13N',
         district: 'Ruoholahti',
-        city: 'Helsinki'
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       const response: request.Response = await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(201)
         .expect('Content-Type', /application\/json/);
 
       const body = response.body as FullGym;
 
+      expect(body.openingHoursEveryone).toEqual({});
       expect(body.openingHoursMembers).toEqual({});
+      expect(body.openingHoursExceptions).toEqual({});
+      expect(body.equipmentVisible).toEqual(false);
+      expect(body.membershipsVisible).toEqual(false);
+      expect(body.openingHoursVisible).toEqual(false);
     });
 
-    test('fails if "name" is null', async () => {
+    test('fails if "name" is undefined', async () => {
       const newGym = {
         street: 'Porkkalankatu',
-        streetNumber: '13',
+        streetNumber: '13N',
         district: 'Ruoholahti',
-        city: 'Helsinki'
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(400);
     });
 
-    test('fails if "street" is null', async () => {
+    test('fails if "street" is undefined', async () => {
       const newGym = {
-        name: 'Mayors Gym',
-        streetNumber: '13',
+        name: 'Mayor\'s Gym',
+        streetNumber: '13N',
         district: 'Ruoholahti',
-        city: 'Helsinki'
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(400);
     });
 
-    test('fails if "streetNumber" is null', async () => {
+    test('fails if "streetNumber" is undefined', async () => {
       const newGym = {
-        name: 'Mayors Gym',
+        name: 'Mayor\'s Gym',
         street: 'Porkkalankatu',
         district: 'Ruoholahti',
-        city: 'Helsinki'
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(400);
     });
 
-    test('fails if "district" is null', async () => {
+    test('fails if "district" is undefined', async () => {
       const newGym = {
-        name: 'Mayors Gym',
+        name: 'Mayor\'s Gym',
         street: 'Porkkalankatu',
-        streetNumber: '13',
-        city: 'Helsinki'
+        streetNumber: '13N',
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(400);
     });
 
-    test('fails if "city" is null', async () => {
+    test('fails if "city" is undefined', async () => {
       const newGym = {
-        name: 'Mayors Gym',
+        name: 'Mayor\'s Gym',
         street: 'Porkkalankatu',
-        streetNumber: '13'
+        streetNumber: '13N',
+        district: 'Ruoholahti',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
       };
 
       await request(app)
         .post('/api/gyms')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
+        .send(newGym)
+        .expect(400);
+    });
+
+    test('fails if "country" is undefined', async () => {
+      const newGym = {
+        name: 'Mayor\'s Gym',
+        street: 'Porkkalankatu',
+        streetNumber: '13N',
+        district: 'Ruoholahti',
+        city: 'Helsinki',
+        latitude: 60.16305,
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
+      };
+
+      await request(app)
+        .post('/api/gyms')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
+        .send(newGym)
+        .expect(400);
+    });
+
+    test('fails if "latitude" is undefined', async () => {
+      const newGym = {
+        name: 'Mayor\'s Gym',
+        street: 'Porkkalankatu',
+        streetNumber: '13N',
+        district: 'Ruoholahti',
+        city: 'Helsinki',
+        country: 'FIN',
+        longitude: 24.90255,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
+      };
+
+      await request(app)
+        .post('/api/gyms')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
+        .send(newGym)
+        .expect(400);
+    });
+
+    test('fails if "longitude" is undefined', async () => {
+      const newGym = {
+        name: 'Mayor\'s Gym',
+        street: 'Porkkalankatu',
+        streetNumber: '13N',
+        district: 'Ruoholahti',
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        // eslint-disable-next-line @stylistic/max-len
+        location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
+      };
+
+      await request(app)
+        .post('/api/gyms')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
+        .send(newGym)
+        .expect(400);
+    });
+
+    test('fails if "location" is undefined', async () => {
+      const newGym = {
+        name: 'Mayor\'s Gym',
+        street: 'Porkkalankatu',
+        streetNumber: '13N',
+        district: 'Ruoholahti',
+        city: 'Helsinki',
+        country: 'FIN',
+        latitude: 60.16305,
+        longitude: 24.90255
+      };
+
+      await request(app)
+        .post('/api/gyms')
+        .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send(newGym)
         .expect(400);
     });
   });
+
+  test('fails as a gym-goer', async () => {
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
+
+    const newGym = {
+      name: 'Mayor\'s Gym',
+      street: 'Porkkalankatu',
+      streetNumber: '13N',
+      district: 'Ruoholahti',
+      city: 'Helsinki',
+      country: 'FIN',
+      latitude: 60.16305,
+      longitude: 24.90255,
+      // eslint-disable-next-line @stylistic/max-len
+      location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
+    };
+
+    await request(app)
+      .post('/api/gyms')
+      .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
+      .send(newGym)
+      .expect(403);
+  });
 });
 
 describe('PATCH gym\'s service hours', () => {
+  beforeEach(async () => {
+    gymToPatch = await Gym.findOne({ where: { name: 'ELIXIA Kamppi' } });
+  });
+
   describe('as an admin', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({
-          username: 'TheAdmin',
-          password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-        })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
-
-      gymToPatch = await Gym.findOne({ where: { name: 'ELIXIA Kamppi' } });
+      ({ token, cookies } = await login({
+        username: 'TheAdmin',
+        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+      }));
     });
 
     test('succeeds with a full set of hours', async () => {
       assert.isNotNull(gymToPatch);
       const newOpeningHoursMembers = {
-        MO: [7, 21],
-        TU: [7, 21],
-        WE: [7, 21],
-        TH: [7, 21],
-        FR: [7, 21],
-        SA: [8, 20],
-        SU: [8, 20]
+        MO: ['07:00', '21:00'],
+        TU: ['07:00', '21:00'],
+        WE: ['07:00', '21:00'],
+        TH: ['07:00', '21:00'],
+        FR: ['07:00', '21:00'],
+        SA: ['07:00', '21:00'],
+        SU: ['07:00', '21:00']
       };
 
       await request(app)
         .patch(`/api/gyms/${gymToPatch.id}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ openingHoursMembers: newOpeningHoursMembers })
         .expect(200);
     });
+  });
+
+  test('fails as a gym-goer', async () => {
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
+    assert.isNotNull(gymToPatch);
+
+    const newOpeningHoursMembers = {
+      MO: ['07:00', '21:00'],
+      TU: ['07:00', '21:00'],
+      WE: ['07:00', '21:00'],
+      TH: ['07:00', '21:00'],
+      FR: ['07:00', '21:00'],
+      SA: ['07:00', '21:00'],
+      SU: ['07:00', '21:00']
+    };
+
+    await request(app)
+      .patch(`/api/gyms/${gymToPatch.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
+      .send({ openingHoursMembers: newOpeningHoursMembers })
+      .expect(403);
   });
 });
 
 describe('DELETE a gym', () => {
   describe('as an admin', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({
-          username: 'TheAdmin',
-          password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-        })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'TheAdmin',
+        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+      }));
     });
 
     test('succeeds with a valid id', async () => {
@@ -280,6 +473,7 @@ describe('DELETE a gym', () => {
       await request(app)
         .delete(`/api/gyms/${gymToDelete.id}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       const endResponse = await request(app)
@@ -292,7 +486,26 @@ describe('DELETE a gym', () => {
       await request(app)
         .delete('/api/gyms/ca16ce67-718e-497a-acbe-011fcdee4745')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(404);
     });
+  });
+
+  test('fails as a gym-goer', async () => {
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
+
+    const gymToDelete: FullGym | null = await Gym.findOne({
+      where: { name: 'Fitness24Seven Helsinki Punavuori' }
+    });
+    assert.isNotNull(gymToDelete);
+
+    await request(app)
+      .delete(`/api/gyms/${gymToDelete.id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
+      .expect(403);
   });
 });

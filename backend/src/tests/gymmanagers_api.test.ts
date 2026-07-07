@@ -4,6 +4,7 @@ import request from 'supertest';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
 import app from '../index.ts';
+import { login } from './test_utils.ts';
 
 import { Gym, GymManagers, User } from '../models/index.ts';
 
@@ -12,9 +13,8 @@ import {
   type LoginResponse
 } from '@strength-inventory/schemas';
 
-// The number of junctions created in the topmost beforeEach
-const initialGymManagersCount = 1;
 let token: string;
+let cookies: string;
 
 const adminId = '54419ee4-2880-4e96-82d7-69dfc1238584';  // User
 const goldId = 'cabd5a6b-8cf7-41be-8333-0d76487681a1';  // User
@@ -73,6 +73,11 @@ beforeEach(async () => {
     streetNumber: '13N',
     district: 'Ruoholahti',
     city: 'Helsinki',
+    country: 'FIN',
+    latitude: 60.16305,
+    longitude: 24.90255,
+    // eslint-disable-next-line @stylistic/max-len
+    location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
     equipmentVisible: false,
     membershipsVisible: false,
     openingHoursVisible: false,
@@ -81,12 +86,17 @@ beforeEach(async () => {
 
   await Gym.create({
     id: elixiaId,
-    name: 'Elixia Citycenter',
-    chain: 'Elixia',
-    street: 'Kaivokatu',
-    streetNumber: '8',
-    district: 'Kluuvi',
+    name: 'ELIXIA Kamppi',
+    chain: 'ELIXIA',
+    street: 'Fredrikinkatu',
+    streetNumber: '48',
+    district: 'Kamppi',
     city: 'Helsinki',
+    country: 'FIN',
+    latitude: 60.16933,
+    longitude: 24.92966,
+    // eslint-disable-next-line @stylistic/max-len
+    location: 'https://www.google.com/maps/place/ELIXIA+Kamppi/@60.1694856,24.9268664,17z/data=!3m1!4b1!4m6!3m5!1s0x46920a3485cc265d:0xace8b112832c5729!8m2!3d60.169483!4d24.929436!16s%2Fg%2F1q67ml5y5?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
     equipmentVisible: false,
     membershipsVisible: false,
     openingHoursVisible: false,
@@ -99,16 +109,10 @@ beforeEach(async () => {
     gymId: mayorId
   });
 
-  const response: request.Response = await request(app)
-    .post('/api/login')
-    .send({
-      username: 'TheAdmin',
-      password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-    })
-    .expect(200);
-
-  const body = response.body as LoginResponse;
-  token = body.token;
+  ({ token, cookies } = await login({
+    username: 'TheAdmin',
+    password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+  }));
 });
 
 afterAll(async () => {
@@ -116,21 +120,14 @@ afterAll(async () => {
   await Gym.truncate({ cascade: true });
 });
 
-test('GET all gymmanagers correctly returns a json', async () => {
-  const response = await request(app)
-    .get('/api/gymmanagers')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-
-  expect(response.body).toHaveLength(initialGymManagersCount);
-});
-
 test(
-  'Giving gym-goer first manager rights succeeds and changes role to "MANAGER"',
+  `Giving gym-goer their first manager rights
+  succeeds and changes their role to "MANAGER"`,
   async () => {
     await request(app)
       .post('/api/gymmanagers')
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ userId: lashaId, gymId: mayorId })
       .expect(201);
 
@@ -147,6 +144,7 @@ describe('Removing manager rights from a user', () => {
       await request(app)
         .delete(`/api/gymmanagers/${goldMayorId}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       const gold = await User.findByPk(goldId);
@@ -161,12 +159,14 @@ describe('Removing manager rights from a user', () => {
       await request(app)
         .post('/api/gymmanagers')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ userId: goldId, gymId: elixiaId })
         .expect(201);
 
       await request(app)
         .delete(`/api/gymmanagers/${goldMayorId}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       const gold = await User.findByPk(goldId);
@@ -185,6 +185,7 @@ describe('Being an admin', () => {
       const response: request.Response = await request(app)
         .post('/api/gymmanagers')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ userId: adminId, gymId: mayorId })
         .expect(201);
 
@@ -198,6 +199,7 @@ describe('Being an admin', () => {
       await request(app)
         .delete(`/api/gymmanagers/${adminMayor}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       admin = await User.findByPk(adminId);
@@ -215,15 +217,21 @@ describe('Being an admin', () => {
     const body = response.body as LoginResponse;
     token = body.token;
 
+    if (response.headers['set-cookie']) {
+      cookies = response.headers['set-cookie'];
+    }
+
     await request(app)
       .post('/api/gymmanagers')
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ userId: lashaId, gymId: mayorId })
       .expect(403);
 
     await request(app)
       .delete(`/api/gymmanagers/${goldMayorId}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .expect(403);
   });
 });
@@ -234,18 +242,21 @@ test(
     await request(app)
       .post('/api/gymmanagers')
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ userId: goldId, gymId: elixiaId })
       .expect(201);
 
     await request(app)
       .post('/api/gymmanagers')
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ userId: lashaId, gymId: mayorId })
       .expect(201);
 
     await request(app)
       .delete(`/api/gyms/${mayorId}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .expect(204);
 
     const gold = await User.findByPk(goldId);

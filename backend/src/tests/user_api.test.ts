@@ -4,17 +4,16 @@ import request from 'supertest';
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
 import app from '../index.ts';
+import { login } from './test_utils.ts';
 
 import { User } from '../models/index.ts';
 
-import {
-  type User as FullUser,
-  type LoginResponse
-} from '@strength-inventory/schemas';
+import { type User as FullUser } from '@strength-inventory/schemas';
 
-// The number of users created in the topmost beforeEach
+// the number of users created in the topmost beforeEach
 const initialUserCount = 3;
 let token: string;
+let cookies: string;
 
 beforeEach(async () => {
   await User.truncate({ cascade: true });
@@ -172,13 +171,10 @@ describe('POST a new user', () => {
 
 describe('PATCH username and name', () => {
   beforeEach(async () => {
-    const response: request.Response = await request(app)
-      .post('/api/login')
-      .send({ username: 'LashaTalakhadze', password: 'ILiftThereforeIAm' })
-      .expect(200);
-
-    const body = response.body as LoginResponse;
-    token = body.token;
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
   });
 
   test('succeeds on yourself with valid input', async () => {
@@ -190,6 +186,7 @@ describe('PATCH username and name', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ username: 'TheLasha', name: 'Lasha' })
       .expect(200);
   });
@@ -203,6 +200,7 @@ describe('PATCH username and name', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ name: 'Lasha' })
       .expect(400);
   });
@@ -216,6 +214,7 @@ describe('PATCH username and name', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ username: 'TheLasha' })
       .expect(400);
   });
@@ -229,6 +228,7 @@ describe('PATCH username and name', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ username: 'TheWenwen', name: 'Wenwen' })
       .expect(403);
   });
@@ -236,13 +236,10 @@ describe('PATCH username and name', () => {
 
 describe('PATCH email', () => {
   beforeEach(async () => {
-    const response: request.Response = await request(app)
-      .post('/api/login')
-      .send({ username: 'LashaTalakhadze', password: 'ILiftThereforeIAm' })
-      .expect(200);
-
-    const body = response.body as LoginResponse;
-    token = body.token;
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
   });
 
   test('succeeds on yourself with valid input', async () => {
@@ -254,6 +251,7 @@ describe('PATCH email', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/email`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ email: 'lasha@talakhadze.com' })
       .expect(200);
   });
@@ -267,6 +265,7 @@ describe('PATCH email', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/email`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ email: 'LashaIsTheBest' })
       .expect(400);
   });
@@ -280,6 +279,7 @@ describe('PATCH email', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/email`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ email: 'wenwen@li.com' })
       .expect(403);
   });
@@ -287,13 +287,10 @@ describe('PATCH email', () => {
 
 describe('PATCH password', () => {
   beforeEach(async () => {
-    const response: request.Response = await request(app)
-      .post('/api/login')
-      .send({ username: 'LashaTalakhadze', password: 'ILiftThereforeIAm' })
-      .expect(200);
-
-    const body = response.body as LoginResponse;
-    token = body.token;
+    ({ token, cookies } = await login({
+      username: 'LashaTalakhadze',
+      password: 'ILiftThereforeIAm'
+    }));
   });
 
   test('succeeds on yourself with valid input', async () => {
@@ -305,6 +302,7 @@ describe('PATCH password', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/password`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ password: 'StrongTodayStrongerTomorrow' })
       .expect(200);
   });
@@ -318,6 +316,7 @@ describe('PATCH password', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/password`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ password: 'StrongToday' })
       .expect(400);
   });
@@ -331,6 +330,7 @@ describe('PATCH password', () => {
     await request(app)
       .patch(`/api/users/${userToPatch.id}/password`)
       .set('Authorization', `Bearer ${token}`)
+      .set('Cookie', cookies)
       .send({ password: 'StrongTodayStrongerTomorrow' })
       .expect(403);
   });
@@ -339,16 +339,10 @@ describe('PATCH password', () => {
 describe('PATCH user\'s role', () => {
   describe('as an admin', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({
-          username: 'TheAdmin',
-          password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-        })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'TheAdmin',
+        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+      }));
     });
 
     test('succeeds with a valid role', async () => {
@@ -360,6 +354,7 @@ describe('PATCH user\'s role', () => {
       await request(app)
         .patch(`/api/users/${userToPatch.id}/role`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ role: 'MANAGER' })
         .expect(200);
     });
@@ -373,6 +368,7 @@ describe('PATCH user\'s role', () => {
       await request(app)
         .patch(`/api/users/${userToPatch.id}/role`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ role: 'GYM-OWNER' })
         .expect(400);
     });
@@ -380,13 +376,10 @@ describe('PATCH user\'s role', () => {
 
   describe('as a gym-goer', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({ username: 'LashaTalakhadze', password: 'ILiftThereforeIAm' })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'LashaTalakhadze',
+        password: 'ILiftThereforeIAm'
+      }));
     });
 
     test('fails on yourself with a valid role', async () => {
@@ -398,6 +391,7 @@ describe('PATCH user\'s role', () => {
       await request(app)
         .patch(`/api/users/${userToPatch.id}/role`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .send({ role: 'SUPERUSER' })
         .expect(403);
     });
@@ -407,16 +401,10 @@ describe('PATCH user\'s role', () => {
 describe('DELETE a user', () => {
   describe('as an admin', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({
-          username: 'TheAdmin',
-          password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-        })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'TheAdmin',
+        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
+      }));
     });
 
     test('succeeds with a valid id', async () => {
@@ -433,6 +421,7 @@ describe('DELETE a user', () => {
       await request(app)
         .delete(`/api/users/${userToDelete.id}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       const endResponse = await request(app)
@@ -445,19 +434,17 @@ describe('DELETE a user', () => {
       await request(app)
         .delete('/api/users/ca16ce67-718e-497a-acbe-011fcdee4745')
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(404);
     });
   });
 
   describe('as a gym-goer', () => {
     beforeEach(async () => {
-      const response: request.Response = await request(app)
-        .post('/api/login')
-        .send({ username: 'LashaTalakhadze', password: 'ILiftThereforeIAm' })
-        .expect(200);
-
-      const body = response.body as LoginResponse;
-      token = body.token;
+      ({ token, cookies } = await login({
+        username: 'LashaTalakhadze',
+        password: 'ILiftThereforeIAm'
+      }));
     });
 
     test('succeeds on yourself', async () => {
@@ -474,6 +461,7 @@ describe('DELETE a user', () => {
       await request(app)
         .delete(`/api/users/${userToDelete.id}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(204);
 
       const endResponse = await request(app)
@@ -491,6 +479,7 @@ describe('DELETE a user', () => {
       await request(app)
         .delete(`/api/users/${userToDelete.id}`)
         .set('Authorization', `Bearer ${token}`)
+        .set('Cookie', cookies)
         .expect(403);
     });
   });

@@ -13,6 +13,9 @@ import { District } from './index.ts';
 
 import { sequelize } from '../utils/db.ts';
 
+import { COUNTRY_MAX_LEN, LOCATION_MAX_LEN, REF_POINT_MAX_LEN }
+  from '@strength-inventory/schemas';
+
 class City extends Model<InferAttributes<City>, InferCreationAttributes<City>> {
   declare id: CreationOptional<string>;
 
@@ -45,23 +48,40 @@ City.init({
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      len: [1, LOCATION_MAX_LEN]
+    }
   },
   referencePoint: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      len: [1, REF_POINT_MAX_LEN]
+    }
   },
   latitude: {
     type: DataTypes.DECIMAL(8, 5),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      max: 90,
+      min: -90
+    }
   },
   longitude: {
     type: DataTypes.DECIMAL(8, 5),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      max: 180,
+      min: -180
+    }
   },
   country: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      len: [1, COUNTRY_MAX_LEN]
+    }
   },
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE
