@@ -29,7 +29,7 @@ const __dirname = path.dirname(__filename);
 let pathToFrontendBuild: string;
 
 if (NODE_ENV === 'production') {
-  pathToFrontendBuild = path.join(__dirname, '../dist');
+  pathToFrontendBuild = path.join(__dirname, '../../dist');
 } else {
   pathToFrontendBuild = path.join(__dirname, '/dist');
 }
