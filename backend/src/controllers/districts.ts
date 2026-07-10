@@ -1,6 +1,7 @@
 import Express, { type Request, type Response } from 'express';
 
-import { isAdmin, targetDistrictExtractor } from '../utils/middleware.ts';
+import { districtParser, isAdmin, targetDistrictExtractor }
+  from '../utils/middleware.ts';
 
 import { City, District } from '../models/index.ts';
 
@@ -29,6 +30,7 @@ districtsRouter.get('/:id', targetDistrictExtractor, (req, res) => {
 // POST for admins to create a district
 districtsRouter.post(
   '/',
+  districtParser,
   ...isAdmin,
   async (
     req: Request<unknown, unknown, DistrictPostAndPut>,
@@ -57,6 +59,7 @@ districtsRouter.post(
 // PUT for admins to modify everything except id and timestamps
 districtsRouter.put(
   '/:id',
+  districtParser,
   ...isAdmin,
   targetDistrictExtractor,
   async (

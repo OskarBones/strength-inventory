@@ -24,10 +24,13 @@ import { Equipment, Membership, User } from './index.ts';
 import { COUNTRY_MAX_LEN, LOCATION_MAX_LEN, STREET_NO_MAX_LEN }
   from '@strength-inventory/schemas';
 
+/* the fields declared as 'string | null' do not need
+CreationOptional<> for functional reasons but to conveniently
+satisfy TS in the .post() route in controllers/gyms.ts */
 class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare id: CreationOptional<string>;
   declare name: string;
-  declare chain: string;
+  declare chain: CreationOptional<string | null>;
   declare street: string;
   declare streetNumber: string;
   declare district: string;
@@ -38,12 +41,12 @@ class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare openingHoursEveryone: CreationOptional<Hours>;
   declare openingHoursMembers: CreationOptional<Hours>;
   declare openingHoursExceptions: CreationOptional<HoursExceptions>;
-  declare url: string | null | undefined;
+  declare url: CreationOptional<string | null>;
   declare location: string;
-  declare equipmentVisible: boolean;
-  declare membershipsVisible: boolean;
-  declare openingHoursVisible: boolean;
-  declare notes: string;
+  declare equipmentVisible: CreationOptional<boolean>;
+  declare membershipsVisible: CreationOptional<boolean>;
+  declare openingHoursVisible: CreationOptional<boolean>;
+  declare notes: CreationOptional<string | null>;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -66,10 +69,17 @@ Gym.init({
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   chain: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    defaultValue: null,
+    validate: {
+      notEmpty: true
+    }
   },
   street: {
     type: DataTypes.STRING,
@@ -117,20 +127,37 @@ Gym.init({
   openingHoursEveryone: {
     type: DataTypes.JSON,
     allowNull: false,
-    defaultValue: {}
+    defaultValue: {
+      MO: [null, null],
+      TU: [null, null],
+      WE: [null, null],
+      TH: [null, null],
+      FR: [null, null],
+      SA: [null, null],
+      SU: [null, null]
+    }
   },
   openingHoursMembers: {
     type: DataTypes.JSON,
     allowNull: false,
-    defaultValue: {}
+    defaultValue: {
+      MO: [null, null],
+      TU: [null, null],
+      WE: [null, null],
+      TH: [null, null],
+      FR: [null, null],
+      SA: [null, null],
+      SU: [null, null]
+    }
   },
   openingHoursExceptions: {
     type: DataTypes.JSON,
     allowNull: false,
-    defaultValue: {}
+    defaultValue: { data: [] }
   },
   url: {
     type: DataTypes.STRING,
+    defaultValue: null,
     validate: {
       isUrl: true
     }
@@ -158,7 +185,11 @@ Gym.init({
     defaultValue: false
   },
   notes: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    defaultValue: null,
+    validate: {
+      notEmpty: true
+    }
   },
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE

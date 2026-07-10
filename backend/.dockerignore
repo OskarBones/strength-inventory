@@ -1,6 +1,5 @@
-build
 node_modules
-dist
 .env
+.gitignore
 docker-compose.yml
-todo.md
+*.md

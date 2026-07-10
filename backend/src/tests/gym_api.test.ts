@@ -21,7 +21,16 @@ import { type Gym as FullGym } from '@strength-inventory/schemas';
 const initialGymCount = 2;  // the number of gyms created in beforeEach
 let token: string;
 let cookies: string;
-let gymToPatch: FullGym | null;
+
+const emptyOpeningHours = {
+  MO: [null, null],
+  TU: [null, null],
+  WE: [null, null],
+  TH: [null, null],
+  FR: [null, null],
+  SA: [null, null],
+  SU: [null, null]
+};
 
 beforeAll(async () => {
   await User.truncate({ cascade: true });
@@ -82,10 +91,10 @@ beforeEach(async () => {
       SA: ['00:00', '23:59'],
       SU: ['00:00', '23:59']
     },
-    equipmentVisible: false,
-    membershipsVisible: false,
+    equipmentVisible: true,
+    membershipsVisible: true,
     openingHoursVisible: true,
-    notes: ''
+    notes: 'Membership required to get in.'
   });
 
   await Gym.create({
@@ -111,8 +120,8 @@ beforeEach(async () => {
       SA: ['08:00', '20:00'],
       SU: ['08:00', '20:00']
     },
-    equipmentVisible: false,
-    membershipsVisible: false,
+    equipmentVisible: true,
+    membershipsVisible: true,
     openingHoursVisible: true,
     notes: 'A lot of natural light.'
   });
@@ -165,9 +174,9 @@ describe('POST a new gym', () => {
 
       const body = response.body as FullGym;
 
-      expect(body.openingHoursEveryone).toEqual({});
-      expect(body.openingHoursMembers).toEqual({});
-      expect(body.openingHoursExceptions).toEqual({});
+      expect(body.openingHoursEveryone).toEqual(emptyOpeningHours);
+      expect(body.openingHoursMembers).toEqual(emptyOpeningHours);
+      expect(body.openingHoursExceptions).toEqual({ data: [] });
       expect(body.equipmentVisible).toEqual(false);
       expect(body.membershipsVisible).toEqual(false);
       expect(body.openingHoursVisible).toEqual(false);
@@ -386,66 +395,6 @@ describe('POST a new gym', () => {
       .set('Authorization', `Bearer ${token}`)
       .set('Cookie', cookies)
       .send(newGym)
-      .expect(403);
-  });
-});
-
-describe('PATCH gym\'s service hours', () => {
-  beforeEach(async () => {
-    gymToPatch = await Gym.findOne({ where: { name: 'ELIXIA Kamppi' } });
-  });
-
-  describe('as an admin', () => {
-    beforeEach(async () => {
-      ({ token, cookies } = await login({
-        username: 'TheAdmin',
-        password: 'ThereIsOnlyWeightAndThoseTooWeakToLiftIt'
-      }));
-    });
-
-    test('succeeds with a full set of hours', async () => {
-      assert.isNotNull(gymToPatch);
-      const newOpeningHoursMembers = {
-        MO: ['07:00', '21:00'],
-        TU: ['07:00', '21:00'],
-        WE: ['07:00', '21:00'],
-        TH: ['07:00', '21:00'],
-        FR: ['07:00', '21:00'],
-        SA: ['07:00', '21:00'],
-        SU: ['07:00', '21:00']
-      };
-
-      await request(app)
-        .patch(`/api/gyms/${gymToPatch.id}`)
-        .set('Authorization', `Bearer ${token}`)
-        .set('Cookie', cookies)
-        .send({ openingHoursMembers: newOpeningHoursMembers })
-        .expect(200);
-    });
-  });
-
-  test('fails as a gym-goer', async () => {
-    ({ token, cookies } = await login({
-      username: 'LashaTalakhadze',
-      password: 'ILiftThereforeIAm'
-    }));
-    assert.isNotNull(gymToPatch);
-
-    const newOpeningHoursMembers = {
-      MO: ['07:00', '21:00'],
-      TU: ['07:00', '21:00'],
-      WE: ['07:00', '21:00'],
-      TH: ['07:00', '21:00'],
-      FR: ['07:00', '21:00'],
-      SA: ['07:00', '21:00'],
-      SU: ['07:00', '21:00']
-    };
-
-    await request(app)
-      .patch(`/api/gyms/${gymToPatch.id}`)
-      .set('Authorization', `Bearer ${token}`)
-      .set('Cookie', cookies)
-      .send({ openingHoursMembers: newOpeningHoursMembers })
       .expect(403);
   });
 });

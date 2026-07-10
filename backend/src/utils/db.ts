@@ -3,11 +3,22 @@ import 'ts-node/register';  // Required by Node.js to read .ts migration files.
 import { SequelizeStorage, Umzug } from 'umzug';
 import { Sequelize } from 'sequelize';
 
-import {
-  DB_URI
-} from './config.ts';  // .ts instead of .js to accommodate Vitest
+// .ts instead of .js to accommodate Vitest
+import { DB_URI, NODE_ENV } from './config.ts';
 
-const sequelize = new Sequelize(DB_URI);
+// reference [4]
+
+let sequelizeConfig = {};
+if (NODE_ENV === 'production') {
+  sequelizeConfig = {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: { require: true, rejectUnauthorized: true }
+    }
+  };
+}
+
+const sequelize = new Sequelize(DB_URI, sequelizeConfig);
 
 const umzug = new Umzug({
   migrations: {

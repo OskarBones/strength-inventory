@@ -34,6 +34,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "types": ["cors", "cookie-parser", "express", "jsonwebtoken", "node", "pg", "sequelize", "supertest"]
-  }
+    "types": ["cors", "cookie-parser", "express", "jsonwebtoken", "node", "pg", "sequelize", "supertest"],
+  },
+  "exclude": ["build/**/*", "dev/**/*", "src/tests/**/*"]
 }

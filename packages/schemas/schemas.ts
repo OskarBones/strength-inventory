@@ -624,8 +624,8 @@ export type HoursExceptions = z.infer<typeof HoursExceptionsSchema>;
 export const STREET_NO_MAX_LEN = 20
 export const GymSchema = z.object({
   id: z.uuidv4(),
-  name: z.string().min(1),
-  chain: z.string(),
+  name: z.string().min(1).max(255),
+  chain: z.string().min(1).max(255).nullable(),
   street: SubLocationNameSchema,
   streetNumber: z.string().min(1).max(STREET_NO_MAX_LEN),
   district: SubLocationNameSchema,
@@ -636,15 +636,12 @@ export const GymSchema = z.object({
   openingHoursEveryone: HoursSchema,
   openingHoursMembers: HoursSchema,
   openingHoursExceptions: HoursExceptionsSchema,
-  url: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.url().nullish()
-  ),
+  url: z.url().nullable(),
   location: z.url(),
   equipmentVisible: z.boolean(),
   membershipsVisible: z.boolean(),
   openingHoursVisible: z.boolean(),
-  notes: z.string(),
+  notes: z.string().min(1).max(255).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 });
@@ -655,7 +652,53 @@ export const GymGetEquipmentSchema = z.intersection(
   EquipmentUnions)
 export type GymGetEquipment = z.infer<typeof GymGetEquipmentSchema>;
 
-export const GymGetSchema = GymSchema.extend({
+export const GymGetMembershipsSchema = z.intersection(
+  MembershipBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
+  MembershipUnions)
+export type GymGetMemberships = z.infer<typeof GymGetMembershipsSchema>;
+
+export const GymPostSchema = GymSchema.partial({
+  id: true,
+  chain: true,
+  openingHoursEveryone: true,
+  openingHoursMembers: true,
+  openingHoursExceptions: true,
+  equipmentVisible: true,
+  membershipsVisible: true,
+  openingHoursVisible: true,
+  url: true,
+  notes: true,
+  createdAt: true,
+  updatedAt: true
+})
+export type GymPost = z.infer<typeof GymPostSchema>;
+
+const GymFrontendBaseSchema = GymSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+})
+
+export const GymPutSchema = GymFrontendBaseSchema.partial();
+export type GymPut = z.infer<typeof GymPutSchema>;
+
+export const GymGetSchema = GymSchema.omit({
+  chain: true,
+  url: true,
+  notes: true
+}).extend({
+  chain: z.preprocess(
+    (val) => (val === null ? '' : val),
+    z.string().max(255)
+  ),
+  url: z.preprocess(
+    (val) => (val === null ? '' : val),
+    z.string()
+  ),
+  notes: z.preprocess(
+    (val) => (val === null ? '' : val),
+    z.string().max(255)
+  ),
   managers: z.array(UserSchema.pick({
     id: true,
     username: true,
@@ -675,90 +718,86 @@ export const GymWithDistanceSchema = GymGetSchema.extend({
 })
 export type GymWithDistance = z.infer<typeof GymWithDistanceSchema>;
 
-export const GymGetMembershipsSchema = z.intersection(
-  MembershipBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
-  MembershipUnions)
-export type GymGetMemberships = z.infer<typeof GymGetMembershipsSchema>;
-
-export const GymPostAndPutSchema = GymSchema.pick({
-  name: true,
+export const GymFrontendPostAndPutSchema = GymFrontendBaseSchema.omit({
   chain: true,
-  street: true,
-  streetNumber: true,
-  district: true,
-  city: true,
-  country: true,
   latitude: true,
   longitude: true,
-  openingHoursEveryone: true,
-  openingHoursMembers: true,
-  openingHoursExceptions: true,
-  url: true,
-  location: true,
   equipmentVisible: true,
   membershipsVisible: true,
   openingHoursVisible: true,
+  url: true,
   notes: true
-});
-export type GymPostAndPut = z.infer<typeof GymPostAndPutSchema>;
+}).extend({
+  chain: z.preprocess(
+    (val) => (val === '' ? null : val),
+    z.string().min(1).max(255).nullable()
+  ),
+  latitude: z.preprocess(
+    (val) => (Number(val)),
+    LatitudeSchema
+  ),
+  longitude: z.preprocess(
+    (val) => (Number(val)),
+    LongitudeSchema
+  ),
+  equipmentVisible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  ),
+  membershipsVisible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  ),
+  openingHoursVisible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  ),
+  url: z.preprocess(
+    (val) => (val === '' ? null : val),
+    z.url().nullable()
+  ),
+  notes: z.preprocess(
+    (val) => (val === '' ? null : val),
+    z.string().min(1).max(255).nullable()
+  ),
+})
+export type GymFrontendPostAndPut = z.infer<typeof GymFrontendPostAndPutSchema>;
 
-const GymPostFrontendHour = z.preprocess(
+const GymFrontendHourSchema = z.preprocess(
   (val) => (val === '' ? null : val),
   z.iso.time().nullable()
 )
-export const GymPostFrontendSchema = GymSchema.pick({
-  name: true,
-  chain: true,
-  street: true,
-  streetNumber: true,
-  district: true,
-  city: true,
-  url: true,
-  location: true,
-  notes: true
-}).extend({
-  latitude: z.string().min(1),
-  longitude: z.string().min(1),
-  equipmentVisibility: z.string().optional(),
-  membershipsVisibility: z.string().optional(),
-  openingHoursVisibility: z.string().optional(),
-  everyoneMOOpen: GymPostFrontendHour,
-  everyoneMOClose: GymPostFrontendHour,
-  everyoneTUOpen: GymPostFrontendHour,
-  everyoneTUClose: GymPostFrontendHour,
-  everyoneWEOpen: GymPostFrontendHour,
-  everyoneWEClose: GymPostFrontendHour,
-  everyoneTHOpen: GymPostFrontendHour,
-  everyoneTHClose: GymPostFrontendHour,
-  everyoneFROpen: GymPostFrontendHour,
-  everyoneFRClose: GymPostFrontendHour,
-  everyoneSAOpen: GymPostFrontendHour,
-  everyoneSAClose: GymPostFrontendHour,
-  everyoneSUOpen: GymPostFrontendHour,
-  everyoneSUClose: GymPostFrontendHour,
-  membersMOOpen: GymPostFrontendHour,
-  membersMOClose: GymPostFrontendHour,
-  membersTUOpen: GymPostFrontendHour,
-  membersTUClose: GymPostFrontendHour,
-  membersWEOpen: GymPostFrontendHour,
-  membersWEClose: GymPostFrontendHour,
-  membersTHOpen: GymPostFrontendHour,
-  membersTHClose: GymPostFrontendHour,
-  membersFROpen: GymPostFrontendHour,
-  membersFRClose: GymPostFrontendHour,
-  membersSAOpen: GymPostFrontendHour,
-  membersSAClose: GymPostFrontendHour,
-  membersSUOpen: GymPostFrontendHour,
-  membersSUClose: GymPostFrontendHour
+export const GymFormHoursSchema = z.object({
+  everyoneMOOpen: GymFrontendHourSchema,
+  everyoneMOClose: GymFrontendHourSchema,
+  everyoneTUOpen: GymFrontendHourSchema,
+  everyoneTUClose: GymFrontendHourSchema,
+  everyoneWEOpen: GymFrontendHourSchema,
+  everyoneWEClose: GymFrontendHourSchema,
+  everyoneTHOpen: GymFrontendHourSchema,
+  everyoneTHClose: GymFrontendHourSchema,
+  everyoneFROpen: GymFrontendHourSchema,
+  everyoneFRClose: GymFrontendHourSchema,
+  everyoneSAOpen: GymFrontendHourSchema,
+  everyoneSAClose: GymFrontendHourSchema,
+  everyoneSUOpen: GymFrontendHourSchema,
+  everyoneSUClose: GymFrontendHourSchema,
+  membersMOOpen: GymFrontendHourSchema,
+  membersMOClose: GymFrontendHourSchema,
+  membersTUOpen: GymFrontendHourSchema,
+  membersTUClose: GymFrontendHourSchema,
+  membersWEOpen: GymFrontendHourSchema,
+  membersWEClose: GymFrontendHourSchema,
+  membersTHOpen: GymFrontendHourSchema,
+  membersTHClose: GymFrontendHourSchema,
+  membersFROpen: GymFrontendHourSchema,
+  membersFRClose: GymFrontendHourSchema,
+  membersSAOpen: GymFrontendHourSchema,
+  membersSAClose: GymFrontendHourSchema,
+  membersSUOpen: GymFrontendHourSchema,
+  membersSUClose: GymFrontendHourSchema
 })
-export type GymPostFrontend = z.infer<typeof GymPostFrontendSchema>;
-
-export const GymPatchHoursSchema = GymSchema.pick({
-  openingHoursEveryone: true,
-  openingHoursMembers: true,
-  openingHoursExceptions: true
-})
-export type GymPatchHours = z.infer<typeof GymPatchHoursSchema>;
+export type GymFormHours = z.infer<typeof GymFormHoursSchema>;
 
 
 // login

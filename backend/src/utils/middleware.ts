@@ -21,12 +21,15 @@ import {
 } from '../models/index.ts';
 
 import {
+  CityPostAndPutSchema,
+  DistrictPostAndPutSchema,
+  EquipmentPostAndPutSchema,
   type Gym as FullGym,
   GymEquipmentDeleteSchema,
   GymEquipmentPostSchema,
   GymMembershipPostAndDeleteSchema,
-  GymPatchHoursSchema,
-  GymPostAndPutSchema,
+  GymPostSchema,
+  GymPutSchema,
   LoginRequestSchema,
   MembershipPostAndPutSchema,
   PasswordSchema,
@@ -51,14 +54,15 @@ export function errorHandler (
   if (err instanceof z.ZodError) {
     console.error(err.name);
     const messages = err.issues.map((issue) => issue.message);
+    console.error(messages);
     res.status(400).json({ errors: messages });
     return;
   } else if (err instanceof ValidationError) {
-    console.error(err.name);
+    console.error(`${err.name}: ${err.message}`);
     res.status(400).json({ error: err.message });
     return;
   } else if (err instanceof Error) {
-    console.error(err.name);
+    console.error(`${err.name}: ${err.message}`);
     if (err.name === 'AuthenticationError') {
       res.status(401).json({ error: err.message });
     } else {
@@ -442,13 +446,26 @@ export async function targetGymExtractor (
   next();
 }
 
-export function gymParser (
+export function gymPostParser (
   req: Request,
   _res: Response,
   next: NextFunction
 ) {
   try {
-    GymPostAndPutSchema.parse(req.body);
+    GymPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function gymPutParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    GymPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
@@ -494,19 +511,6 @@ export function gymMembershipParser (
   }
 }
 
-export function gymHoursParser (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-) {
-  try {
-    GymPatchHoursSchema.parse(req.body);
-    next();
-  } catch (e: unknown) {
-    next(e);
-  }
-}
-
 
 // equipment
 
@@ -530,6 +534,19 @@ export async function targetEquipmentExtractor (
 
   req.targetEquipment = equipment;
   next();
+}
+
+export function equipmentParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    EquipmentPostAndPutSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
 }
 
 
@@ -605,6 +622,19 @@ export async function targetGymEquipmentExtractor (
 
   req.targetGymEquipment = junction;
   next();
+}
+
+export function equipmentCountParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    z.object({ count: z.int().min(1) }).parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
 }
 
 
@@ -714,6 +744,19 @@ export async function targetCityExtractor (
   next();
 }
 
+export function cityParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    CityPostAndPutSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
 
 // district
 
@@ -737,5 +780,18 @@ export async function targetDistrictExtractor (
 
   req.targetDistrict = district;
   next();
+}
+
+export function districtParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    DistrictPostAndPutSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
 }
 

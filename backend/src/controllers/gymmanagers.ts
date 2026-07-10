@@ -18,6 +18,7 @@ gymManagersRouter.get('/', async (_req, res) => {
 });
 
 // POST for admins to create a new junction
+// Frontend will instead use routes in gyms.ts to add managers to gyms.
 gymManagersRouter.post(
   '/',
   ...isAdmin,
@@ -34,6 +35,7 @@ gymManagersRouter.post(
 );
 
 // DELETE for admins to delete a junction
+// Frontend will instead use routes in gyms.ts to remove managers from gyms.
 gymManagersRouter.delete(
   '/:id',
   ...isAdmin,

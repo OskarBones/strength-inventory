@@ -8,9 +8,10 @@
   "main": "index.ts",
   "scripts": {
     "tsc": "tsc",
+    "start": "cross-env NODE_ENV=production tsx watch src/index.ts",
     "seed:admin": "tsx dev/scripts/create-admin-on-startup.ts",
-    "dev": "cross-env npm run seed:admin && tsx watch src/index.ts",
-    "test": "cross-env NODE_ENV=test vitest run src/tests/gym_api.test.ts",
+    "dev": "cross-env NODE_ENV=development npm run seed:admin && tsx watch src/index.ts",
+    "test": "cross-env NODE_ENV=test vitest run",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "migration:down_dev": "tsx src/utils/rollback.js",

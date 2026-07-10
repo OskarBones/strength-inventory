@@ -10,7 +10,7 @@ import { GymMemberships } from '../models/index.ts';
 
 import type {
   GymMembership as FullGymMembership,
-  GymMembershipPost
+  GymMembershipPostAndDelete
 } from '@strength-inventory/schemas';
 
 const gymMembershipsRouter = Express.Router();
@@ -22,14 +22,13 @@ gymMembershipsRouter.get('/', async (_req, res) => {
 });
 
 // POST for admins to create a new junction
-// Only for dev use.
-// Frontend uses routes in gyms.ts to add memberships to gyms.
+// Frontend instead uses routes in gyms.ts to add memberships to gyms.
 gymMembershipsRouter.post(
   '/:id',
   targetGymExtractor,
   ...isAdmin,
   async (
-    req: Request<{ id: string; }, unknown, GymMembershipPost>,
+    req: Request<{ id: string; }, unknown, GymMembershipPostAndDelete>,
     res: Response<FullGymMembership>
   ) => {
     if (!req.targetGym) {
@@ -46,8 +45,7 @@ gymMembershipsRouter.post(
 );
 
 // DELETE for admins to delete a junction
-// Only for dev use.
-// Frontend uses routes in gyms.ts to remove memberships from gyms.
+// Frontend instead routes in gyms.ts to remove memberships from gyms.
 gymMembershipsRouter.delete(
   '/:id',
   targetGymMembershipExtractor,

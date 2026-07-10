@@ -51,7 +51,10 @@ Equipment.init({
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   category: {
     type: DataTypes
@@ -64,7 +67,10 @@ Equipment.init({
         'strengthMachine',
         'system'
       ),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   /* at the db level, subcategory is only enforced as a string
   instead of an enum because the set of accepted subcategories
@@ -72,15 +78,24 @@ Equipment.init({
   subcategory: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'other'
+    defaultValue: 'other',
+    validate: {
+      notEmpty: true
+    }
   },
   manufacturer: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   code: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   weightUnit: {
     type: DataTypes.ENUM('kg', 'lbs')

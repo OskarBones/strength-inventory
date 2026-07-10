@@ -1,6 +1,7 @@
 import Express, { type Request, type Response } from 'express';
 
-import { isAdmin, targetEquipmentExtractor } from '../utils/middleware.ts';
+import { equipmentParser, isAdmin, targetEquipmentExtractor }
+  from '../utils/middleware.ts';
 
 import { Equipment } from '../models/index.js';
 
@@ -32,6 +33,7 @@ equipmentRouter.get('/:id', targetEquipmentExtractor, (req, res) => {
 // POST for admins to create a new equipment
 equipmentRouter.post(
   '/',
+  equipmentParser,
   ...isAdmin,
   async (
     req: Request<unknown, unknown, EquipmentPostAndPut>,
@@ -80,6 +82,7 @@ equipmentRouter.post(
 // PUT for admins to modify everything except id and timestamps
 equipmentRouter.put(
   '/:id',
+  equipmentParser,
   ...isAdmin,
   targetEquipmentExtractor,
   async (

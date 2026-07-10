@@ -56,7 +56,10 @@ Membership.init({
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   initiationFee: {
     type: DataTypes.DECIMAL(10, 2)
@@ -67,7 +70,10 @@ Membership.init({
   },
   feeCurrency: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   visits: {
     type: DataTypes.INTEGER

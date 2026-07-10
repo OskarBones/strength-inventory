@@ -68,7 +68,6 @@ beforeEach(async () => {
   await Gym.create({
     id: mayorId,
     name: 'Mayor\'s gym',
-    chain: '',
     street: 'Porkkalankatu',
     streetNumber: '13N',
     district: 'Ruoholahti',
@@ -77,11 +76,7 @@ beforeEach(async () => {
     latitude: 60.16305,
     longitude: 24.90255,
     // eslint-disable-next-line @stylistic/max-len
-    location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
-    equipmentVisible: false,
-    membershipsVisible: false,
-    openingHoursVisible: false,
-    notes: ''
+    location: 'https://www.google.com/maps/place/Mayors+Gym/@60.1629998,24.8993245,16z/data=!3m1!4b1!4m6!3m5!1s0x46920a4a81758913:0x6cc4e3a73ece210!8m2!3d60.1629972!4d24.9018941!16s%2Fg%2F11byp6byhf?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
   });
 
   await Gym.create({
@@ -96,11 +91,7 @@ beforeEach(async () => {
     latitude: 60.16933,
     longitude: 24.92966,
     // eslint-disable-next-line @stylistic/max-len
-    location: 'https://www.google.com/maps/place/ELIXIA+Kamppi/@60.1694856,24.9268664,17z/data=!3m1!4b1!4m6!3m5!1s0x46920a3485cc265d:0xace8b112832c5729!8m2!3d60.169483!4d24.929436!16s%2Fg%2F1q67ml5y5?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D',
-    equipmentVisible: false,
-    membershipsVisible: false,
-    openingHoursVisible: false,
-    notes: ''
+    location: 'https://www.google.com/maps/place/ELIXIA+Kamppi/@60.1694856,24.9268664,17z/data=!3m1!4b1!4m6!3m5!1s0x46920a3485cc265d:0xace8b112832c5729!8m2!3d60.169483!4d24.929436!16s%2Fg%2F1q67ml5y5?entry=ttu&g_ep=EgoyMDI2MDYyOS4wIKXMDSoASAFQAw%3D%3D'
   });
 
   await GymManagers.create({

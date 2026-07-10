@@ -1,6 +1,7 @@
 import Express, { type Request, type Response } from 'express';
 
 import {
+  equipmentCountParser,
   isAdmin,
   isAdminOrManager,
   targetGymEquipmentExtractor,
@@ -23,8 +24,7 @@ gymEquipmentRouter.get('/', async (_req, res) => {
 });
 
 // POST for admins to create a new junction
-// Only for dev use.
-// Frontend uses routes in gyms.ts to add equipment to gyms.
+// Frontend instead routes in gyms.ts to add equipment to gyms.
 gymEquipmentRouter.post(
   '/:id',
   targetGymExtractor,
@@ -49,6 +49,7 @@ gymEquipmentRouter.post(
 // PATCH for admins and managers to set the number of equipment at some gym
 gymEquipmentRouter.patch(
   '/:id',
+  equipmentCountParser,
   targetGymEquipmentExtractor,
   ...isAdminOrManager,
   async (
@@ -72,8 +73,7 @@ gymEquipmentRouter.patch(
 );
 
 // DELETE for admins to delete a junction
-// Only for dev use.
-// Frontend uses routes in gyms.ts to remove equipment from gyms.
+// Frontend instead uses routes in gyms.ts to remove equipment from gyms.
 gymEquipmentRouter.delete(
   '/:id',
   targetGymEquipmentExtractor,

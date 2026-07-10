@@ -36,9 +36,10 @@ import { WEEKDAYS } from '../../../../../constants/values';
 
 import {
   type District,
-  type GymPost,
-  type GymPostFrontend,
-  GymPostFrontendSchema,
+  type GymFormHours,
+  GymFormHoursSchema,
+  type GymFrontendPostAndPut,
+  GymFrontendPostAndPutSchema,
   type Hours,
   LOCATION_MAX_LEN,
   type OpeningHoursException,
@@ -65,13 +66,7 @@ export default function Form (
     setParentNotification
   }: FormProps
 ) {
-  interface formatSubmitProps {
-    req: GymPostFrontend;
-    country: string;
-    exceptions: OpeningHoursException[];
-  }
-
-  function formatSubmit ({ req, country, exceptions }: formatSubmitProps) {
+  function formatHours (req: GymFormHours) {
     const openingHoursEveryone: Hours = {
       MO: ['', ''],
       TU: ['', ''],
@@ -98,67 +93,7 @@ export default function Form (
         = [req[`members${weekday}Open`], req[`members${weekday}Close`]];
     });
 
-    const {
-      name,
-      chain,
-      street,
-      streetNumber,
-      district,
-      city,
-      latitude,
-      longitude,
-      url,
-      location,
-      equipmentVisibility,
-      membershipsVisibility,
-      openingHoursVisibility,
-      notes
-    } = req;
-
-    let equipmentVisible: boolean;
-    let membershipsVisible: boolean;
-    let openingHoursVisible: boolean;
-
-    if (equipmentVisibility) {
-      equipmentVisible = true;
-    } else {
-      equipmentVisible = false;
-    }
-
-    if (membershipsVisibility) {
-      membershipsVisible = true;
-    } else {
-      membershipsVisible = false;
-    }
-
-    if (openingHoursVisibility) {
-      openingHoursVisible = true;
-    } else {
-      openingHoursVisible = false;
-    }
-
-    const formattedGym = {
-      name: name,
-      chain: chain,
-      street: street,
-      streetNumber: streetNumber,
-      district: district,
-      city: city,
-      country: country,
-      latitude: Number(latitude),
-      longitude: Number(longitude),
-      openingHoursEveryone: openingHoursEveryone,
-      openingHoursMembers: openingHoursMembers,
-      openingHoursExceptions: { data: exceptions },
-      url: url,
-      location: location,
-      equipmentVisible: equipmentVisible,
-      membershipsVisible: membershipsVisible,
-      openingHoursVisible: openingHoursVisible,
-      notes: notes
-    };
-
-    return formattedGym;
+    return { openingHoursEveryone, openingHoursMembers };
   }
 
   const auth = use(AuthContext);
@@ -184,7 +119,7 @@ export default function Form (
   });
 
   const postMutation = useMutation({
-    mutationFn: (newGym: GymPost) =>
+    mutationFn: (newGym: GymFrontendPostAndPut) =>
       postGym({ gym: newGym, refresh: auth.refresh, logout: auth.logout }),
     onSuccess: (newGymFromServer) => {
       setSelectedGymId(newGymFromServer.id);
@@ -199,7 +134,8 @@ export default function Form (
   });
 
   const putMutation = useMutation({
-    mutationFn: ({ id, updatedGym }: { id: string, updatedGym: GymPost; }) =>
+    mutationFn: ({ id, updatedGym }:
+    { id: string, updatedGym: GymFrontendPostAndPut; }) =>
       putGym({
         id: id, gym: updatedGym, refresh: auth.refresh, logout: auth.logout
       }),
@@ -288,13 +224,19 @@ export default function Form (
     const req = Object.fromEntries(formData.entries());
 
     try {
-      const validatedReq = GymPostFrontendSchema.parse(req);
-      const formattedGym = formatSubmit({
-        req: validatedReq, country: gym.country, exceptions: exceptions
+      const hours = GymFormHoursSchema.parse(req);
+      const { openingHoursEveryone, openingHoursMembers }
+        = formatHours(hours);
+      const validatedReq = GymFrontendPostAndPutSchema.parse({
+        ...req,
+        country: gym.country,
+        openingHoursEveryone: openingHoursEveryone,
+        openingHoursMembers: openingHoursMembers,
+        openingHoursExceptions: { data: exceptions }
       });
       if (formMode === 'create') {
         try {
-          await postMutation.mutateAsync(formattedGym);
+          await postMutation.mutateAsync(validatedReq);
           return {
             success: true,
             error: null
@@ -305,7 +247,7 @@ export default function Form (
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedGymId, updatedGym: formattedGym
+            id: selectedGymId, updatedGym: validatedReq
           });
           return {
             success: true,
@@ -374,7 +316,7 @@ export default function Form (
       longitude: longitude
         ? String(longitude)
         : '',
-      url: url ?? '',
+      url: url,
       location: location,
       equipmentVisible: equipmentVisible,
       membershipsVisible: membershipsVisible,
@@ -395,7 +337,7 @@ export default function Form (
       longitude: longitude
         ? String(longitude)
         : '',
-      url: url ?? '',
+      url: url,
       location: location,
       equipmentVisible: equipmentVisible,
       membershipsVisible: membershipsVisible,
@@ -801,7 +743,7 @@ export default function Form (
             </h4>
             <div className='flex gap-1'>
               <label
-                htmlFor='equipmentVisibility'
+                htmlFor='equipmentVisible'
                 hidden={formMode === 'create'}
               >
                 {iconMode
@@ -809,8 +751,8 @@ export default function Form (
                   : <span className='flex w-30'>equipment visible</span>}
               </label>
               <input
-                id='equipmentVisibility'
-                name='equipmentVisibility'
+                id='equipmentVisible'
+                name='equipmentVisible'
                 type='checkbox'
                 value='visible'
                 checked={gym.equipmentVisible}
@@ -822,7 +764,7 @@ export default function Form (
             </div>
             <div className='flex gap-1'>
               <label
-                htmlFor='membershipsVisibility'
+                htmlFor='membershipsVisible'
                 hidden={formMode === 'create'}
               >
                 {iconMode
@@ -834,8 +776,8 @@ export default function Form (
                   : <span className='flex w-30'>memberships visible</span>}
               </label>
               <input
-                id='membershipsVisibility'
-                name='membershipsVisibility'
+                id='membershipsVisible'
+                name='membershipsVisible'
                 type='checkbox'
                 value='visible'
                 checked={gym.membershipsVisible}
@@ -848,14 +790,14 @@ export default function Form (
               />
             </div>
             <div className='flex gap-1'>
-              <label htmlFor='openingHoursVisibility'>
+              <label htmlFor='openingHoursVisible'>
                 {iconMode
                   ? <span className='flex w-5 text-base'><TbClock /></span>
                   : <span className='flex w-30'>opening hours visible</span>}
               </label>
               <input
-                id='openingHoursVisibility'
-                name='openingHoursVisibility'
+                id='openingHoursVisible'
+                name='openingHoursVisible'
                 type='checkbox'
                 value='visible'
                 checked={gym.openingHoursVisible}

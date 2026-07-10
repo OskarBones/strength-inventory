@@ -29,15 +29,24 @@ Session.init({
   userId: {
     type: DataTypes.UUID,
     allowNull: false,
-    references: { model: 'users', key: 'id' }
+    references: { model: 'users', key: 'id' },
+    validate: {
+      notEmpty: true
+    }
   },
   accessToken: {
     type: DataTypes.STRING(510),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   refreshToken: {
     type: DataTypes.STRING(510),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE

@@ -2,10 +2,10 @@ import Express, { type Request, type Response } from 'express';
 
 import {
   gymDeleteEquipmentParser,
-  gymHoursParser,
   gymMembershipParser,
-  gymParser,
   gymPostEquipmentParser,
+  gymPostParser,
+  gymPutParser,
   isAdmin,
   isAdminOrManager,
   targetGymExtractor
@@ -15,8 +15,8 @@ import { Equipment, Gym, Membership, User } from '../models/index.ts';
 
 import type {
   Gym as FullGym,
-  GymPatchHours,
-  GymPostAndPut
+  GymPost,
+  GymPut
 } from '@strength-inventory/schemas';
 
 const gymsRouter = Express.Router();
@@ -77,54 +77,13 @@ gymsRouter.get('/:id/memberships', targetGymExtractor, async (req, res) => {
 // POST for admins to create a new gym
 gymsRouter.post(
   '/',
-  gymParser,
+  gymPostParser,
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, GymPostAndPut>,
+    req: Request<unknown, unknown, GymPost>,
     res: Response<FullGym>
   ) => {
-    const {
-      name,
-      chain,
-      street,
-      streetNumber,
-      district,
-      city,
-      country,
-      latitude,
-      longitude,
-      openingHoursEveryone,
-      openingHoursMembers,
-      openingHoursExceptions,
-      url,
-      location,
-      equipmentVisible,
-      membershipsVisible,
-      openingHoursVisible,
-      notes
-    } = req.body;
-
-    const gym = await Gym.create({
-      name,
-      chain,
-      street,
-      streetNumber,
-      district,
-      city,
-      country,
-      latitude,
-      longitude,
-      openingHoursEveryone,
-      openingHoursMembers,
-      openingHoursExceptions,
-      url,
-      location,
-      equipmentVisible,
-      membershipsVisible,
-      openingHoursVisible,
-      notes
-    });
-
+    const gym = await Gym.create(req.body);
     return res.status(201).json(gym);
   }
 );
@@ -177,11 +136,11 @@ gymsRouter.post(
 // PUT for admins to modify everything except id and timestamps
 gymsRouter.put(
   '/:id',
-  gymParser,
+  gymPutParser,
   ...isAdmin,
   targetGymExtractor,
   async (
-    req: Request<{ id: string; }, unknown, GymPostAndPut>,
+    req: Request<{ id: string; }, unknown, GymPut>,
     res: Response<FullGym>
   ) => {
     if (!req.targetGym) {
@@ -189,79 +148,8 @@ gymsRouter.put(
     }  // Should never trigger after middleware.
 
     const gym = req.targetGym;
-    const {
-      name,
-      chain,
-      street,
-      streetNumber,
-      district,
-      city,
-      country,
-      latitude,
-      longitude,
-      openingHoursEveryone,
-      openingHoursMembers,
-      openingHoursExceptions,
-      url,
-      location,
-      equipmentVisible,
-      membershipsVisible,
-      openingHoursVisible,
-      notes
-    } = req.body;
 
-    await gym.update({
-      name: name,
-      chain: chain,
-      street: street,
-      streetNumber: streetNumber,
-      district: district,
-      city: city,
-      country: country,
-      latitude: latitude,
-      longitude: longitude,
-      openingHoursEveryone: openingHoursEveryone,
-      openingHoursMembers: openingHoursMembers,
-      openingHoursExceptions: openingHoursExceptions,
-      url: url,
-      location: location,
-      equipmentVisible: equipmentVisible,
-      membershipsVisible: membershipsVisible,
-      openingHoursVisible: openingHoursVisible,
-      notes: notes
-    });
-    await gym.save();
-
-    return res.status(200).json(gym);
-  }
-);
-
-// PATCH for admins and managers to edit opening hours
-gymsRouter.patch(
-  '/:id',
-  gymHoursParser,
-  targetGymExtractor,
-  ...isAdminOrManager,
-  async (
-    req: Request<{ id: string; }, unknown, GymPatchHours>,
-    res: Response<FullGym>
-  ) => {
-    if (!req.targetGym) {
-      throw Error('Gym missing from request.');
-    }  // Should never trigger after middleware.
-
-    const gym = req.targetGym;
-    const {
-      openingHoursEveryone,
-      openingHoursMembers,
-      openingHoursExceptions
-    } = req.body;
-
-    await gym.update({
-      openingHoursEveryone: openingHoursEveryone,
-      openingHoursMembers: openingHoursMembers,
-      openingHoursExceptions: openingHoursExceptions
-    });
+    await gym.update(req.body as Partial<FullGym>);
     await gym.save();
 
     return res.status(200).json(gym);

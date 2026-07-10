@@ -15,10 +15,10 @@ import {
   type EquipmentPostAndPut,
   EquipmentSchema,
   GymEquipmentSchema,
+  type GymFrontendPostAndPut,
   GymGetEquipmentSchema,
   GymGetMembershipsSchema,
   GymGetSchema,
-  type GymPostAndPut,
   GymSchema,
   type MembershipPostAndPut,
   MembershipSchema
@@ -93,7 +93,7 @@ export const getGymMemberships = async ({ gymId }: { gymId: string }) => {
 };
 
 interface PostGymProps extends TokenValidationProps {
-  gym: GymPostAndPut
+  gym: GymFrontendPostAndPut
 }
 
 export const postGym = async ({ gym, refresh, logout }: PostGymProps) => {
@@ -195,7 +195,7 @@ export const postGymMembership = async (
 
 interface putGymProps extends TokenValidationProps {
   id: string
-  gym: GymPostAndPut
+  gym: GymFrontendPostAndPut
 }
 
 export const putGym

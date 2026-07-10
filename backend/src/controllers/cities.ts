@@ -1,6 +1,7 @@
 import Express, { type Request, type Response } from 'express';
 
-import { isAdmin, targetCityExtractor } from '../utils/middleware.ts';
+import { cityParser, isAdmin, targetCityExtractor }
+  from '../utils/middleware.ts';
 
 import { City, District } from '../models/index.ts';
 
@@ -29,6 +30,7 @@ citiesRouter.get('/:id', targetCityExtractor, (req, res) => {
 // POST for admins to create a city
 citiesRouter.post(
   '/',
+  cityParser,
   ...isAdmin,
   async (
     req: Request<unknown, unknown, CityPostAndPut>,
@@ -57,6 +59,7 @@ citiesRouter.post(
 // PUT for admins to modify everything except id and timestamps
 citiesRouter.put(
   '/:id',
+  cityParser,
   ...isAdmin,
   targetCityExtractor,
   async (

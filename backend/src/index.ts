@@ -6,8 +6,8 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { errorHandler, unknownEndpoint } from './utils/middleware.js';
+import { NODE_ENV, PORT } from './utils/config.js';
 import { connectToDatabase } from './utils/db.js';
-import { PORT } from './utils/config.js';
 
 import citiesRouter from './controllers/cities.ts';
 import districtsRouter from './controllers/districts.ts';
@@ -29,7 +29,9 @@ const __dirname = path.dirname(__filename);
 const pathToFrontendBuild = path.join(__dirname, '/dist');
 
 app.use(express.static(pathToFrontendBuild));
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+if (NODE_ENV === 'development') {
+  app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+}
 app.use(express.json());
 app.use(cookieParser());
 
