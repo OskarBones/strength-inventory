@@ -35,4 +35,4 @@ USER node
 EXPOSE 3000
 
 WORKDIR /usr/src/app/backend
-CMD ["node", "build/index.js"]
+CMD ["node", "build/src/index.js"]
