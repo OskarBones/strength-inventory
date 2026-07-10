@@ -25,7 +25,7 @@ COPY package.json ./
 COPY packages/schemas/package*.json ./packages/schemas
 COPY backend/package*.json ./backend
 
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 COPY --from=builder /usr/src/app/packages/schemas ./packages/schemas
 COPY --from=builder /usr/src/app/backend/build ./backend/build
