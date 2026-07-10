@@ -26,7 +26,13 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const pathToFrontendBuild = path.join(__dirname, '/dist');
+let pathToFrontendBuild: string;
+
+if (NODE_ENV === 'production') {
+  pathToFrontendBuild = path.join(__dirname, '../dist');
+} else {
+  pathToFrontendBuild = path.join(__dirname, '/dist');
+}
 
 app.use(express.static(pathToFrontendBuild));
 if (NODE_ENV === 'development') {

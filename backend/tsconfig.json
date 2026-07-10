@@ -36,5 +36,5 @@
 
     "types": ["cors", "cookie-parser", "express", "jsonwebtoken", "node", "pg", "sequelize", "supertest"],
   },
-  "exclude": ["build/**/*", "dev/**/*", "src/tests/**/*"]
+  "exclude": ["build/**/*", "dev/**/*", "src/tests/**/*", "/vitest.config.ts"]
 }

@@ -4,12 +4,17 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY packages/schemas/package*.json ./packages/schemas/
+COPY frontend/package*.json ./frontend/
 COPY backend/package*.json ./backend/
 
 RUN npm ci
 
 COPY packages/schemas ./packages/schemas/
+COPY frontend ./frontend/
 COPY backend ./backend/
+
+WORKDIR /usr/src/app/frontend
+RUN npm run build:deploy
 
 WORKDIR /usr/src/app/backend
 RUN npm run tsc
@@ -28,6 +33,7 @@ COPY backend/package*.json ./backend/
 RUN npm ci --omit=dev
 
 COPY --from=builder /usr/src/app/packages/schemas ./packages/schemas/
+COPY --from=builder /usr/src/app/backend/dist ./backend/dist/
 COPY --from=builder /usr/src/app/backend/build ./backend/build/
 
 USER node
