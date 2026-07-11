@@ -106,10 +106,18 @@ export default function Gyms () {
         ? (
           filteredGyms.length > 0
             ? (
-              <ol className='flex flex-col gap-3'>
-                {gymsWithDistance.map((gym) =>
-                  <li key={gym.id}><Gym gym={gym} /></li>)}
-              </ol>
+              <div className='flex flex-col gap-3'>
+                <p className='self-center text-sm'>
+                  {filteredGyms.length > 1
+                    ? `${selectedCity.name} has
+                    ${String(filteredGyms.length)} gyms in the database`
+                    : `${selectedCity.name} has 1 gym in the database`}
+                </p>
+                <ol className='flex flex-col gap-3'>
+                  {gymsWithDistance.map((gym) =>
+                    <li key={gym.id}><Gym gym={gym} /></li>)}
+                </ol>
+              </div>
             )
             : <p>the selected city has no gyms</p>
         )

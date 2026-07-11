@@ -108,7 +108,7 @@ export default function AuthProvider (
         throw Error('Authentication failed.');
       }
     } else {
-      throw Error('Authentication failed.');
+      throw Error('Incorrect username or password.');
     }
   }
 
