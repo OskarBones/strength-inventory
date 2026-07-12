@@ -3,7 +3,7 @@ import { z } from 'zod';
 interface handleSubmitErrorProps {
   err: unknown,
   setNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
+    type: string
     message: string
   }>>
 }

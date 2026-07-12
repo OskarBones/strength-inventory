@@ -9,7 +9,9 @@ import { deleteGym, getGymsIdAndName } from '../../../../utils/api';
 import { AuthContext, IconContext } from '../../../../utils/contexts';
 
 import CreateEditDeleteList from '../CreateEditDeleteList.tsx';
+import Error from '../../../Error.tsx';
 import Form from './Form/Index.tsx';
+import Loading from '../../../Loading.tsx';
 import Notification from '../../../Notification.tsx';
 
 export default function AdminGyms () {
@@ -45,11 +47,11 @@ export default function AdminGyms () {
   });
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
-    return <p>Error: {error.message}</p>;
+    return <Error message={error.message} />;
   }
 
   return (

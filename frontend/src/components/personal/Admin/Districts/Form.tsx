@@ -10,6 +10,8 @@ import { getCities, getDistrict, postDistrict, putDistrict }
   from '../../../../utils/api';
 import handleSubmitError from '../../../../utils/handleSubmitError';
 
+import Error from '../../../Error';
+import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
@@ -184,15 +186,15 @@ export default function Form ({
   }
 
   if ((selectedDistrictId && districtQuery.isPending) || cityQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if ((selectedDistrictId && districtQuery.isError)) {
-    return <p>Error: {districtQuery.error.message}</p>;
+    return <Error message={districtQuery.error.message} />;
   }
 
   if (cityQuery.isError) {
-    return <p>Error: {cityQuery.error.message}</p>;
+    return <Error message={cityQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

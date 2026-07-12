@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
+import { BsInfoCircle } from 'react-icons/bs';
 import { useQuery } from '@tanstack/react-query';
 
-import { getGyms } from '../../../utils/api';
+import { getCities, getDistricts, getGyms } from '../../../utils/api';
 
+import Error from '../../Error';
 import Filters from './Filters';
 import Gym from './Gym';
+import Loading from '../../Loading';
 
 import type { CityGet, DistrictGet, GymWithDistance }
   from '@strength-inventory/schemas';
@@ -37,24 +40,45 @@ export default function Gyms () {
     return Number(d.toFixed(1));
   }
 
-  const { isPending, isError, data, error } = useQuery({
+  const gymsQuery = useQuery({
     queryKey: ['gyms'],
     queryFn: () => getGyms()
+  });
+
+  const citiesQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: () => getCities()
+  });
+
+  const districtsQuery = useQuery({
+    queryKey: ['districts'],
+    queryFn: () => getDistricts()
   });
 
   const [selectedCity, setSelectedCity] = useState<CityGet | null>(null);
   const [selectedDistrict, setSelectedDistrict]
     = useState<DistrictGet | null>(null);
 
-  if (isPending) {
-    return <p>Loading...</p>;
+  if (
+    citiesQuery.isPending || districtsQuery.isPending || gymsQuery.isPending
+  ) {
+    return <Loading />;
   }
 
-  if (isError) {
-    return <p>Error: {error.message} </p>;
+  if (gymsQuery.isError) {
+    return <Error message={gymsQuery.error.message} />;
   }
 
-  const filteredGyms = data.filter((gym) => gym.city === selectedCity?.name);
+  if (citiesQuery.isError) {
+    return <Error message={citiesQuery.error.message} />;
+  }
+
+  if (districtsQuery.isError) {
+    return <Error message={districtsQuery.error.message} />;
+  }
+
+  const filteredGyms = gymsQuery.data
+    .filter((gym) => gym.city === selectedCity?.name);
 
   let gymsWithDistance: GymWithDistance[] = [];
   if (selectedDistrict) {
@@ -95,9 +119,24 @@ export default function Gyms () {
         flex flex-col gap-3 self-center p-3 md:px-27 mx-auto
         w-full min-w-90 md:min-w-135 max-w-250'
     >
+      <p
+        className='
+          flex justify-center items-center gap-3 rounded-sm
+          bg-tertiary dark:bg-tertiary-dark p-3 text-center'
+      >
+        <span><BsInfoCircle className='text-2xl' /></span>
+        <span className='text-sm'>
+          This preview showcases the functionalities of the website.
+          The underlying database currently lacks sufficient coverage
+          of any area to be used effectively.
+        </span>
+      </p>
+
       <Filters
+        cities={citiesQuery.data}
         selectedCity={selectedCity}
         setSelectedCity={setSelectedCity}
+        districts={districtsQuery.data}
         selectedDistrict={selectedDistrict}
         setSelectedDistrict={setSelectedDistrict}
       />

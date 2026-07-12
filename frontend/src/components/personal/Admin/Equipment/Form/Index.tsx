@@ -12,6 +12,8 @@ import { getPiece, postEquipment, putEquipment }
 import handleSubmitError from '../../../../../utils/handleSubmitError';
 
 import AvailableWeights from './AvailableWeights';
+import Error from '../../../../Error';
+import Loading from '../../../../Loading';
 import Notification from '../../../../Notification';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
@@ -250,11 +252,11 @@ export default function Form ({
   }
 
   if (selectedPieceId && pieceQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (selectedPieceId && pieceQuery.isError) {
-    return <p>Error: {pieceQuery.error.message}</p>;
+    return <Error message={pieceQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

@@ -1,8 +1,8 @@
 # strength inventory
-**Web application for finding and comparing gym equipment, memberships, and opening hours.**
+**Web application for finding and comparing gym equipment, memberships and opening hours.**
 
 ## Status
-Preview release LIVE at https://official--strength-inventory--dlwys4lx2t96.code.run
+Preview release is [LIVE](https://official--strength-inventory--dlwys4lx2t96.code.run)
 
 ## Features
 - Get a list of gyms by city and sort them by distance to a district within that city
@@ -15,7 +15,7 @@ Preview release LIVE at https://official--strength-inventory--dlwys4lx2t96.code.
 ## Stack
 Frontend: **React** with **TanStack Router** and **TanStack Query**. All components are hand-made using **tailwindcss**.
 
-Backend: **Express** with **Sequelize** for ORM.
+Backend: **Express** with **Sequelize** for ORM
 
 Runtime validation and type definitions: **Zod**
 
@@ -23,7 +23,17 @@ Runtime environment: **Node v24.13.0**
 
 Intended database: **PostgreSQL** (Postgres-specific implementations have been avoided to keep things as plug-and-play as possible with other databases. Sequalize, according to its docs, is compatible with several others.)
 
+## Applied principles
+- [Semantic Versioning](https://semver.org/)
+- [HTML-Attribute-Ordering-Standard](https://github.com/lakhbawa/HTML-Attribute-Ordering-Standard/tree/main)
+- [Concentric ordering](https://github.com/brandon-rhodes/Concentric-CSS/blob/master/style3.css) of tailwindcss classes
+- Screen widths down to 360px accommodated
+
+## Things to note
+- Timezones are yet to be implemented. All times are in UTC.
+
 ## In the TODO list
+- Timezones
 - Equipment category for amenities
 - User account creation and personal features such as managing lists, saving equipment PRs and some type of gamification for motivation
 - Internationalization, starting from the Nordic countries

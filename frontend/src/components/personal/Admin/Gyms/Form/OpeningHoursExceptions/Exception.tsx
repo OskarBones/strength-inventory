@@ -29,8 +29,8 @@ export default function Exception ({
       <span className='flex flex-row gap-2'>
         <span>{date.toLocaleDateString('en-GB')}</span>
         {hours[0] || hours[1]
-          ? <span className='w-10'>{hours[0]}-{hours[1]}</span>
-          : <span className='w-10'>closed</span>}
+          ? <span className='w-18'>{hours[0]}-{hours[1]}</span>
+          : <span className='w-18'>closed</span>}
         <span>concerns: {concerns}</span>
       </span>
       <span className=''>reason: {reason}</span>

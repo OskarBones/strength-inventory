@@ -5,7 +5,8 @@ If not, the form is used for creating an exception. */
 import { useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
+
+import handleSubmitError from '../../../../../../utils/handleSubmitError';
 
 import {
   type OpeningHoursException, OpeningHoursExceptionSchema
@@ -18,10 +19,19 @@ interface FormProps {
   setExceptions:
   React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
   setAddException: React.Dispatch<React.SetStateAction<boolean>>
+  setParentNotification: React.Dispatch<React.SetStateAction<{
+    type: string
+    message: string
+  }>>
 }
 
 export default function Form ({
-  exception, setEditedExceptionId, exceptions, setExceptions, setAddException
+  exception,
+  setEditedExceptionId,
+  exceptions,
+  setExceptions,
+  setAddException,
+  setParentNotification
 }: FormProps) {
   const [date, setDate] = useState(exception
     ? exception.date.toISOString().split('T')[0]
@@ -42,7 +52,8 @@ export default function Form ({
   const [reason, setReason] = useState(exception
     ? exception.reason
     : '');
-  const [error, setError] = useState('');
+  const [currentDate] = useState(() => new Date().toISOString()
+    .split('T')[0]);
 
   function handleSubmit (event: React.SubmitEvent) {
     function compareDates (a: OpeningHoursException, b: OpeningHoursException) {
@@ -85,9 +96,11 @@ export default function Form ({
         && ((exception.concerns === (submittedException.concerns || 'everyone'))
           || submittedException.concerns === 'everyone'));
       if (overlap) {
-        throw Error(
-          'there already exists an overlapping exception for the date'
-        );
+        setParentNotification({
+          type: 'error',
+          message: 'there already is an overlapping exception for the date'
+        });
+        return;
       }
 
       let newExceptions;
@@ -117,24 +130,15 @@ export default function Form ({
       } else {
         setAddException(false);
       }
-      setError('');
     } catch (err: unknown) {
-      if (err instanceof z.ZodError) {
-        const messages = err.issues.map((issue) => issue.message);
-        console.error(messages);
-        setError(err.issues[0].message);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('ERROR');
-      }
+      handleSubmitError({ err, setNotification: setParentNotification });
     }
   }
 
   return (
     <form
       autoComplete='off'
-      className='flex flex-col gap-1 border p-1'
+      className='flex flex-col gap-1 border rounded-sm p-1'
       onSubmit={handleSubmit}
     >
       <h5 className='font-bold'>
@@ -150,6 +154,7 @@ export default function Form ({
           type='date'
           value={date}
           required
+          min={currentDate}
           className={`p-1 w-30 invalid:text-red-dark dark:invalid:text-red
             ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
@@ -245,8 +250,8 @@ export default function Form ({
         <button
           type='submit'
           className='
-            mr-0.5 border
-            bg-green dark:bg-green-dark w-1/2 cursor-pointer
+            mr-0.5 border rounded-sm
+            bg-green dark:bg-green-dark py-1 w-1/2 cursor-pointer
             hover:border-white hover:dark:border-black
             active:border-white active:dark:border-black active:font-bold'
         >
@@ -257,8 +262,8 @@ export default function Form ({
         <button
           type='submit'
           className='
-            ml-0.5 border
-            bg-red dark:bg-red-dark w-1/2 cursor-pointer
+            ml-0.5 border rounded-sm
+            bg-red dark:bg-red-dark py-1 w-1/2 cursor-pointer
             hover:border-white hover:dark:border-black
             active:border-white active:dark:border-black active:font-bold'
           onClick={() => {
@@ -272,10 +277,6 @@ export default function Form ({
           cancel
         </button>
       </div>
-
-      {error
-        ? <p className='text-red-dark dark:text-red'>{error}</p>
-        : null}
     </form>
   );
 }

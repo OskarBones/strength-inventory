@@ -10,6 +10,8 @@ import { getCity, postCity, putCity }
   from '../../../../utils/api';
 import handleSubmitError from '../../../../utils/handleSubmitError';
 
+import Error from '../../../Error';
+import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
@@ -171,11 +173,11 @@ export default function Form ({
   }
 
   if (selectedCityId && cityQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (selectedCityId && cityQuery.isError) {
-    return <p>Error: {cityQuery.error.message}</p>;
+    return <Error message={cityQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

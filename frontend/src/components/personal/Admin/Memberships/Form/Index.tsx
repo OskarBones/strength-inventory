@@ -21,6 +21,8 @@ import {
 import handleSubmitError from '../../../../../utils/handleSubmitError';
 
 import AvailabilityButton from './AvailabilityButton';
+import Error from '../../../../Error';
+import Loading from '../../../../Loading';
 import Notification from '../../../../Notification';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
@@ -329,11 +331,11 @@ export function Form (
   }
 
   if (selectedMembershipId && membershipQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (selectedMembershipId && membershipQuery.isError) {
-    return <p>Error: {membershipQuery.error.message}</p>;
+    return <Error message={membershipQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

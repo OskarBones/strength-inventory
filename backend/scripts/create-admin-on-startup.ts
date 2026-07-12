@@ -1,8 +1,10 @@
+// only for development
+
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 
-import { connectToDatabase, sequelize } from '../../src/utils/db.ts';
+import { connectToDatabase, sequelize } from '../src/utils/db.ts';
 
-import { User } from '../../src/models/index.ts';
+import { User } from '../src/models/index.ts';
 
 const seedAdmin = async () => {
   try {

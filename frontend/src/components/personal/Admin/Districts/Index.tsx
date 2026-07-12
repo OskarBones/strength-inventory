@@ -7,8 +7,10 @@ import { getDistricts } from '../../../../utils/api';
 
 import { IconContext } from '../../../../utils/contexts';
 
+import Error from '../../../Error';
 import Form from './Form';
 import List from './List';
+import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 
 export default function AdminDistricts () {
@@ -30,11 +32,11 @@ export default function AdminDistricts () {
   });
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
-    return <p>Error: {error.message}</p>;
+    return <Error message={error.message} />;
   }
 
   data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()

@@ -9,7 +9,9 @@ import { deleteEquipment, getEquipmentIdAndName } from '../../../../utils/api';
 import { AuthContext, IconContext } from '../../../../utils/contexts';
 
 import CreateEditDeleteList from '../CreateEditDeleteList';
+import Error from '../../../Error';
 import Form from './Form/Index';
+import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 
 export default function AdminEquipment () {
@@ -46,11 +48,11 @@ export default function AdminEquipment () {
   });
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
-    return <p>Error: {error.message}</p>;
+    return <Error message={error.message} />;
   }
 
   return (

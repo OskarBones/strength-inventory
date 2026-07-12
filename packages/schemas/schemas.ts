@@ -609,6 +609,10 @@ export type GymMembershipPostAndDelete = z.infer<typeof GymMembershipPostAndDele
 
 export const OpeningHoursExceptionSchema = z.object({
   id: z.uuidv4(),
+  /* Frontend's gym form handles deleting old exceptions upon opening the form.
+  Since old exceptions can, in theory, be as old as the website itself,
+  Zod only enforces date to be any date to avoid having
+  separate schemas for GET and POST/PUT requests only for exceptions. */
   date: z.coerce.date(),
   hours: ExceptionTimeSchema,
   reason: z.string().min(1),
