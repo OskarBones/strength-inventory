@@ -8,7 +8,6 @@
   "main": "index.ts",
   "scripts": {
     "tsc": "tsc",
-    "start": "cross-env NODE_ENV=production tsx watch src/index.ts",
     "seed:admin": "tsx scripts/create-admin-on-startup.ts",
     "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx watch src/index.ts",
     "test": "cross-env NODE_ENV=test vitest run",

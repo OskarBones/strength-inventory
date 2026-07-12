@@ -29,6 +29,7 @@ const __dirname = path.dirname(__filename);
 let pathToFrontendBuild: string;
 
 if (NODE_ENV === 'production') {
+  // this path is for Dockerfile, will fail locally
   pathToFrontendBuild = path.join(__dirname, '../../dist');
 } else {
   pathToFrontendBuild = path.join(__dirname, '/dist');

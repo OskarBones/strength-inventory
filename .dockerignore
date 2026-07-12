@@ -2,3 +2,5 @@ node_modules
 .gitignore
 *.md
 strength-inventory.code-workspace
+dumpfile
+LICENSE
