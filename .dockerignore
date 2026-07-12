@@ -1,6 +1,7 @@
 node_modules
+
 .gitignore
 *.md
-strength-inventory.code-workspace
 dumpfile
 LICENSE
+strength-inventory.code-workspace

@@ -13,7 +13,7 @@ export default function Header () {
         className='relative flex gap-3'
       >
         <p className='py-1 text-xl'>strength inventory</p>
-        <p className='absolute -right-16 bottom-1.5 text-xs'>preview</p>
+        <p className='absolute -right-16 bottom-1.5 text-xs'>PREVIEW</p>
       </Link>
     </div>
   );
