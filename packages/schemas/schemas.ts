@@ -242,6 +242,10 @@ export type UserFrontend = z.infer<typeof UserFrontendSchema>
 export const EquipmentCategoryEnum = z.enum(['accessoryOrTool', 'barOrPlate', 'cardio', 'freeWeight', 'handleAttachment', 'strengthMachine', 'system']);
 export type EquipmentCategory = z.infer<typeof EquipmentCategoryEnum>;
 
+/* NOTE: the word 'plate' shall only be used in BARS_AND_PLATES
+subcategories for loadable plates, because the frontend does
+piece.subcategory.includes('plate') to identify them */
+
 export const SYSTEMS = [
   'rack or rig',
   'adjustable crossover cable station',
@@ -276,6 +280,9 @@ export const BARS_AND_PLATES = [
   '10 kg bar',
   'trap bar',
   'EZ bar',
+  'barbell pad',
+  'collar pair',
+  'other',
   '25 kg plate',
   '20 kg plate',
   '15 kg plate',
@@ -284,10 +291,7 @@ export const BARS_AND_PLATES = [
   '2.5 kg plate',
   '1.25 kg plate',
   '0.5 kg plate',
-  '0.25 kg plate',
-  'barbell pad',
-  'collar pair',
-  'other'
+  '0.25 kg plate'
 ];
 export const BarOrPlateCategorySchema = z.enum(BARS_AND_PLATES)
 export type BarOrPlateCategory = z.infer<typeof BarOrPlateCategorySchema>

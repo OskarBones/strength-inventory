@@ -4,13 +4,13 @@ import { mutationOptions, useQuery, useQueryClient }
   from '@tanstack/react-query';
 import { CgGym } from 'react-icons/cg';
 
-import { deleteEquipment, getEquipmentIdAndName } from '../../../../utils/api';
+import { deleteEquipment, getEquipment } from '../../../../utils/api';
 
 import { AuthContext, IconContext } from '../../../../utils/contexts';
 
-import CreateEditDeleteList from '../CreateEditDeleteList';
 import Error from '../../../Error';
 import Form from './Form/Index';
+import List from './List';
 import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 
@@ -31,8 +31,8 @@ export default function AdminEquipment () {
   });
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ['equipmentIdAndName'],
-    queryFn: () => getEquipmentIdAndName()
+    queryKey: ['equipment'],
+    queryFn: () => getEquipment()
   });
 
   const deleteMutationOptions = mutationOptions({
@@ -71,11 +71,11 @@ export default function AdminEquipment () {
 
         {formMode === 'hidden'
           ? (
-            <CreateEditDeleteList
+            <List
               scrollTopRef={scrollTopRef}
-              data={data}
-              selectedItemId={selectedPieceId}
-              setSelectedItemId={setSelectedPieceId}
+              equipment={data}
+              selectedPieceId={selectedPieceId}
+              setSelectedPieceId={setSelectedPieceId}
               setFormMode={setFormMode}
               deleteMutationOptions={deleteMutationOptions}
             />

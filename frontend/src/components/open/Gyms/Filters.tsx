@@ -1,3 +1,5 @@
+import calcDistanceInKm from '../../../utils/calcDistanceInKm';
+
 import type { CityGet, District, DistrictGet }
   from '@strength-inventory/schemas';
 
@@ -20,7 +22,23 @@ export default function Filters ({
 }: FiltersProps) {
   let filteredDistricts: District[] = [];
   if (selectedCity) {
-    filteredDistricts = selectedCity.districts;
+    filteredDistricts = selectedCity.districts
+      .toSorted((a: District, b: District) => {
+        const aDistance = calcDistanceInKm({
+          lat1: a.latitude,
+          lon1: a.longitude,
+          lat2: selectedCity.latitude,
+          lon2: selectedCity.longitude
+        });
+        const bDistance = calcDistanceInKm({
+          lat1: b.latitude,
+          lon1: b.longitude,
+          lat2: selectedCity.latitude,
+          lon2: selectedCity.longitude
+        });
+
+        return aDistance - bDistance;
+      });
   }
 
   return (

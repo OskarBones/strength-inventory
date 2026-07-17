@@ -4,6 +4,7 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { useQuery } from '@tanstack/react-query';
 
 import { getCities, getDistricts, getGyms } from '../../../utils/api';
+import calcDistanceInKm from '../../../utils/calcDistanceInKm';
 
 import Error from '../../Error';
 import Filters from './Filters';
@@ -14,32 +15,6 @@ import type { CityGet, DistrictGet, GymWithDistance }
   from '@strength-inventory/schemas';
 
 export default function Gyms () {
-  function deg2rad (deg: number) {
-    return deg * (Math.PI / 180);
-  }
-
-  interface calcDistanceInKmProps {
-    lat1: number
-    lon1: number
-    lat2: number
-    lon2: number
-  }
-
-  // reference [3]
-  function calcDistanceInKm ({ lat1, lon1, lat2, lon2 }:
-  calcDistanceInKmProps) {
-    const R = 6371; // radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1);  // deg2rad above
-    const dLon = deg2rad(lon2 - lon1);
-    const a
-      = (Math.sin(dLat / 2) * Math.sin(dLat / 2))
-        + (Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
-          * Math.sin(dLon / 2) * Math.sin(dLon / 2));
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
-    return Number(d.toFixed(1));
-  }
-
   const gymsQuery = useQuery({
     queryKey: ['gyms'],
     queryFn: () => getGyms()
@@ -109,9 +84,7 @@ export default function Gyms () {
     });
   }
 
-  gymsWithDistance.sort((a, b) => (a.distance > b.distance
-    ? 1
-    : -1));
+  gymsWithDistance.sort((a, b) => (a.distance - b.distance));
 
   return (
     <div
@@ -128,7 +101,7 @@ export default function Gyms () {
         <span className='text-sm'>
           This preview showcases the functionalities of the website.
           The underlying database currently lacks sufficient coverage
-          of any area to be used effectively.
+          of any area to be very useful in practice.
         </span>
       </p>
 

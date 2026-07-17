@@ -26,7 +26,12 @@ interface CategoryProps {
 function Category ({ name, equipment, setClickedEquipment }: CategoryProps) {
   let equipmentCount = 0;
   equipment.forEach((piece) => {
-    equipmentCount += piece.gymequipment.count;
+    // unlike other types, plates are only counted as unique types
+    if (!piece.subcategory.includes('plate')) {
+      equipmentCount += piece.gymequipment.count;
+    } else {
+      equipmentCount += 1;
+    }
   });
 
   const equipmentList = equipment.map((piece) => (
@@ -40,18 +45,20 @@ function Category ({ name, equipment, setClickedEquipment }: CategoryProps) {
         }}
       >
         <p className='flex items-center'>
-          {piece.gymequipment.count < 5
-            ? (
-              <span className='font-light min-w-6'>
-                {piece.gymequipment.count}
-              </span>
-            )
-            : (
-              <span className='font-light min-w-6'>
-                {/* display counts higher than five as 5+, 10+, 15+...*/}
-                {Math.round(piece.gymequipment.count / 5) * 5}+
-              </span>
-            )}
+          {!piece.subcategory.includes('plate')
+            ? piece.gymequipment.count < 5
+              ? (
+                <span className='font-light w-6'>
+                  {piece.gymequipment.count}
+                </span>
+              )
+              : (
+                <span className='font-light w-6'>
+                  {/* display counts higher than five as 5+, 10+, 15+...*/}
+                  {Math.round(piece.gymequipment.count / 5) * 5}+
+                </span>
+              )
+            : <span className='font-light w-6'>:</span>}
           <span>{piece.name}</span>
           {piece.outOfProduction
             ? <MdOutlineStarRate className='ml-1' />
@@ -199,7 +206,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
                 setClickedEquipment={setClickedEquipment}
               />
               <Category
-                name='bars and plates'
+                name='bars and plate types'
                 equipment={barsAndPlates}
                 setClickedEquipment={setClickedEquipment}
               />

@@ -128,7 +128,7 @@ export default function Form ({
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_state, submitAction, isPending] = useActionState(submit, {
+  const [_state, dispatchAction, isPending] = useActionState(submit, {
     success: true,
     error: null
   });
@@ -236,7 +236,7 @@ export default function Form ({
 
       <div className='flex flex-col gap-3 px-3 pb-3 overflow-y-scroll text-xs'>
         <form
-          action={submitAction}
+          action={dispatchAction}
           autoComplete='off'
           className='flex flex-col gap-3'
         >

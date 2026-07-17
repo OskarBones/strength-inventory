@@ -83,6 +83,7 @@ export default function AvailableWeights ({
             </button>
           ))}
         </div>
+
         <div className='flex gap-2'>
           <label htmlFor='new-weight'>add weight:</label>
           <input
@@ -107,6 +108,7 @@ export default function AvailableWeights ({
               }
             }}
           />
+
           <button
             type='button'
             ref={addButtonRef}
@@ -115,7 +117,7 @@ export default function AvailableWeights ({
             }
             className='
               border border-dotted border-black dark:border-neutral-400 w-10
-              cursor-not-allowed enabled:border-solid
+              py-0.5 cursor-not-allowed enabled:border-solid
               enabled:bg-green-dark enabled:dark:bg-green
               enabled:text-primary-text-dark enabled:dark:text-primary-text
               enabled:cursor-pointer
@@ -126,6 +128,18 @@ export default function AvailableWeights ({
             }}
           >
             add
+          </button>
+
+          <button
+            type='button'
+            className='
+              ml-auto border py-0.5 px-1 cursor-pointer
+              hover:bg-red hover:dark:bg-red-dark'
+            onClick={() => {
+              setAvailableWeights([]);
+            }}
+          >
+            clear all
           </button>
         </div>
       </div>

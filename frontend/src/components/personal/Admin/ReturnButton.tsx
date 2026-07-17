@@ -25,6 +25,7 @@ export default function ReturnButton (
 
   return (
     <button
+      type='button'
       className={FORM_RETURN_BUTTON_CLASSES}
       onClick={() => {
         queriesToInvalidate.map((query) =>

@@ -51,9 +51,10 @@ export default function Login () {
     try {
       const validatedReq = LoginRequestSchema.parse(req);
       await auth.login(validatedReq.username, validatedReq.password);
-      navigate({ to: redirectDest, search: true }).catch((err: unknown) => {
-        console.error('Redirect failed', err);
-      });
+      await navigate({ to: redirectDest, search: true })
+        .catch((err: unknown) => {
+          console.error('Redirect failed', err);
+        });
       return { success: true, error: null };
     } catch (err: unknown) {
       return handleSubmitError({ err, setNotification });
@@ -70,7 +71,7 @@ export default function Login () {
     <div
       className='
         relative flex flex-1 flex-col self-center p-3
-        w-full max-w-145'
+        w-full max-w-145 overflow-y-hidden'
     >
       <div
         className='

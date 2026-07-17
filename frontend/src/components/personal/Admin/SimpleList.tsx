@@ -1,4 +1,4 @@
-// used by CreateEditDeleteList
+// used by CreateEditDeleteList and Admin/Equipment/List
 
 interface SimpleListProps {
   data: { id: string, name: string }[] | undefined

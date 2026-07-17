@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useActionState, useState } from 'react';
 
 import {
   IoAddCircle,
@@ -7,6 +7,8 @@ import {
   IoRemoveCircleOutline
 } from 'react-icons/io5';
 import { type UseMutationResult } from '@tanstack/react-query';
+
+import handleSubmitError from '../../../../../../utils/handleSubmitError';
 
 import { type Equipment } from '@strength-inventory/schemas';
 
@@ -22,18 +24,40 @@ interface AddNewProps {
     count: number
   }>
   setEquipmentToAdd: React.Dispatch<React.SetStateAction<Equipment | null>>
+  setParentNotification: React.Dispatch<React.SetStateAction<{
+    type: string,
+    message: string
+  }>>
 }
 
 export default function AddNew ({
   piece,
   gymId,
   addEquipmentMutation,
-  setEquipmentToAdd
+  setEquipmentToAdd,
+  setParentNotification
 }: AddNewProps) {
   const [number, setNumber] = useState(1);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_state, dispatchAction, isPending] = useActionState(submit, {
+    success: true,
+    error: ''
+  });
+
+  async function submit () {
+    try {
+      await addEquipmentMutation
+        .mutateAsync({ gymId, equipmentId: piece.id, count: number });
+      setEquipmentToAdd(null);
+    } catch (err: unknown) {
+      return handleSubmitError({ err, setNotification: setParentNotification });
+    }
+  }
+
   return (
-    <div
+    <form
+      action={dispatchAction}
       className='
         flex flex-col items-center
         bg-background dark:bg-background-dark p-1'
@@ -84,21 +108,31 @@ export default function AddNew ({
         </button>
 
         <button
+          type='submit'
+          disabled={isPending}
           className='
             flex justify-center ml-5 border rounded-md
-            bg-green dark:bg-green-dark px-1 w-15 cursor-pointer
+            bg-green dark:bg-green-dark px-1 w-20 cursor-pointer
             hover:inset-ring active:inset-ring active:font-bold'
-          onClick={() => {
-            addEquipmentMutation
-              .mutate({ gymId, equipmentId: piece.id, count: number });
-            setEquipmentToAdd(null);
-          }}
         >
-          add
+          {!isPending
+            ? 'add'
+            : 'adding...'}
         </button>
       </div>
 
+      {piece.subcategory.includes('plate')
+        ? (
+          <p className='mb-2 italic text-sm text-center'>
+            Counts for loadable plates are not displayed for users.
+            You are free and welcomed to enter a precise count,
+            but for the foreseeable future it remains unutilized.
+          </p>
+        )
+        : null}
+
       <button
+        type='button'
         className='
           border rounded-md bg-red dark:bg-red-dark px-1 w-12 text-xs
           cursor-pointer hover:inset-ring active:inset-ring active:font-bold'
@@ -108,6 +142,6 @@ export default function AddNew ({
       >
         cancel
       </button>
-    </div>
+    </form>
   );
 }

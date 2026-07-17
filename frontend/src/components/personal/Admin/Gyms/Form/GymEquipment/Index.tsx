@@ -4,6 +4,7 @@ import {
   useMutation, useQuery, useQueryClient
 } from '@tanstack/react-query';
 import { CgGym } from 'react-icons/cg';
+import { MdClear } from 'react-icons/md';
 import { TbEdit } from 'react-icons/tb';
 
 import { AuthContext, IconContext } from '../../../../../../utils/contexts';
@@ -155,7 +156,9 @@ export default function GymEquipment (
   if (search !== '') {
     filteredEquipment = equipment.filter((piece) => {
       return (
-        piece.name.toLowerCase().includes(search.toLowerCase()));
+        piece.name.toLowerCase().includes(search.toLowerCase())
+        || piece.subcategory.toLowerCase().includes(search.toLowerCase())
+        || piece.manufacturer.toLowerCase().includes(search.toLowerCase()));
     });
   }
 
@@ -196,21 +199,33 @@ export default function GymEquipment (
                 gymId={gymId}
                 addEquipmentMutation={addEquipmentMutation}
                 setEquipmentToAdd={setEquipmentToAdd}
+                setParentNotification={setParentNotification}
               />
             )
           : (
             null
           )}
-        <div className='flex flex-col gap-1 mt-1 mb-3'>
+        <div
+          className='
+          flex gap-1 mt-1 mb-3 bg-background dark:bg-background-dark px-1'
+        >
           <input
             type='search'
             value={search}
             placeholder='search to add new equipment'
-            className='bg-background dark:bg-background-dark pl-1'
+            className='flex-1'
             onChange={(event) => {
               setSearch(event.target.value);
             }}
           />
+          <button
+            className='cursor-pointer'
+            onClick={() => {
+              setSearch('');
+            }}
+          >
+            <MdClear className='text-2xl' />
+          </button>
         </div>
         <EditFormReturnButton
           model='equipment'

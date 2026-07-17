@@ -1,35 +1,35 @@
-// used by Gyms
-
 import { type RefObject, use, useEffect, useRef, useState } from 'react';
 
 import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { FaRegClone } from 'react-icons/fa6';
 
-import { IconContext } from '../../../utils/contexts';
+import { IconContext } from '../../../../utils/contexts';
 
-import SimpleList from './SimpleList';
+import SimpleList from '../SimpleList';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../constants/theme';
+import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../../constants/theme';
 
-interface CreateEditDeleteListProps {
+import { type Equipment } from '@strength-inventory/schemas';
+
+interface ListProps {
   scrollTopRef: RefObject<number>
-  data: { id: string, name: string }[] | undefined
-  selectedItemId: string
-  setSelectedItemId: React.Dispatch<React.SetStateAction<string>>
+  equipment: Equipment[] | undefined
+  selectedPieceId: string
+  setSelectedPieceId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   deleteMutationOptions: Omit<
     UseMutationOptions<void, Error, string>, 'mutationKey'>
 }
 
-export default function CreateEditDeleteList ({
+export default function List ({
   scrollTopRef,
-  data,
-  selectedItemId,
-  setSelectedItemId,
+  equipment,
+  selectedPieceId,
+  setSelectedPieceId,
   setFormMode,
   deleteMutationOptions
-}: CreateEditDeleteListProps) {
+}: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
   // reference [2]
@@ -45,12 +45,18 @@ export default function CreateEditDeleteList ({
 
   const [search, setSearch] = useState('');
 
-  let filteredItems: { id: string, name: string }[] | undefined = data;
-  if (search !== '' && data) {
-    filteredItems = data.filter((item) => {
+  let filteredEquipment: { id: string, name: string }[] | undefined = equipment;
+  if (search !== '' && equipment) {
+    filteredEquipment = equipment.filter((piece) => {
       return (
-        item.name.toLowerCase().includes(search.toLowerCase())
-        || item.id === selectedItemId);
+        piece.name.toLowerCase().includes(search.toLowerCase())
+        || piece.subcategory.toLowerCase().includes(search.toLowerCase())
+        || piece.manufacturer.toLowerCase().includes(search.toLowerCase()));
+    }).map(({ id, name }) => {
+      return {
+        id: id,
+        name: name
+      };
     });
   }
 
@@ -59,7 +65,7 @@ export default function CreateEditDeleteList ({
       <input
         type='text'
         value={search}
-        placeholder='search'
+        placeholder='name, subcategory or manufacturer'
         autoComplete='off'
         className='bg-background dark:bg-background-dark pl-1'
         onChange={(event) => {
@@ -70,7 +76,7 @@ export default function CreateEditDeleteList ({
         <button
           className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
           onClick={() => {
-            setSelectedItemId('');
+            setSelectedPieceId('');
             setFormMode('create');
           }}
         >
@@ -79,7 +85,7 @@ export default function CreateEditDeleteList ({
             : 'create'}
         </button>
         <button
-          disabled={!selectedItemId}
+          disabled={!selectedPieceId}
           className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
           onClick={() => {
             setFormMode('create');
@@ -90,7 +96,7 @@ export default function CreateEditDeleteList ({
             : 'clone'}
         </button>
         <button
-          disabled={!selectedItemId}
+          disabled={!selectedPieceId}
           className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
           onClick={() => {
             setFormMode('edit');
@@ -101,10 +107,10 @@ export default function CreateEditDeleteList ({
             : 'edit'}
         </button>
         <button
-          disabled={!selectedItemId}
+          disabled={!selectedPieceId}
           className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
           onClick={() => {
-            deleteMutation.mutate(selectedItemId);
+            deleteMutation.mutate(selectedPieceId);
           }}
         >
           {iconMode
@@ -122,9 +128,9 @@ export default function CreateEditDeleteList ({
         }}
       >
         <SimpleList
-          data={filteredItems}
-          selectedItemId={selectedItemId}
-          setSelectedItemId={setSelectedItemId}
+          data={filteredEquipment}
+          selectedItemId={selectedPieceId}
+          setSelectedItemId={setSelectedPieceId}
           setFormMode={setFormMode}
         />
       </div>
