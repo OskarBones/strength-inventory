@@ -20,9 +20,16 @@ if (NODE_ENV === 'production') {
 
 const sequelize = new Sequelize(DB_URI, sequelizeConfig);
 
+let migrationPath: string;
+if (NODE_ENV === 'production') {
+  migrationPath = 'src/migrations/*.js';
+} else {
+  migrationPath = 'src/migrations/*.ts';
+}
+
 const umzug = new Umzug({
   migrations: {
-    glob: 'src/migrations/*.ts'
+    glob: migrationPath
   },
   storage: new SequelizeStorage({ sequelize, tableName: 'migrations' }),
   context: sequelize.getQueryInterface(),
