@@ -22,6 +22,7 @@ export default function AdminEquipment () {
 
   const scrollTopRef = useRef(0);
 
+  const [search, setSearch] = useState('');
   const [selectedPieceId, setSelectedPieceId] = useState('');
   const [formMode, setFormMode] = useState('hidden');
 
@@ -41,7 +42,7 @@ export default function AdminEquipment () {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['equipment'] });
       void queryClient
-        .invalidateQueries({ queryKey: ['equipmentIdAndName'] });
+        .invalidateQueries({ queryKey: ['equipment'] });
       setSelectedPieceId('');
       setNotification({ type: 'success', message: 'piece deleted' });
     }
@@ -73,6 +74,8 @@ export default function AdminEquipment () {
           ? (
             <List
               scrollTopRef={scrollTopRef}
+              search={search}
+              setSearch={setSearch}
               equipment={data}
               selectedPieceId={selectedPieceId}
               setSelectedPieceId={setSelectedPieceId}

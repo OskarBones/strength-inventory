@@ -18,6 +18,7 @@ export default function AdminCities () {
 
   const scrollTopRef = useRef(0);
 
+  const [search, setSearch] = useState('');
   const [selectedCityId, setSelectedCityId] = useState('');
   const [formMode, setFormMode] = useState('hidden');
 
@@ -61,6 +62,8 @@ export default function AdminCities () {
           ? (
             <List
               scrollTopRef={scrollTopRef}
+              search={search}
+              setSearch={setSearch}
               cities={data}
               selectedCityId={selectedCityId}
               setSelectedCityId={setSelectedCityId}

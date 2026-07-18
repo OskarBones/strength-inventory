@@ -22,6 +22,7 @@ export default function AdminGyms () {
 
   const scrollTopRef = useRef(0);
 
+  const [search, setSearch] = useState('');
   const [formMode, setFormMode] = useState('hidden');
   const [selectedGymId, setSelectedGymId] = useState('');
 
@@ -72,6 +73,8 @@ export default function AdminGyms () {
           ? (
             <CreateEditDeleteList
               scrollTopRef={scrollTopRef}
+              search={search}
+              setSearch={setSearch}
               data={data}
               selectedItemId={selectedGymId}
               setSelectedItemId={setSelectedGymId}

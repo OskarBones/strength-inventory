@@ -20,12 +20,9 @@ if (NODE_ENV === 'production') {
 
 const sequelize = new Sequelize(DB_URI, sequelizeConfig);
 
-let migrationPath: string;
-if (NODE_ENV === 'production') {
-  migrationPath = 'build/src/migrations/*.js';
-} else {
-  migrationPath = 'src/migrations/*.ts';
-}
+const migrationPath = NODE_ENV === 'production'
+  ? 'build/src/migrations/*.js'
+  : 'src/migrations/*.ts';
 
 const umzug = new Umzug({
   migrations: {

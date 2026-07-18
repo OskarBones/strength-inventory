@@ -19,7 +19,9 @@ import {
 import AvailableList from './AvailableList';
 import CurrentList from './CurrentList';
 import EditFormReturnButton from '../EditFormReturnButton';
+import Error from '../../../../../Error';
 import Form from './Form';
+import Loading from '../../../../../Loading';
 
 import { type Equipment } from '@strength-inventory/schemas';
 
@@ -124,21 +126,21 @@ export default function GymEquipment (
   const [equipmentToAdd, setEquipmentToAdd] = useState<Equipment | null>(null);
 
   if (gymEquipmentQuery.isPending || equipmentQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (gymEquipmentQuery.isError || equipmentQuery.isError) {
     if (gymEquipmentQuery.isError && equipmentQuery.isError) {
       return (
         <div>
-          <p>Error: {gymEquipmentQuery.error.message}</p>
-          <p>Error: {equipmentQuery.error.message}</p>
+          <Error message={gymEquipmentQuery.error.message} />
+          <Error message={equipmentQuery.error.message} />
         </div>
       );
     } else if (gymEquipmentQuery.isError) {
-      return <p>Error: {gymEquipmentQuery.error.message}</p>;
+      return <Error message={gymEquipmentQuery.error.message} />;
     } else if (equipmentQuery.isError) {
-      return <p>Error: {equipmentQuery.error.message}</p>;
+      return <Error message={equipmentQuery.error.message} />;
     }
   }
 

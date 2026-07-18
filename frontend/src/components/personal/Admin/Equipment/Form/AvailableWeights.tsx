@@ -84,7 +84,7 @@ export default function AvailableWeights ({
           ))}
         </div>
 
-        <div className='flex gap-2'>
+        <div className='flex items-center gap-2'>
           <label htmlFor='new-weight'>add weight:</label>
           <input
             id='new-weight'

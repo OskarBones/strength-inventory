@@ -70,7 +70,7 @@ export default function Form ({
       }),
     onSuccess: (newPieceFromServer) => {
       void queryClient.invalidateQueries({
-        queryKey: ['equipmentIdAndName']
+        queryKey: ['equipment']
       });
       setSelectedPieceId(newPieceFromServer.id);
       setFormMode('hidden');
@@ -93,7 +93,7 @@ export default function Form ({
         queryKey: ['piece', selectedPieceId]
       });
       void queryClient.invalidateQueries({
-        queryKey: ['equipmentIdAndName']
+        queryKey: ['equipment']
       });
       setFormMode('hidden');
       setTimeout(() => {

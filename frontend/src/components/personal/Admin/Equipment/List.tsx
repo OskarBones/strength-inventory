@@ -1,4 +1,4 @@
-import { type RefObject, use, useEffect, useRef, useState } from 'react';
+import { type RefObject, use, useEffect, useRef } from 'react';
 
 import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ import { type Equipment } from '@strength-inventory/schemas';
 
 interface ListProps {
   scrollTopRef: RefObject<number>
+  search: string
+  setSearch: React.Dispatch<React.SetStateAction<string>>
   equipment: Equipment[] | undefined
   selectedPieceId: string
   setSelectedPieceId: React.Dispatch<React.SetStateAction<string>>
@@ -24,6 +26,8 @@ interface ListProps {
 
 export default function List ({
   scrollTopRef,
+  search,
+  setSearch,
   equipment,
   selectedPieceId,
   setSelectedPieceId,
@@ -43,8 +47,6 @@ export default function List ({
 
   const deleteMutation = useMutation(deleteMutationOptions);
 
-  const [search, setSearch] = useState('');
-
   let filteredEquipment: { id: string, name: string }[] | undefined = equipment;
   if (search !== '' && equipment) {
     filteredEquipment = equipment.filter((piece) => {
@@ -61,13 +63,14 @@ export default function List ({
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-1 overflow-y-scroll'>
+    <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
       <input
         type='text'
         value={search}
         placeholder='name, subcategory or manufacturer'
+        autoFocus
         autoComplete='off'
-        className='bg-background dark:bg-background-dark pl-1'
+        className='rounded-sm bg-background dark:bg-background-dark pl-1'
         onChange={(event) => {
           setSearch(event.target.value);
         }}

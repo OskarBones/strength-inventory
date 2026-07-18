@@ -1,6 +1,6 @@
 // used by Gyms
 
-import { type RefObject, use, useEffect, useRef, useState } from 'react';
+import { type RefObject, use, useEffect, useRef } from 'react';
 
 import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../constants/theme';
 
 interface CreateEditDeleteListProps {
   scrollTopRef: RefObject<number>
+  search: string
+  setSearch: React.Dispatch<React.SetStateAction<string>>
   data: { id: string, name: string }[] | undefined
   selectedItemId: string
   setSelectedItemId: React.Dispatch<React.SetStateAction<string>>
@@ -24,6 +26,8 @@ interface CreateEditDeleteListProps {
 
 export default function CreateEditDeleteList ({
   scrollTopRef,
+  search,
+  setSearch,
   data,
   selectedItemId,
   setSelectedItemId,
@@ -43,8 +47,6 @@ export default function CreateEditDeleteList ({
 
   const deleteMutation = useMutation(deleteMutationOptions);
 
-  const [search, setSearch] = useState('');
-
   let filteredItems: { id: string, name: string }[] | undefined = data;
   if (search !== '' && data) {
     filteredItems = data.filter((item) => {
@@ -55,13 +57,14 @@ export default function CreateEditDeleteList ({
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-1 overflow-y-scroll'>
+    <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
       <input
         type='text'
         value={search}
-        placeholder='search'
+        placeholder='name'
+        autoFocus
         autoComplete='off'
-        className='bg-background dark:bg-background-dark pl-1'
+        className='rounded-sm bg-background dark:bg-background-dark pl-1'
         onChange={(event) => {
           setSearch(event.target.value);
         }}

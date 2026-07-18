@@ -13,6 +13,8 @@ import { type CityGet } from '@strength-inventory/schemas';
 
 interface ListProps {
   scrollTopRef: RefObject<number>
+  search: string
+  setSearch: React.Dispatch<React.SetStateAction<string>>
   cities: CityGet[]
   selectedCityId: string
   setSelectedCityId: React.Dispatch<React.SetStateAction<string>>
@@ -25,6 +27,8 @@ interface ListProps {
 
 export default function List ({
   scrollTopRef,
+  search,
+  setSearch,
   cities,
   selectedCityId,
   setSelectedCityId,
@@ -55,7 +59,6 @@ export default function List ({
     }
   });
 
-  const [search, setSearch] = useState('');
   // used to manage the enablement of the delete button
   const [selectedCityDistricts, setSelectedCityDistricts] = useState(
     cities.find((city) => city.id === selectedCityId)?.districts
@@ -71,13 +74,14 @@ export default function List ({
   }
 
   return (
-    <div className='flex flex-1 flex-col gap-1 overflow-y-scroll'>
+    <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
       <input
         type='text'
         value={search}
-        placeholder='search'
+        placeholder='name'
+        autoFocus
         autoComplete='off'
-        className='bg-background dark:bg-background-dark pl-1'
+        className='rounded-sm bg-background dark:bg-background-dark pl-1'
         onChange={(event) => {
           setSearch(event.target.value);
         }}
@@ -139,37 +143,33 @@ export default function List ({
           scrollTopRef.current = event.currentTarget.scrollTop;
         }}
       >
-        {filteredCities.length > 0
-          ? (
-            <ul className='flex flex-col w-full text-sm'>
-              {filteredCities.map((city) => (
-                <li key={city.id}>
-                  <button
-                    aria-pressed={city.id === selectedCityId}
-                    className='
-                      flex justify-between px-1 w-full
-                      aria-pressed:bg-gray-300 dark:aria-pressed:bg-gray-600'
-                    onClick={() => {
-                      setSelectedCityId(city.id);
-                      setSelectedCityDistricts(city.districts);
-                    }}
-                    onDoubleClick={() => {
-                      setSelectedCityId(city.id);
-                      setFormMode('edit');
-                    }}
-                  >
-                    <p className='flex-1 min-w-0 truncate text-left'>
-                      {city.name}
-                    </p>
-                    <p className='w-25 text-end'>
-                      ({city.districts.length} districts)
-                    </p>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )
-          : <ul><li>no data</li></ul>}
+        <ul className='flex flex-col w-full text-sm'>
+          {filteredCities.map((city) => (
+            <li key={city.id}>
+              <button
+                aria-pressed={city.id === selectedCityId}
+                className='
+                  flex justify-between px-1 w-full
+                  aria-pressed:bg-gray-300 dark:aria-pressed:bg-gray-600'
+                onClick={() => {
+                  setSelectedCityId(city.id);
+                  setSelectedCityDistricts(city.districts);
+                }}
+                onDoubleClick={() => {
+                  setSelectedCityId(city.id);
+                  setFormMode('edit');
+                }}
+              >
+                <p className='flex-1 min-w-0 truncate text-left'>
+                  {city.name}
+                </p>
+                <p className='w-25 text-end'>
+                  ({city.districts.length} districts)
+                </p>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

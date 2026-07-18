@@ -18,6 +18,7 @@ export default function AdminDistricts () {
 
   const scrollTopRef = useRef(0);
 
+  const [search, setSearch] = useState('');
   const [selectedDistrictId, setSelectedDistrictId] = useState('');
   const [formMode, setFormMode] = useState('hidden');
 
@@ -61,6 +62,8 @@ export default function AdminDistricts () {
           ? (
             <List
               scrollTopRef={scrollTopRef}
+              search={search}
+              setSearch={setSearch}
               districts={data}
               selectedDistrictId={selectedDistrictId}
               setSelectedDistrictId={setSelectedDistrictId}

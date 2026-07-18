@@ -70,7 +70,8 @@ export default function List ({
           name='country'
           value={country}
           className='
-            border bg-tertiary dark:bg-tertiary-dark p-1 cursor-pointer'
+            border rounded-sm
+            bg-tertiary dark:bg-tertiary-dark p-1 cursor-pointer'
           onChange={(event) => {
             setCountry(event.target.value);
             if (event.target.value === '') {
@@ -79,11 +80,11 @@ export default function List ({
           }}
         >
           <option value=''>-- please select a country --</option>
-          <option value='Denmark'>DEN</option>
-          <option value='Finland'>FIN</option>
-          <option value='Iceland'>ICE</option>
-          <option value='Norway'>NOR</option>
-          <option value='Sweden'>SWE</option>
+          <option value='DEN'>DEN</option>
+          <option value='FIN'>FIN</option>
+          <option value='ICE'>ICE</option>
+          <option value='NOR'>NOR</option>
+          <option value='SWE'>SWE</option>
         </select>
       </div>
 
@@ -97,7 +98,7 @@ export default function List ({
           type='text'
           value={chain}
           autoComplete='off'
-          className='border bg-tertiary dark:bg-tertiary-dark pl-1'
+          className='border rounded-sm bg-tertiary dark:bg-tertiary-dark pl-1'
           onChange={(event) => {
             setChain(event.target.value);
           }}
@@ -108,7 +109,7 @@ export default function List ({
         ref={listRef}
         hidden={!country}
         className='
-          flex flex-1 bg-background dark:bg-background-dark
+          flex flex-1 rounded-sm bg-background dark:bg-background-dark
           overflow-y-scroll overflow-x-scroll'
         onScroll={(event) => {
           scrollTopRef.current = event.currentTarget.scrollTop;
