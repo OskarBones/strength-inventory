@@ -33,7 +33,7 @@ interface CategoryProps {
   }, Error, {
     relationshipId: string;
     count: number;
-  }>,
+  }>
   removeEquipmentMutation: UseMutationResult<{
     gymId: string,
     equipmentId: string
@@ -64,7 +64,7 @@ function Category ({
               <a
                 href={piece.url}
                 target='_blank'
-                className='font-medium'
+                className='underline'
               >
                 {piece.name}
               </a>

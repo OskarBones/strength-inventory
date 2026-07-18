@@ -24,7 +24,7 @@ export default function AvailableList (
     <div
       className='
         flex bg-background dark:bg-background-dark
-        max-h-7/10 overflow-y-scroll overflow-x-scroll'
+        max-h-6/10 overflow-y-scroll overflow-x-scroll'
     >
       <ul className='min-w-full text-sm'>
         <hr />
@@ -50,11 +50,7 @@ export default function AvailableList (
                 flex items-center gap-1 whitespace-nowrap
                 enabled:cursor-pointer'
               onClick={() => {
-                if (currentEquipmentIds.includes(piece.id)) {
-                  console.log('nothing happens, yet');
-                } else {
-                  setEquipmentToAdd(piece);
-                }
+                setEquipmentToAdd(piece);
               }}
             >
               <span className='flex w-5'>

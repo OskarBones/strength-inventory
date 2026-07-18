@@ -40,7 +40,7 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "bcrypt-ts": "^8.0.1",
+    "bcrypt-ts": "^9.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "cross-env": "^10.1.0",

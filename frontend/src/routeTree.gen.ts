@@ -9,61 +9,45 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as NoAuthRouteImport } from './routes/_noAuth'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as NoAuthIndexRouteImport } from './routes/_noAuth/index'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as NoAuthRouteImport } from './routes/_noAuth'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
-import { Route as NoAuthopenGymsRouteImport } from './routes/_noAuth/(open)/gyms'
-import { Route as AuthenticatedAdminMembershipsRouteImport } from './routes/_authenticated/admin.memberships'
-import { Route as AuthenticatedAdminGymsRouteImport } from './routes/_authenticated/admin.gyms'
-import { Route as AuthenticatedAdminEquipmentRouteImport } from './routes/_authenticated/admin.equipment'
-import { Route as AuthenticatedAdminDistrictsRouteImport } from './routes/_authenticated/admin.districts'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as NoAuthIndexRouteImport } from './routes/_noAuth/index'
 import { Route as AuthenticatedAdminCitiesRouteImport } from './routes/_authenticated/admin.cities'
+import { Route as AuthenticatedAdminDistrictsRouteImport } from './routes/_authenticated/admin.districts'
+import { Route as AuthenticatedAdminEquipmentRouteImport } from './routes/_authenticated/admin.equipment'
+import { Route as AuthenticatedAdminGymsRouteImport } from './routes/_authenticated/admin.gyms'
+import { Route as AuthenticatedAdminMembershipsRouteImport } from './routes/_authenticated/admin.memberships'
+import { Route as NoAuthopenGymsRouteImport } from './routes/_noAuth/(open)/gyms'
 
-const NoAuthRoute = NoAuthRouteImport.update({
-  id: '/_noAuth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NoAuthIndexRoute = NoAuthIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NoAuthRoute,
-} as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRoute,
+const NoAuthRoute = NoAuthRouteImport.update({
+  id: '/_noAuth',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NoAuthopenGymsRoute = NoAuthopenGymsRouteImport.update({
-  id: '/(open)/gyms',
-  path: '/gyms',
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const NoAuthIndexRoute = NoAuthIndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => NoAuthRoute,
 } as any)
-const AuthenticatedAdminMembershipsRoute =
-  AuthenticatedAdminMembershipsRouteImport.update({
-    id: '/memberships',
-    path: '/memberships',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminGymsRoute = AuthenticatedAdminGymsRouteImport.update({
-  id: '/gyms',
-  path: '/gyms',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
-const AuthenticatedAdminEquipmentRoute =
-  AuthenticatedAdminEquipmentRouteImport.update({
-    id: '/equipment',
-    path: '/equipment',
+const AuthenticatedAdminCitiesRoute =
+  AuthenticatedAdminCitiesRouteImport.update({
+    id: '/cities',
+    path: '/cities',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminDistrictsRoute =
@@ -72,12 +56,28 @@ const AuthenticatedAdminDistrictsRoute =
     path: '/districts',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCitiesRoute =
-  AuthenticatedAdminCitiesRouteImport.update({
-    id: '/cities',
-    path: '/cities',
+const AuthenticatedAdminEquipmentRoute =
+  AuthenticatedAdminEquipmentRouteImport.update({
+    id: '/equipment',
+    path: '/equipment',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminGymsRoute = AuthenticatedAdminGymsRouteImport.update({
+  id: '/gyms',
+  path: '/gyms',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminMembershipsRoute =
+  AuthenticatedAdminMembershipsRouteImport.update({
+    id: '/memberships',
+    path: '/memberships',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const NoAuthopenGymsRoute = NoAuthopenGymsRouteImport.update({
+  id: '/(open)/gyms',
+  path: '/gyms',
+  getParentRoute: () => NoAuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof NoAuthIndexRoute
@@ -161,13 +161,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_noAuth': {
-      id: '/_noAuth'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof NoAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -175,19 +168,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_noAuth/': {
-      id: '/_noAuth/'
-      path: '/'
+    '/_noAuth': {
+      id: '/_noAuth'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof NoAuthIndexRouteImport
-      parentRoute: typeof NoAuthRoute
-    }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      preLoaderRoute: typeof NoAuthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(auth)/login': {
       id: '/(auth)/login'
@@ -196,32 +182,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_noAuth/(open)/gyms': {
-      id: '/_noAuth/(open)/gyms'
-      path: '/gyms'
-      fullPath: '/gyms'
-      preLoaderRoute: typeof NoAuthopenGymsRouteImport
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_noAuth/': {
+      id: '/_noAuth/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof NoAuthIndexRouteImport
       parentRoute: typeof NoAuthRoute
     }
-    '/_authenticated/admin/memberships': {
-      id: '/_authenticated/admin/memberships'
-      path: '/memberships'
-      fullPath: '/admin/memberships'
-      preLoaderRoute: typeof AuthenticatedAdminMembershipsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/gyms': {
-      id: '/_authenticated/admin/gyms'
-      path: '/gyms'
-      fullPath: '/admin/gyms'
-      preLoaderRoute: typeof AuthenticatedAdminGymsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/equipment': {
-      id: '/_authenticated/admin/equipment'
-      path: '/equipment'
-      fullPath: '/admin/equipment'
-      preLoaderRoute: typeof AuthenticatedAdminEquipmentRouteImport
+    '/_authenticated/admin/cities': {
+      id: '/_authenticated/admin/cities'
+      path: '/cities'
+      fullPath: '/admin/cities'
+      preLoaderRoute: typeof AuthenticatedAdminCitiesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/districts': {
@@ -231,12 +210,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDistrictsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/cities': {
-      id: '/_authenticated/admin/cities'
-      path: '/cities'
-      fullPath: '/admin/cities'
-      preLoaderRoute: typeof AuthenticatedAdminCitiesRouteImport
+    '/_authenticated/admin/equipment': {
+      id: '/_authenticated/admin/equipment'
+      path: '/equipment'
+      fullPath: '/admin/equipment'
+      preLoaderRoute: typeof AuthenticatedAdminEquipmentRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/gyms': {
+      id: '/_authenticated/admin/gyms'
+      path: '/gyms'
+      fullPath: '/admin/gyms'
+      preLoaderRoute: typeof AuthenticatedAdminGymsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/memberships': {
+      id: '/_authenticated/admin/memberships'
+      path: '/memberships'
+      fullPath: '/admin/memberships'
+      preLoaderRoute: typeof AuthenticatedAdminMembershipsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_noAuth/(open)/gyms': {
+      id: '/_noAuth/(open)/gyms'
+      path: '/gyms'
+      fullPath: '/gyms'
+      preLoaderRoute: typeof NoAuthopenGymsRouteImport
+      parentRoute: typeof NoAuthRoute
     }
   }
 }

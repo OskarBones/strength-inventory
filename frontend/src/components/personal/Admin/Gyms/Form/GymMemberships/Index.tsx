@@ -7,8 +7,10 @@ import { useQuery } from '@tanstack/react-query';
 import { getGymMemberships } from '../../../../../../utils/api';
 import { IconContext } from '../../../../../../utils/contexts';
 
+import Error from '../../../../../Error';
 import Form from './Form';
 import List from './List';
+import Loading from '../../../../../Loading';
 import Notification from '../../../../../Notification';
 
 interface GymMembershipsProps {
@@ -45,11 +47,11 @@ export default function GymMemberships (
   });
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
-    return <p>Error: {error.message}</p>;
+    return <Error message={error.message} />;
   }
 
   return (

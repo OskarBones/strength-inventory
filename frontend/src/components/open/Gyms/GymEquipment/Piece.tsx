@@ -12,6 +12,7 @@ interface PieceProps {
 export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
   const {
     name,
+    subcategory,
     manufacturer,
     code,
     weightUnit,
@@ -53,7 +54,9 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
         {notNullUrl
           ? (
             <p className='flex items-center gap-1'>
-              <span>{gymequipment.count}x</span>
+              {subcategory.includes('plate')
+                ? <span>{gymequipment.count}x</span>
+                : null}
               <a
                 href={notNullUrl}
                 target='_blank'
@@ -70,7 +73,9 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
           )
           : (
             <p className='flex items-center gap-1'>
-              <span>{gymequipment.count}x</span>
+              {subcategory.includes('plate')
+                ? <span>{gymequipment.count}x</span>
+                : null}
               <span className='font-bold'>{name}</span>
               {outOfProduction
                 ? <MdOutlineStarRate />

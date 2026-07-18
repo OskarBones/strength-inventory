@@ -16,10 +16,10 @@ import {
   setGymEquipmentCount
 } from '../../../../../../utils/api';
 
-import AddNew from './AddNew';
 import AvailableList from './AvailableList';
 import CurrentList from './CurrentList';
 import EditFormReturnButton from '../EditFormReturnButton';
+import Form from './Form';
 
 import { type Equipment } from '@strength-inventory/schemas';
 
@@ -194,10 +194,13 @@ export default function GymEquipment (
               />
             )
             : (
-              <AddNew
+              <Form
                 piece={equipmentToAdd}
                 gymId={gymId}
+                currentEquipment={gymEquipment}
                 addEquipmentMutation={addEquipmentMutation}
+                setEquipmentCountMutation={setEquipmentCountMutation}
+                removeEquipmentMutation={removeEquipmentMutation}
                 setEquipmentToAdd={setEquipmentToAdd}
                 setParentNotification={setParentNotification}
               />
@@ -213,7 +216,7 @@ export default function GymEquipment (
             type='search'
             value={search}
             placeholder='search to add new equipment'
-            className='flex-1'
+            className='flex-1 px-1'
             onChange={(event) => {
               setSearch(event.target.value);
             }}
