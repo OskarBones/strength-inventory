@@ -1,3 +1,5 @@
+// reference [4]
+
 import 'ts-node/register';  // Required by Node.js to read .ts migration files.
 
 import { SequelizeStorage, Umzug } from 'umzug';
@@ -5,8 +7,6 @@ import { Sequelize } from 'sequelize';
 
 // .ts instead of .js to accommodate Vitest
 import { DB_URI, NODE_ENV } from './config.ts';
-
-// reference [4]
 
 let sequelizeConfig = {};
 if (NODE_ENV === 'production') {
