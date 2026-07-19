@@ -9,19 +9,19 @@ import { IconContext } from '../../../utils/contexts';
 function ButtonIcon ({ title }: { title: string }) {
   if (title === 'equipment') {
     return (
-      <CgGym className='text-4xl' />
+      <CgGym className='text-2xl md:text-5xl' />
     );
   }
 
   if (title === 'memberships') {
     return (
-      <FaRegAddressCard className='text-4xl' />
+      <FaRegAddressCard className='text-2xl md:text-5xl' />
     );
   }
 
   if (title === 'opening hours') {
     return (
-      <TbClock className='text-4xl' />
+      <TbClock className='text-2xl md:text-5xl' />
     );
   }
 }
@@ -61,7 +61,7 @@ export default function GymButton (
       >
         {iconMode
           ? <ButtonIcon title={title} />
-          : <span className='text-sm md:text-xs'>{title}</span>}
+          : <span className='text-xs'>{title}</span>}
       </h3>
     </button>
   );
