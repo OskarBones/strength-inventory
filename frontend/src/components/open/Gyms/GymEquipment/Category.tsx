@@ -1,3 +1,5 @@
+import { type RefObject, useEffect, useRef } from 'react';
+
 import { FaCaretLeft } from 'react-icons/fa';
 import { MdOutlineStarRate } from 'react-icons/md';
 
@@ -63,6 +65,7 @@ ModelListProps) {
 }
 
 interface CategoryProps {
+  scrollTopRef: RefObject<number>
   modelView: boolean
   name: string
   equipment: GymGetEquipment[]
@@ -73,6 +76,7 @@ interface CategoryProps {
 }
 
 export default function Category ({
+  scrollTopRef,
   modelView,
   name,
   equipment,
@@ -80,6 +84,15 @@ export default function Category ({
   setSelectedSubcategory,
   setClickedEquipment
 }: CategoryProps) {
+  const listRef = useRef<HTMLUListElement>(null);
+
+  // reference [2]
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = scrollTopRef.current;
+    }
+  });
+
   let equipmentCount = 0;
   equipment.forEach((piece) => {
     // unlike other equipment, plates are only counted as unique types
@@ -172,31 +185,43 @@ export default function Category ({
               )
               : null}
 
-            <ul
-              className='
-                flex flex-1 flex-col gap-1 h-20 overflow-y-scroll text-xs'
-            >
-              {modelView
-                ? (
-                  <ModelList
-                    subcategory={undefined}
-                    equipment={equipment}
-                    setClickedEquipment={setClickedEquipment}
-                  />
-                )
-                : selectedSubcategory
+            <div className='flex flex-1 flex-col gap-1 h-20 text-xs'>
+              {selectedSubcategory && !modelView
+                ? <h4 className='font-semibold'>{selectedSubcategory}</h4>
+                : null}
+
+              <ul
+                ref={listRef}
+                className='
+                  flex flex-1 flex-col gap-1 overflow-y-scroll'
+                onScroll={(event) => {
+                  if (!selectedSubcategory) {
+                    scrollTopRef.current = event.currentTarget.scrollTop;
+                  }
+                }}
+              >
+                {modelView
                   ? (
                     <ModelList
-                      subcategory={selectedSubcategory}
+                      subcategory={undefined}
                       equipment={equipment}
                       setClickedEquipment={setClickedEquipment}
                     />
                   )
-                  : subcategoryList}
-            </ul>
+                  : selectedSubcategory
+                    ? (
+                      <ModelList
+                        subcategory={selectedSubcategory}
+                        equipment={equipment}
+                        setClickedEquipment={setClickedEquipment}
+                      />
+                    )
+                    : subcategoryList}
+              </ul>
+            </div>
           </div>
         )
-        : <p className='text-xs'>-</p>}
+        : <p className='h-20 text-xs'>-</p>}
     </div>
   );
 }

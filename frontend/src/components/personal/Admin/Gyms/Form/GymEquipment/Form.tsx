@@ -120,7 +120,7 @@ export default function Form ({
     <form
       action={dispatchAction}
       className='
-        flex flex-col items-center
+        flex flex-col items-center rounded-sm mb-3
         bg-background dark:bg-background-dark p-1'
     >
       <p className='flex gap-1 text-center'>

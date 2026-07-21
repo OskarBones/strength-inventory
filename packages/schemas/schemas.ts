@@ -286,6 +286,8 @@ export const BARS_AND_PLATES = [
   'trap bar',
   'EZ bar',
   'swiss bar',
+  'tricep bar',
+  'strongman log',
   'barbell rowing handle',
   'deadlift jack',
   'barbell pad',
@@ -322,6 +324,7 @@ export const HANDLE_ATTACHMENTS = [
   'EZ pulldown bar',
   'arms handle',
   'ab crunch handle',
+  'arm strap',
   'ankle strap',
   'other'
 ];
@@ -386,6 +389,7 @@ export const ACCESSORIES_AND_TOOLS = [
   'push-up handle pair',
   'hand gripper',
   'head harness',
+  'sled strap',
   'boxing gloves',
   'other'
 ];

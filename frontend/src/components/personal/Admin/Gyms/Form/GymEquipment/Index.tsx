@@ -1,4 +1,4 @@
-import { use, useState } from 'react';
+import { use, useRef, useState } from 'react';
 
 import {
   useMutation, useQuery, useQueryClient
@@ -40,6 +40,8 @@ export default function GymEquipment (
 ) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+
+  const scrollTopRef = useRef(0);
 
   const queryClient = useQueryClient();
 
@@ -190,6 +192,7 @@ export default function GymEquipment (
           ? !equipmentToAdd
             ? (
               <AvailableList
+                scrollTopRef={scrollTopRef}
                 currentEquipment={gymEquipment}
                 filteredEquipment={filteredEquipment}
                 setEquipmentToAdd={setEquipmentToAdd}
@@ -211,6 +214,7 @@ export default function GymEquipment (
             null
           )}
         <div
+          hidden={equipmentToAdd !== null}
           className='
           flex gap-1 mt-1 mb-3 bg-background dark:bg-background-dark px-1'
         >
@@ -218,6 +222,7 @@ export default function GymEquipment (
             type='search'
             value={search}
             placeholder='search to add new equipment'
+            autoFocus
             className='flex-1 px-1'
             onChange={(event) => {
               setSearch(event.target.value);

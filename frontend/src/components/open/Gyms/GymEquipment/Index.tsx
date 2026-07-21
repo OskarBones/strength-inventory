@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Category from './Category';
 import Piece from './Piece';
@@ -16,6 +16,14 @@ import {
 } from '@strength-inventory/schemas';
 
 export default function GymEquipment ({ gym }: { gym: GymGet }) {
+  const systemsScrollTopRef = useRef(0);
+  const barsAndPlatesScrollTopRef = useRef(0);
+  const freeWeightsScrollTopRef = useRef(0);
+  const attachmentsScrollTopRef = useRef(0);
+  const strMachinesScrollTopRef = useRef(0);
+  const accAndToolsScrollTopRef = useRef(0);
+  const cardioScrollTopRef = useRef(0);
+
   const [modelView, setModelView] = useState(false);
   const [clickedEquipment, setClickedEquipment]
     = useState<GymGetEquipment | null>(null);
@@ -154,6 +162,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
         <div className='flex flex-1'>
           <div className='flex flex-col gap-2 pr-1 w-1/2'>
             <Category
+              scrollTopRef={systemsScrollTopRef}
               modelView={modelView}
               name='systems'
               equipment={systems}
@@ -162,6 +171,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
               setClickedEquipment={setClickedEquipment}
             />
             <Category
+              scrollTopRef={barsAndPlatesScrollTopRef}
               modelView={modelView}
               name='bars and plate types'
               equipment={barsAndPlates}
@@ -170,6 +180,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
               setClickedEquipment={setClickedEquipment}
             />
             <Category
+              scrollTopRef={freeWeightsScrollTopRef}
               modelView={modelView}
               name='free weights'
               equipment={freeWeights}
@@ -178,6 +189,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
               setClickedEquipment={setClickedEquipment}
             />
             <Category
+              scrollTopRef={attachmentsScrollTopRef}
               modelView={modelView}
               name='handle attachments'
               equipment={handleAttachments}
@@ -188,6 +200,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
           </div>
           <div className='flex flex-col gap-2 pl-1 w-1/2'>
             <Category
+              scrollTopRef={strMachinesScrollTopRef}
               modelView={modelView}
               name='strength machines'
               equipment={strengthMachines}
@@ -196,6 +209,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
               setClickedEquipment={setClickedEquipment}
             />
             <Category
+              scrollTopRef={accAndToolsScrollTopRef}
               modelView={modelView}
               name='accessories and tools'
               equipment={accessoriesAndTools}
@@ -204,6 +218,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
               setClickedEquipment={setClickedEquipment}
             />
             <Category
+              scrollTopRef={cardioScrollTopRef}
               modelView={modelView}
               name='cardio'
               equipment={cardio}
