@@ -14,6 +14,6 @@ export const FORM_INPUT_CLASSES
 export const FORM_RETURN_BUTTON_CLASSES
   = `flex justify-center self-center border rounded-sm
     bg-tertiary dark:bg-tertiary-dark
-    py-1 w-9/10 text-xs cursor-pointer
-    hover:bg-background dark:hover:bg-background-dark
-    active:font-bold`;
+    py-1 w-9/10 text-xs enabled:cursor-pointer
+    enabled:hover:bg-background enabled::hover:bg-background-dark
+    enabled:active:font-bold`;

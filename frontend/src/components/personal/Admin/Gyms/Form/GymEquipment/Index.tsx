@@ -1,4 +1,4 @@
-import { use, useRef, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 import {
   useMutation, useQuery, useQueryClient
@@ -42,6 +42,7 @@ export default function GymEquipment (
   const iconMode = use(IconContext);
 
   const scrollTopRef = useRef(0);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -126,6 +127,10 @@ export default function GymEquipment (
 
   const [search, setSearch] = useState('');
   const [equipmentToAdd, setEquipmentToAdd] = useState<Equipment | null>(null);
+
+  useEffect(() => {
+    searchRef.current?.focus();
+  });
 
   if (gymEquipmentQuery.isPending || equipmentQuery.isPending) {
     return <Loading />;
@@ -219,6 +224,7 @@ export default function GymEquipment (
           flex gap-1 mt-1 mb-3 bg-background dark:bg-background-dark px-1'
         >
           <input
+            ref={searchRef}
             type='search'
             value={search}
             placeholder='search to add new equipment'
@@ -232,6 +238,7 @@ export default function GymEquipment (
             className='cursor-pointer'
             onClick={() => {
               setSearch('');
+              searchRef.current?.focus();
             }}
           >
             <MdClear className='text-2xl' />

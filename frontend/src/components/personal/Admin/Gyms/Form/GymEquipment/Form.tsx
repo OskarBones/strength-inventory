@@ -227,7 +227,9 @@ export default function Form ({
 
       <button
         type='button'
-        className={`${FORM_RETURN_BUTTON_CLASSES} py-px w-12`}
+        disabled={removeEquipmentMutation.isPending}
+        className={`
+          ${FORM_RETURN_BUTTON_CLASSES} disabled:border-dotted py-px w-12`}
         onClick={() => {
           setEquipmentToAdd(null);
         }}
