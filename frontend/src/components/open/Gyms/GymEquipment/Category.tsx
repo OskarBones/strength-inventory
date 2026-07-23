@@ -31,7 +31,7 @@ ModelListProps) {
     filteredEquipment.map((piece) => (
       <li key={piece.id}>
         <button
-          disabled={piece.name.includes('(generic)')}
+          disabled={piece.name.includes('generic')}
           className='
             rounded-sm px-1 w-full text-left enabled:cursor-pointer
             enabled:hover:bg-primary enabled:dark:hover:bg-background-dark

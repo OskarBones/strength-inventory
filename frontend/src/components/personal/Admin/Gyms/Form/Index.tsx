@@ -848,10 +848,9 @@ export default function Form (
             flex justify-center mt-3 border rounded-sm
             bg-green dark:bg-green-dark px-3 w-full
             text-primary-text dark:text-primary-text-dark text-base
-            hover:border-white hover:dark:border-black
-            active:border-white active:dark:border-black active:font-bold
+            active:inset-ring active:font-bold
             ${!isPending
-      ? 'cursor-pointer'
+      ? 'cursor-pointer hover:inset-ring'
       : 'cursor-progress'
     }`}
         >

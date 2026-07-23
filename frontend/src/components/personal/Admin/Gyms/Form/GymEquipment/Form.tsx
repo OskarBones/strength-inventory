@@ -202,8 +202,9 @@ export default function Form ({
           disabled={isPending || removeEquipmentMutation.isPending}
           className='
             flex justify-center ml-5 border rounded-md
-            bg-green dark:bg-green-dark px-1 w-24 cursor-pointer
-            hover:inset-ring active:inset-ring active:font-bold'
+            bg-green dark:bg-green-dark px-1 w-24
+            disabled:cursor-progress cursor-pointer
+            enabled:hover:inset-ring active:inset-ring active:font-bold'
         >
           {editedPiece
             ? !isPending
@@ -227,9 +228,10 @@ export default function Form ({
 
       <button
         type='button'
-        disabled={removeEquipmentMutation.isPending}
+        disabled={isPending}
         className={`
-          ${FORM_RETURN_BUTTON_CLASSES} disabled:border-dotted py-px w-12`}
+          ${FORM_RETURN_BUTTON_CLASSES}
+          disabled:border-dotted py-px w-12 disabled:cursor-progress`}
         onClick={() => {
           setEquipmentToAdd(null);
         }}

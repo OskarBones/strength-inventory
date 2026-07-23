@@ -28,9 +28,11 @@ Intended database: **PostgreSQL** (Postgres-specific implementations have been a
 - [HTML-Attribute-Ordering-Standard](https://github.com/lakhbawa/HTML-Attribute-Ordering-Standard/tree/main)
 - [Concentric ordering](https://github.com/brandon-rhodes/Concentric-CSS/blob/master/style3.css) of tailwindcss classes
 - Screen widths down to 360px accommodated
+- The English language, metric units and international/EU links take precedence until internationalization is implemented
 
-## Things to note
+## Known deficiencies
 - Timezones are yet to be implemented. All times are in UTC.
+- Database operations are somewhat slow with the current host.
 
 ## In the TODO list
 - Timezones

@@ -43,7 +43,6 @@ export default function AvailableList (
       }}
     >
       <ul className='min-w-full text-sm'>
-        <hr />
         {filteredEquipment.map((piece) => (
           <li
             key={piece.id}

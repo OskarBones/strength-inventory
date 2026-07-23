@@ -28,9 +28,9 @@ export default function SubmitButton (
         flex justify-center border rounded-sm
         bg-green dark:bg-green-dark px-3 w-full
         text-primary-text dark:text-primary-text-dark text-base
-        cursor-progress enabled:cursor-pointer
-        hover:border-white dark:hover:border-black
-        active:border-white dark:active:border-black active:font-bold'
+        disabled:cursor-progress cursor-pointer
+        enabled:hover:inset-ring
+        active:inset-ring active:font-bold'
     >
       {formMode === 'create'
         ? !isPending
