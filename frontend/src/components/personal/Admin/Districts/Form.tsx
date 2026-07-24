@@ -1,4 +1,4 @@
-import { use, useActionState, useState } from 'react';
+import { use, useActionState, useRef, useState } from 'react';
 
 import {
   skipToken, useMutation, useQuery, useQueryClient
@@ -10,6 +10,8 @@ import { getCities, getDistrict, postDistrict, putDistrict }
   from '../../../../utils/api';
 import handleSubmitError from '../../../../utils/handleSubmitError';
 
+import Error from '../../../Error';
+import Loading from '../../../Loading';
 import Notification from '../../../Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
@@ -43,6 +45,8 @@ export default function Form ({
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -139,7 +143,7 @@ export default function Form ({
   });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_state, submitAction, isPending] = useActionState(submit, {
+  const [_state, dispatchAction, isPending] = useActionState(submit, {
     success: true,
     error: null
   });
@@ -184,15 +188,15 @@ export default function Form ({
   }
 
   if ((selectedDistrictId && districtQuery.isPending) || cityQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if ((selectedDistrictId && districtQuery.isError)) {
-    return <p>Error: {districtQuery.error.message}</p>;
+    return <Error message={districtQuery.error.message} />;
   }
 
   if (cityQuery.isError) {
-    return <p>Error: {cityQuery.error.message}</p>;
+    return <Error message={cityQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.
@@ -251,7 +255,7 @@ export default function Form ({
 
       <div className='flex flex-col gap-3 px-3 pb-3 overflow-y-scroll text-xs'>
         <form
-          action={submitAction}
+          action={dispatchAction}
           autoComplete='off'
           className='flex flex-col gap-3'
         >
@@ -266,6 +270,7 @@ export default function Form ({
                 className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
                 onChange={(event) => {
                   setDistrict({ ...district, cityId: event.target.value });
+                  nameInputRef.current?.focus();
                 }}
               >
                 <option value=''>-- please select a city --</option>
@@ -282,6 +287,7 @@ export default function Form ({
               <input
                 id='name'
                 name='name'
+                ref={nameInputRef}
                 type='text'
                 value={district.name}
                 required

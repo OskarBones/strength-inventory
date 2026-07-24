@@ -1,3 +1,7 @@
 node_modules
 
+dumpfile
 strength-inventory.code-workspace
+todo.md
+*.sql
+*.gz

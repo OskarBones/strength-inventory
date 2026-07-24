@@ -1,5 +1,4 @@
-// NOTE
-// inputs are validated in components
+// NOTE: inputs are validated in components
 
 import { z } from 'zod';
 
@@ -359,17 +358,6 @@ export const getEquipment = async () => {
   const data: unknown = await res.json();
   const validatedData = z.array(EquipmentSchema).parse(data);
   return validatedData;
-};
-
-export const getEquipmentIdAndName = async () => {
-  const res = await fetch(`${baseUrl}/equipment`);
-  if (!res.ok) {
-    throw Error(`Response status: ${res.statusText}`);
-  }
-
-  const data: unknown = await res.json();
-  const validatedData = z.array(EquipmentSchema).parse(data);
-  return validatedData.map(({ id, name }) => ({ id, name }));
 };
 
 export const getPiece = async ({ id }: { id: string }) => {

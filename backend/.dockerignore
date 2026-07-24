@@ -1,5 +1,10 @@
+build
+dev
+dist
 node_modules
+src/dist
+
 .env
 .gitignore
-docker-compose.yml
 *.md
+docker-compose.yml

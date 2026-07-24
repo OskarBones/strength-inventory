@@ -95,9 +95,7 @@ export default function NextSevenDays ({
       } else {
         hours = gym.openingHoursEveryone[days[i]];
       }
-      if (hours) {
-        openingHours[days[i]] = hours.join('-');
-      }
+      openingHours[days[i]] = hours.join('-');
       exceptionReasons.push(undefined);
     }
   }

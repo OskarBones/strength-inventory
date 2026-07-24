@@ -25,7 +25,8 @@ export default function Gym ({ gym }: { gym: GymWithDistance }) {
           className='
             flex md:flex-col border-x border-t rounded-t-sm
             md:border-x-0 md:border-l md:border-y md:rounded-l-sm
-            md:rounded-tr-none bg-primary dark:bg-primary-dark p-3 md:w-14/30'
+            md:rounded-tr-none bg-primary dark:bg-primary-dark
+            py-3 pl-3 pr-1 md:w-27/60'
         >
           <div className='flex flex-col w-1/2 md:w-full'>
             <h2 className='font-bold'>

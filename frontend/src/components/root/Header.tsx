@@ -10,8 +10,10 @@ export default function Header () {
       <Link
         to='/gyms'
         activeOptions={{ exact: true }}
+        className='relative flex gap-3'
       >
-        strength inventory
+        <p className='py-1 text-xl'>strength inventory</p>
+        <p className='absolute -right-16 bottom-1.5 text-xs'>PREVIEW</p>
       </Link>
     </div>
   );

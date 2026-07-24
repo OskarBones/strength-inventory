@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
-import { MdOutlineStarRate } from 'react-icons/md';
-
+import Category from './Category';
 import Piece from './Piece';
 
 import {
@@ -16,70 +15,25 @@ import {
   SYSTEMS
 } from '@strength-inventory/schemas';
 
-interface CategoryProps {
-  name: string
-  equipment: GymGetEquipment[]
-  setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymGetEquipment | null>>
-}
-
-function Category ({ name, equipment, setClickedEquipment }: CategoryProps) {
-  let equipmentCount = 0;
-  equipment.forEach((piece) => {
-    equipmentCount += piece.gymequipment.count;
-  });
-
-  const equipmentList = equipment.map((piece) => (
-    <li key={piece.id}>
-      <button
-        className='
-          rounded-sm px-1 w-full text-left cursor-pointer
-          hover:bg-primary dark:hover:bg-background-dark active:font-semibold'
-        onClick={() => {
-          setClickedEquipment(piece);
-        }}
-      >
-        <p className='flex items-center'>
-          {piece.gymequipment.count < 5
-            ? (
-              <span className='font-light min-w-6'>
-                {piece.gymequipment.count}
-              </span>
-            )
-            : (
-              <span className='font-light min-w-6'>
-                {/* display counts higher than five as 5+, 10+, 15+...*/}
-                {Math.round(piece.gymequipment.count / 5) * 5}+
-              </span>
-            )}
-          <span>{piece.name}</span>
-          {piece.outOfProduction
-            ? <MdOutlineStarRate className='ml-1' />
-            : null}
-        </p>
-      </button>
-    </li>
-  ));
-
-  return (
-    <div>
-      <h3 className='mb-1 text-sm font-bold'>{name} ({equipmentCount})</h3>
-      {equipment.length > 0
-        ? (
-          <ul
-            className='flex flex-col gap-1 max-h-20 overflow-y-scroll text-xs'
-          >
-            {equipmentList}
-          </ul>
-        )
-        : <p className='text-xs'>-</p>}
-    </div>
-  );
-}
-
 export default function GymEquipment ({ gym }: { gym: GymGet }) {
+  const systemsScrollTopRef = useRef(0);
+  const barsAndPlatesScrollTopRef = useRef(0);
+  const freeWeightsScrollTopRef = useRef(0);
+  const attachmentsScrollTopRef = useRef(0);
+  const strMachinesScrollTopRef = useRef(0);
+  const accAndToolsScrollTopRef = useRef(0);
+  const cardioScrollTopRef = useRef(0);
+
+  const [modelView, setModelView] = useState(false);
   const [clickedEquipment, setClickedEquipment]
     = useState<GymGetEquipment | null>(null);
+  const [systemsSubcategory, setSystemsSubcategory] = useState('');
+  const [barsAndPlatesSubcategory, setBarsAndPlatesSubcategory] = useState('');
+  const [freeWeightsSubcategory, setFreeWeightsSubcategory] = useState('');
+  const [attachmentsSubcategory, setAttachmentsSubcategory] = useState('');
+  const [strMachinesSubcategory, setStrMachinesSubcategory] = useState('');
+  const [accAndToolsSubcategory, setAccAndToolsSubcategory] = useState('');
+  const [cardioSubcategory, setCardioSubcategory] = useState('');
 
   const equipment = gym.equipment;
 
@@ -182,7 +136,100 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
   });
 
   return (
-    <div className='flex flex-1 border-x border-b p-3'>
+    <div className='relative flex flex-col flex-1 gap-3 border-x border-b'>
+      <div
+        className={`
+          flex flex-col flex-1 gap-3 p-3
+          ${clickedEquipment
+      ? 'blur'
+      : ''
+    }`}
+      >
+        <div className='flex gap-2'>
+          <input
+            id='modelView'
+            name='modelView'
+            type='checkbox'
+            value='showModels'
+            checked={modelView}
+            onChange={() => {
+              setModelView(!modelView);
+            }}
+          />
+          <label htmlFor='modelView' className='text-sm'>show models</label>
+        </div>
+
+        <div className='flex flex-1'>
+          <div className='flex flex-col gap-2 pr-1 w-1/2'>
+            <Category
+              scrollTopRef={systemsScrollTopRef}
+              modelView={modelView}
+              name='systems'
+              equipment={systems}
+              selectedSubcategory={systemsSubcategory}
+              setSelectedSubcategory={setSystemsSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+            <Category
+              scrollTopRef={barsAndPlatesScrollTopRef}
+              modelView={modelView}
+              name='bars and plate types'
+              equipment={barsAndPlates}
+              selectedSubcategory={barsAndPlatesSubcategory}
+              setSelectedSubcategory={setBarsAndPlatesSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+            <Category
+              scrollTopRef={freeWeightsScrollTopRef}
+              modelView={modelView}
+              name='free weights'
+              equipment={freeWeights}
+              selectedSubcategory={freeWeightsSubcategory}
+              setSelectedSubcategory={setFreeWeightsSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+            <Category
+              scrollTopRef={attachmentsScrollTopRef}
+              modelView={modelView}
+              name='handle attachments'
+              equipment={handleAttachments}
+              selectedSubcategory={attachmentsSubcategory}
+              setSelectedSubcategory={setAttachmentsSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+          </div>
+          <div className='flex flex-col gap-2 pl-1 w-1/2'>
+            <Category
+              scrollTopRef={strMachinesScrollTopRef}
+              modelView={modelView}
+              name='strength machines'
+              equipment={strengthMachines}
+              selectedSubcategory={strMachinesSubcategory}
+              setSelectedSubcategory={setStrMachinesSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+            <Category
+              scrollTopRef={accAndToolsScrollTopRef}
+              modelView={modelView}
+              name='accessories and tools'
+              equipment={accessoriesAndTools}
+              selectedSubcategory={accAndToolsSubcategory}
+              setSelectedSubcategory={setAccAndToolsSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+            <Category
+              scrollTopRef={cardioScrollTopRef}
+              modelView={modelView}
+              name='cardio'
+              equipment={cardio}
+              selectedSubcategory={cardioSubcategory}
+              setSelectedSubcategory={setCardioSubcategory}
+              setClickedEquipment={setClickedEquipment}
+            />
+          </div>
+        </div>
+      </div>
+
       {clickedEquipment
         ? (
           <Piece
@@ -190,49 +237,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
             setClickedEquipment={setClickedEquipment}
           />
         )
-        : (
-          <div className='flex flex-1 min-w-0'>
-            <div className='flex flex-col gap-2 pr-1 w-1/2'>
-              <Category
-                name='systems'
-                equipment={systems}
-                setClickedEquipment={setClickedEquipment}
-              />
-              <Category
-                name='bars and plates'
-                equipment={barsAndPlates}
-                setClickedEquipment={setClickedEquipment}
-              />
-              <Category
-                name='free weights'
-                equipment={freeWeights}
-                setClickedEquipment={setClickedEquipment}
-              />
-              <Category
-                name='handle attachments'
-                equipment={handleAttachments}
-                setClickedEquipment={setClickedEquipment}
-              />
-            </div>
-            <div className='flex flex-col gap-2 pl-1 w-1/2'>
-              <Category
-                name='strength machines'
-                equipment={strengthMachines}
-                setClickedEquipment={setClickedEquipment}
-              />
-              <Category
-                name='accessories and tools'
-                equipment={accessoriesAndTools}
-                setClickedEquipment={setClickedEquipment}
-              />
-              <Category
-                name='cardio'
-                equipment={cardio}
-                setClickedEquipment={setClickedEquipment}
-              />
-            </div>
-          </div>
-        )}
+        : null}
     </div>
   );
 }

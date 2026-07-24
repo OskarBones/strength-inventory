@@ -16,10 +16,14 @@ interface OpeningHoursExceptionsProps {
   exceptions: OpeningHoursException[]
   setExceptions:
   React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
+  setParentNotification: React.Dispatch<React.SetStateAction<{
+    type: string;
+    message: string;
+  }>>
 }
 
 export default function OpeningHoursExceptions ({
-  exceptions, setExceptions
+  exceptions, setExceptions, setParentNotification
 }: OpeningHoursExceptionsProps) {
   const iconMode = use(IconContext);
 
@@ -85,6 +89,7 @@ export default function OpeningHoursExceptions ({
             exceptions={exceptions}
             setExceptions={setExceptions}
             setAddException={setAddException}
+            setParentNotification={setParentNotification}
           />
         )
         : ''}
@@ -113,6 +118,7 @@ export default function OpeningHoursExceptions ({
                   exceptions={exceptions}
                   setExceptions={setExceptions}
                   setAddException={setAddException}
+                  setParentNotification={setParentNotification}
                 />
                 <hr />
               </li>

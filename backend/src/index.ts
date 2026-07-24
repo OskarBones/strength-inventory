@@ -26,7 +26,10 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const pathToFrontendBuild = path.join(__dirname, '/dist');
+const pathToFrontendBuild = NODE_ENV === 'production'
+  // prod path is for Dockerfile, will fail locally
+  ? path.join(__dirname, '../../dist')
+  : path.join(__dirname, '/dist');
 
 app.use(express.static(pathToFrontendBuild));
 if (NODE_ENV === 'development') {

@@ -6,6 +6,8 @@ import { AuthContext } from './utils/contexts';
 import { baseUrl } from './utils/api';
 import { isTokenValid } from './utils/syncToken';
 
+import Loading from './components/Loading';
+
 import {
   LoginRefreshResponseSchema,
   LoginResponseSchema,
@@ -78,7 +80,11 @@ export default function AuthProvider (
   }, [token]);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className='flex flex-col pt-19 h-svh'>
+        <Loading />
+      </div>
+    );
   }
 
   async function login (username: string, password: string) {
@@ -108,7 +114,7 @@ export default function AuthProvider (
         throw Error('Authentication failed.');
       }
     } else {
-      throw Error('Authentication failed.');
+      throw Error('Incorrect username or password.');
     }
   }
 

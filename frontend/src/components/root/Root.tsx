@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, useRouterState } from '@tanstack/react-router';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
@@ -8,11 +8,14 @@ import { IconContext } from '../../utils/contexts';
 
 import Footer from './Footer';
 import Header from './Header';
+import Loading from '../Loading';
 import Navbar from './Navbar';
 import SidebarLeft from './SidebarLeft';
 import SidebarRight from './SidebarRight';
 
 export default function Root () {
+  const { isLoading } = useRouterState();
+
   const [iconMode, setIconMode] = useState(() => {
     const savedVisuals = localStorage.getItem('visuals');
     if (savedVisuals === 'icons') {
@@ -66,15 +69,19 @@ export default function Root () {
           setSidebarRightVisible={setSidebarRightVisible}
           iconMode={iconMode}
         />
+
         <div className='relative flex flex-1 flex-col overflow-hidden'>
           <div
             className='
               flex flex-1 flex-col bg-background dark:bg-background-dark
               overflow-y-auto text-primary-text dark:text-primary-text-dark'
           >
-            <Outlet />
+            {isLoading
+              ? <Loading />
+              : <Outlet />}
           </div>
           <Footer />
+
           <SidebarLeft
             sidebarLeftVisible={sidebarLeftVisible}
             setSidebarLeftVisible={setSidebarLeftVisible}
@@ -90,6 +97,7 @@ export default function Root () {
           />
         </div>
       </div>
+
       <ReactQueryDevtools />
       <TanStackRouterDevtools />
     </IconContext >

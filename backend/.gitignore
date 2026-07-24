@@ -1,6 +1,7 @@
 build
-node_modules
+dev
 dist
+node_modules
+
 .env
 docker-compose.yml
-todo.md

@@ -1,45 +1,44 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { getCities, getDistricts } from '../../../utils/api';
+import calcDistanceInKm from '../../../utils/calcDistanceInKm';
 
 import type { CityGet, District, DistrictGet }
   from '@strength-inventory/schemas';
 
 interface FiltersProps {
+  cities: CityGet[]
   selectedCity: CityGet | null
   setSelectedCity: React.Dispatch<React.SetStateAction<CityGet | null>>
+  districts: DistrictGet[]
   selectedDistrict: DistrictGet | null
   setSelectedDistrict: React.Dispatch<React.SetStateAction<DistrictGet | null>>
 }
 
 export default function Filters ({
-  selectedCity, setSelectedCity, selectedDistrict, setSelectedDistrict
+  cities,
+  selectedCity,
+  setSelectedCity,
+  districts,
+  selectedDistrict,
+  setSelectedDistrict
 }: FiltersProps) {
-  const citiesQuery = useQuery({
-    queryKey: ['cities'],
-    queryFn: () => getCities()
-  });
-
-  const districtsQuery = useQuery({
-    queryKey: ['districts'],
-    queryFn: () => getDistricts()
-  });
-
-  if (citiesQuery.isPending || districtsQuery.isPending) {
-    return <p>Loading...</p>;
-  }
-
-  if (citiesQuery.isError) {
-    return <p>Error: {citiesQuery.error.message}</p>;
-  }
-
-  if (districtsQuery.isError) {
-    return <p>Error: {districtsQuery.error.message}</p>;
-  }
-
   let filteredDistricts: District[] = [];
   if (selectedCity) {
-    filteredDistricts = selectedCity.districts;
+    filteredDistricts = selectedCity.districts
+      .toSorted((a: District, b: District) => {
+        const aDistance = calcDistanceInKm({
+          lat1: a.latitude,
+          lon1: a.longitude,
+          lat2: selectedCity.latitude,
+          lon2: selectedCity.longitude
+        });
+        const bDistance = calcDistanceInKm({
+          lat1: b.latitude,
+          lon1: b.longitude,
+          lat2: selectedCity.latitude,
+          lon2: selectedCity.longitude
+        });
+
+        return aDistance - bDistance;
+      });
   }
 
   return (
@@ -78,7 +77,7 @@ export default function Filters ({
             : ''}
           className='border rounded-sm p-1 pl-5 w-50 text-center cursor-pointer'
           onChange={(event) => {
-            const newSelectedCity = citiesQuery.data
+            const newSelectedCity = cities
               .find((city) => city.name === event.target.value);
             // truthy when the -- city -- option is not selected
             if (newSelectedCity) {
@@ -90,7 +89,7 @@ export default function Filters ({
           }}
         >
           <option value=''>-- city --</option>
-          {citiesQuery.data.map((city) => (
+          {cities.map((city) => (
             <option key={city.id} value={city.name}>
               {city.name} ({city.country})
             </option>
@@ -116,7 +115,7 @@ export default function Filters ({
             : ''}
           className='border rounded-sm p-1 pl-5 w-50 text-center cursor-pointer'
           onChange={(event) => {
-            const newSelectedDistrict = districtsQuery.data
+            const newSelectedDistrict = districts
               .find((district) => district.name === event.target.value);
             // truthy when the -- district -- option is not selected
             if (newSelectedDistrict) {

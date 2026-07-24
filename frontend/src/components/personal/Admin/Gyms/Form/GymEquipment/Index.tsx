@@ -1,9 +1,10 @@
-import { use, useState } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 
 import {
   useMutation, useQuery, useQueryClient
 } from '@tanstack/react-query';
 import { CgGym } from 'react-icons/cg';
+import { MdClear } from 'react-icons/md';
 import { TbEdit } from 'react-icons/tb';
 
 import { AuthContext, IconContext } from '../../../../../../utils/contexts';
@@ -15,10 +16,12 @@ import {
   setGymEquipmentCount
 } from '../../../../../../utils/api';
 
-import AddNew from './AddNew';
 import AvailableList from './AvailableList';
 import CurrentList from './CurrentList';
 import EditFormReturnButton from '../EditFormReturnButton';
+import Error from '../../../../../Error';
+import Form from './Form';
+import Loading from '../../../../../Loading';
 
 import { type Equipment } from '@strength-inventory/schemas';
 
@@ -37,6 +40,9 @@ export default function GymEquipment (
 ) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+
+  const scrollTopRef = useRef(0);
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -122,22 +128,26 @@ export default function GymEquipment (
   const [search, setSearch] = useState('');
   const [equipmentToAdd, setEquipmentToAdd] = useState<Equipment | null>(null);
 
+  useEffect(() => {
+    searchRef.current?.focus();
+  });
+
   if (gymEquipmentQuery.isPending || equipmentQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (gymEquipmentQuery.isError || equipmentQuery.isError) {
     if (gymEquipmentQuery.isError && equipmentQuery.isError) {
       return (
         <div>
-          <p>Error: {gymEquipmentQuery.error.message}</p>
-          <p>Error: {equipmentQuery.error.message}</p>
+          <Error message={gymEquipmentQuery.error.message} />
+          <Error message={equipmentQuery.error.message} />
         </div>
       );
     } else if (gymEquipmentQuery.isError) {
-      return <p>Error: {gymEquipmentQuery.error.message}</p>;
+      return <Error message={gymEquipmentQuery.error.message} />;
     } else if (equipmentQuery.isError) {
-      return <p>Error: {equipmentQuery.error.message}</p>;
+      return <Error message={equipmentQuery.error.message} />;
     }
   }
 
@@ -155,7 +165,9 @@ export default function GymEquipment (
   if (search !== '') {
     filteredEquipment = equipment.filter((piece) => {
       return (
-        piece.name.toLowerCase().includes(search.toLowerCase()));
+        piece.name.toLowerCase().includes(search.toLowerCase())
+        || piece.subcategory.toLowerCase().includes(search.toLowerCase())
+        || piece.manufacturer.toLowerCase().includes(search.toLowerCase()));
     });
   }
 
@@ -185,32 +197,52 @@ export default function GymEquipment (
           ? !equipmentToAdd
             ? (
               <AvailableList
+                scrollTopRef={scrollTopRef}
                 currentEquipment={gymEquipment}
                 filteredEquipment={filteredEquipment}
                 setEquipmentToAdd={setEquipmentToAdd}
               />
             )
             : (
-              <AddNew
+              <Form
                 piece={equipmentToAdd}
                 gymId={gymId}
+                currentEquipment={gymEquipment}
                 addEquipmentMutation={addEquipmentMutation}
+                setEquipmentCountMutation={setEquipmentCountMutation}
+                removeEquipmentMutation={removeEquipmentMutation}
                 setEquipmentToAdd={setEquipmentToAdd}
+                setParentNotification={setParentNotification}
               />
             )
           : (
             null
           )}
-        <div className='flex flex-col gap-1 mt-1 mb-3'>
+        <div
+          hidden={equipmentToAdd !== null}
+          className='
+          flex gap-1 mt-1 mb-3 bg-background dark:bg-background-dark px-1'
+        >
           <input
+            ref={searchRef}
             type='search'
             value={search}
             placeholder='search to add new equipment'
-            className='bg-background dark:bg-background-dark pl-1'
+            autoFocus
+            className='flex-1 px-1'
             onChange={(event) => {
               setSearch(event.target.value);
             }}
           />
+          <button
+            className='cursor-pointer'
+            onClick={() => {
+              setSearch('');
+              searchRef.current?.focus();
+            }}
+          >
+            <MdClear className='text-2xl' />
+          </button>
         </div>
         <EditFormReturnButton
           model='equipment'

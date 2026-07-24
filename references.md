@@ -5,3 +5,5 @@
 [3] Haversine formula implementation for calculating distances between gyms was adapted from this opening on Stack Overflow: https://stackoverflow.com/questions/18883601/function-to-calculate-distance-between-two-coordinates
 
 [4] db.ts of the backend is mostly copied from Part 13 of the Full Stack Open course by the University of Helsinki: https://courses.mooc.fi/org/uh-cs/courses/full-stack-open-relational-databases/chapter-4
+
+[5] Favicon is GiGymBag from react-icons/gi made transparent.

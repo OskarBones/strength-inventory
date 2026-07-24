@@ -33,7 +33,7 @@ interface CategoryProps {
   }, Error, {
     relationshipId: string;
     count: number;
-  }>,
+  }>
   removeEquipmentMutation: UseMutationResult<{
     gymId: string,
     equipmentId: string
@@ -59,7 +59,17 @@ function Category ({
             flex flex-1 items-center gap-1
             overflow-hidden text-clip whitespace-nowrap'
         >
-          <p>{piece.name}</p>
+          {piece.url
+            ? (
+              <a
+                href={piece.url}
+                target='_blank'
+                className='underline'
+              >
+                {piece.name}
+              </a>
+            )
+            : <p>{piece.name}</p>}
           {piece.outOfProduction
             ? <MdOutlineStarRate className='text-base' />
             : null}
@@ -140,7 +150,7 @@ function Category ({
   ));
 
   return (
-    <div className='flex flex-1 flex-col'>
+    <div className='flex flex-col'>
       <h3 className='mb-1 text-sm font-bold'>{name}</h3>
       {equipment.length > 0
         ? (

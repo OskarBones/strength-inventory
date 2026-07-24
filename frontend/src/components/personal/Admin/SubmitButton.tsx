@@ -24,16 +24,13 @@ export default function SubmitButton (
     <button
       type='submit'
       disabled={isPending}
-      className={`
+      className='
         flex justify-center border rounded-sm
         bg-green dark:bg-green-dark px-3 w-full
         text-primary-text dark:text-primary-text-dark text-base
-        hover:border-white dark:hover:border-black
-        active:border-white dark:active:border-black active:font-bold
-      ${!isPending
-      ? 'cursor-pointer'
-      : 'cursor-progress'
-    }`}
+        disabled:cursor-progress cursor-pointer
+        enabled:hover:inset-ring
+        active:inset-ring active:font-bold'
     >
       {formMode === 'create'
         ? !isPending

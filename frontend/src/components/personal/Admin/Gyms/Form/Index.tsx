@@ -24,8 +24,10 @@ import { getCities, getDistricts, getGym, postGym, putGym }
   from '../../../../../utils/api';
 import handleSubmitError from '../../../../../utils/handleSubmitError';
 
+import Error from '../../../../Error';
 import GymEquipment from './GymEquipment/Index';
 import GymMemberships from './GymMemberships/Index';
+import Loading from '../../../../Loading';
 import Notification from '../../../../Notification';
 import OpeningHoursDayInput from './OpeningHoursDayInput';
 import OpeningHoursExceptions from './OpeningHoursExceptions/Index';
@@ -203,6 +205,11 @@ export default function Form (
   const [firstRender, setFirstRender] = useState(true);
   const [originalName, setOriginalName] = useState('');
   const [hoursChanged, setHoursChanged] = useState(false);
+  const [sevenDaysBefore] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 7);
+    return date;
+  });
 
   const [notification, setNotification] = useState({
     type: '',
@@ -265,19 +272,19 @@ export default function Form (
   if ((selectedGymId && gymQuery.isPending)
     || citiesQuery.isPending
     || districtsQuery.isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (selectedGymId && gymQuery.isError) {
-    return <p>Error: {gymQuery.error.message}</p>;
+    return <Error message={gymQuery.error.message} />;
   }
 
   if (citiesQuery.isError) {
-    return <p>Error: {citiesQuery.error.message}</p>;
+    return <Error message={citiesQuery.error.message} />;
   }
 
   if (districtsQuery.isError) {
-    return <p>Error: {districtsQuery.error.message}</p>;
+    return <Error message={districtsQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.
@@ -344,8 +351,15 @@ export default function Form (
       openingHoursVisible: openingHoursVisible,
       notes: notes
     });
-    setExceptions(openingHoursExceptions.data);
-    setOriginalExceptions(openingHoursExceptions.data);
+
+    /* This is the only place in the entire application where old exceptions get
+    deleted. Notice that these changes are disregarded
+    if the admin returns without saving. */
+    const prunedExceptions = openingHoursExceptions.data.filter((exception) => {
+      return exception.date > sevenDaysBefore;
+    });
+    setExceptions(prunedExceptions);
+    setOriginalExceptions(prunedExceptions);
 
     setFirstRender(false);
     setOriginalName(name);
@@ -414,6 +428,7 @@ export default function Form (
                 type='text'
                 value={gym.name}
                 required
+                autoFocus={formMode === 'create'}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setGym({ ...gym, name: event.target.value });
@@ -819,7 +834,9 @@ export default function Form (
         </form>
 
         <OpeningHoursExceptions
-          exceptions={exceptions} setExceptions={setExceptions}
+          exceptions={exceptions}
+          setExceptions={setExceptions}
+          setParentNotification={setNotification}
         />
 
         {/* Actual submit button outside the <form>
@@ -832,10 +849,9 @@ export default function Form (
             flex justify-center mt-3 border rounded-sm
             bg-green dark:bg-green-dark px-3 w-full
             text-primary-text dark:text-primary-text-dark text-base
-            hover:border-white hover:dark:border-black
-            active:border-white active:dark:border-black active:font-bold
+            active:inset-ring active:font-bold
             ${!isPending
-      ? 'cursor-pointer'
+      ? 'cursor-pointer hover:inset-ring'
       : 'cursor-progress'
     }`}
         >

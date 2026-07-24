@@ -242,27 +242,36 @@ export type UserFrontend = z.infer<typeof UserFrontendSchema>
 export const EquipmentCategoryEnum = z.enum(['accessoryOrTool', 'barOrPlate', 'cardio', 'freeWeight', 'handleAttachment', 'strengthMachine', 'system']);
 export type EquipmentCategory = z.infer<typeof EquipmentCategoryEnum>;
 
+/* NOTE: the word 'plate' shall only be used in BARS_AND_PLATES
+subcategories for loadable plates, because the frontend does
+piece.subcategory.includes('plate') to identify them */
+
 export const SYSTEMS = [
   'rack or rig',
   'adjustable crossover cable station',
   'high/low crossover cable station',
+  'high/low duplex cable station',
   'adjustable cable station',
   'high cable station',
   'low cable station',
   'smith machine',
+  'split squat stand',
   'flat bench press',
   'incline bench press',
+  'decline bench press',
+  'shoulder press bench',
   'adjustable bench',
   'fixed bench',
-  'preacher curl',
+  'incline biceps curl',
   'rowing cable station',
   'pulldown cable station',
-  'dip station',
+  'seal row',
   'landmine',
+  'dip station',
   'hip thrust pad',
-  'decline bench',
   'back extension',
-  'captain\'s chair',
+  'abs bench',
+  'stall bars',
   'safety arm',
   'platform',
   'other'
@@ -271,31 +280,45 @@ export const SystemCategorySchema = z.enum(SYSTEMS)
 export type SystemCategory = z.infer<typeof SystemCategorySchema>
 
 export const BARS_AND_PLATES = [
-  '20 kg bar',
-  '15 kg bar',
-  '10 kg bar',
+  '25 kg barbell',
+  '20 kg barbell',
+  '15 kg barbell',
+  '10 kg barbell',
   'trap bar',
+  'safety squat bar',
+  'swiss bar',
+  'other barbell',
   'EZ bar',
+  'tricep bar',
+  'strongman log',
+  'barbell rowing handle',
+  'deadlift jack',
+  'barbell pad',
+  'collar pair',
+  'other',
+  '50 kg plate',
+  '40 kg plate',
   '25 kg plate',
   '20 kg plate',
   '15 kg plate',
   '10 kg plate',
   '5 kg plate',
   '2.5 kg plate',
+  '2 kg plate',
+  '1.5 kg plate',
   '1.25 kg plate',
+  '1 kg plate',
   '0.5 kg plate',
-  '0.25 kg plate',
-  'barbell pad',
-  'collar pair',
-  'other'
+  '0.25 kg plate'
 ];
 export const BarOrPlateCategorySchema = z.enum(BARS_AND_PLATES)
 export type BarOrPlateCategory = z.infer<typeof BarOrPlateCategorySchema>
 
 export const FREE_WEIGHTS = [
   'dumbbell',
-  'barbell',
+  'fixed barbell',
   'kettlebell',
+  'sandbag',
   'other'
 ];
 export const FreeWeightCategorySchema = z.enum(FREE_WEIGHTS)
@@ -306,9 +329,10 @@ export const HANDLE_ATTACHMENTS = [
   'rope',
   'rowing handle',
   'pulldown bar',
-  'EZ pulldown bar',
+  'curved bar',
   'arms handle',
   'ab crunch handle',
+  'arm strap',
   'ankle strap',
   'other'
 ];
@@ -316,28 +340,36 @@ export const HandleAttachmentCategorySchema = z.enum(HANDLE_ATTACHMENTS)
 export type handleAttachmentCategory = z.infer<typeof HandleAttachmentCategorySchema>
 
 export const STRENGTH_MACHINES = [
-  'hack squat',
+  'squat',
   'leg press',
   'glute machine',
+  'leg extension + leg curl',
   'leg extension',
   'leg curl',
-  'assisted dip + pull-up',
-  'assisted dip',
-  'assisted pull-up',
+  'dip + pull-up',
+  'dip',
+  'pull-up',
   'row',
   'pulldown',
+  'pullover',
   'rear delts machine + pec deck',
   'rear delts machine',
   'pec deck',
   'chest press',
   'shoulder press',
+  'lateral raise',
+  'tricep extension',
+  'biceps curl',
   'abdominal crunch + back extension',
   'abdominal crunch',
   'back extension',
-  'rotary torso',
+  'torso rotation',
   'calf machine',
-  'inner thigh machine',
-  'outer thigh machine',
+  'forearm machine',
+  'hip abduction + hip adduction',
+  'hip abduction',
+  'hip adduction',
+  'weight stack add on',
   'other'
 ];
 export const StrengthMachineCategorySchema = z.enum(STRENGTH_MACHINES)
@@ -345,21 +377,32 @@ export type StrengthMachineCategory = z.infer<typeof StrengthMachineCategorySche
 
 export const ACCESSORIES_AND_TOOLS = [
   'step platform',
-  'plyobox',
+  'plyo box',
   'lifting belt',
   'dip belt',
   'powerlifting mat',
   'squat ramp',
+  'wearable strap / wrap / grip',
   'suspension strap',
   'hanging strap',
-  'exercise stick',
+  'bar grip',
+  'training stick',
   'exercise mat',
-  'resistance band',
+  'ab wheel',
+  'ab mat',
+  'resistance band/tube',
   'roller or arch',
   'inflated ball',
+  'medicine ball',
+  'yoga block',
   'jump rope',
   'balance trainer',
-  'push-up handle pair',
+  'push-up grip pair',
+  'hand gripper',
+  'head harness',
+  'sled strap',
+  'boxing gloves',
+  'gymnastics equipment',
   'other'
 ];
 export const AccessoryOrToolCategorySchema = z.enum(ACCESSORIES_AND_TOOLS)
@@ -374,6 +417,8 @@ export const CARDIO = [
   'rower',
   'treadmill',
   'skiing machine',
+  'stepper',
+  'punching bag',
   'other'
 ];
 export const CardioCategorySchema = z.enum(CARDIO)
@@ -609,6 +654,10 @@ export type GymMembershipPostAndDelete = z.infer<typeof GymMembershipPostAndDele
 
 export const OpeningHoursExceptionSchema = z.object({
   id: z.uuidv4(),
+  /* Frontend's gym form handles deleting old exceptions upon opening the form.
+  Since old exceptions can, in theory, be as old as the website itself,
+  Zod only enforces date to be any date to avoid having
+  separate schemas for GET and POST/PUT requests only for exceptions. */
   date: z.coerce.date(),
   hours: ExceptionTimeSchema,
   reason: z.string().min(1),
