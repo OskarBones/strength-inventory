@@ -8,7 +8,7 @@ export default function notFoundComponent () {
         <Link
           to='/'
           className='
-            flex flex-1 justify-center border
+            flex flex-1 justify-center border rounded-sm
             bg-tertiary dark:bg-tertiary-dark p-3 w-35
             text-primary-text dark:text-primary-text-dark
             hover:inset-ring active:font-bold'

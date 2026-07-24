@@ -1,4 +1,4 @@
-import { use, useActionState, useState } from 'react';
+import { use, useActionState, useRef, useState } from 'react';
 
 import {
   skipToken, useMutation, useQuery, useQueryClient
@@ -53,6 +53,9 @@ export default function Form ({
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+
+  const manufacturerInputRef = useRef<HTMLInputElement>(null);
+  const weightInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -176,6 +179,8 @@ export default function Form ({
   with the form data in submit() */
   const [availableWeights, setAvailableWeights] = useState<number[]>([]);
   const [firstRender, setFirstRender] = useState(true);
+  const [unknownManufacturer, setUnknownManufacturer] = useState(false);
+  const [unknownCode, setUnknownCode] = useState(false);
 
   const [notification, setNotification] = useState({
     type: '',
@@ -322,6 +327,8 @@ export default function Form ({
       notes: notes
     });
     setAvailableWeights(availableWeights);
+    setUnknownManufacturer(manufacturer === 'unknown');
+    setUnknownCode(code === 'unknown');
 
     setFirstRender(false);
   }
@@ -417,6 +424,7 @@ export default function Form ({
                 className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
                 onChange={(event) => {
                   setPiece({ ...piece, subcategory: event.target.value });
+                  manufacturerInputRef.current?.focus();
                 }}
               >
                 <option value=''>-- please select a subcategory --</option>
@@ -426,34 +434,99 @@ export default function Form ({
               </select>
             </div>
 
-            <div className='flex flex-col'>
-              <label htmlFor='manufacturer'>manufacturer*</label>
-              <input
-                id='manufacturer'
-                name='manufacturer'
-                type='text'
-                value={piece.manufacturer}
-                required
-                className={FORM_INPUT_CLASSES}
-                onChange={(event) => {
-                  setPiece({ ...piece, manufacturer: event.target.value });
-                }}
-              />
+            <div className='flex gap-3'>
+              <div className='flex flex-1 flex-col'>
+                <label htmlFor='manufacturer'>manufacturer*</label>
+                <input
+                  id='manufacturer'
+                  name='manufacturer'
+                  ref={manufacturerInputRef}
+                  type='text'
+                  value={piece.manufacturer}
+                  disabled={piece.manufacturer === 'unknown'}
+                  required
+                  className={FORM_INPUT_CLASSES}
+                  onChange={(event) => {
+                    setPiece({ ...piece, manufacturer: event.target.value });
+                  }}
+                />
+              </div>
+
+              <div className='flex items-end gap-1'>
+                <label htmlFor='unknownManufacturer'>unknown</label>
+                <input
+                  id='unknownManufacturer'
+                  name='unknownManufacturer'
+                  type='checkbox'
+                  value='unknownManufacturer'
+                  checked={piece.manufacturer === 'unknown'}
+                  onChange={() => {
+                    setUnknownManufacturer(!unknownManufacturer);
+                    if (!unknownManufacturer) {
+                      setPiece({
+                        ...piece, manufacturer: 'unknown'
+                      });
+                    } else {
+                      if (originalPiece.manufacturer === 'unknown') {
+                        setPiece({
+                          ...piece, manufacturer: ''
+                        });
+                      } else {
+                        setPiece({
+                          ...piece, manufacturer: originalPiece.manufacturer
+                        });
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
 
-            <div className='flex flex-col'>
-              <label htmlFor='code'>code*</label>
-              <input
-                id='code'
-                name='code'
-                type='text'
-                value={piece.code}
-                required
-                className={FORM_INPUT_CLASSES}
-                onChange={(event) => {
-                  setPiece({ ...piece, code: event.target.value });
-                }}
-              />
+            <div className='flex gap-3'>
+              <div className='flex flex-1 flex-col'>
+                <label htmlFor='code'>code*</label>
+                <input
+                  id='code'
+                  name='code'
+                  type='text'
+                  value={piece.code}
+                  disabled={piece.code === 'unknown'}
+                  required
+                  className={FORM_INPUT_CLASSES}
+                  onChange={(event) => {
+                    setPiece({ ...piece, code: event.target.value });
+                  }}
+                />
+              </div>
+
+              <div className='flex items-end gap-1'>
+                <label htmlFor='unknownCode'>unknown</label>
+                <input
+                  id='unknownCode'
+                  name='unknownCode'
+                  type='checkbox'
+                  value='unknownCode'
+                  checked={piece.code === 'unknown'}
+                  onChange={() => {
+                    setUnknownCode(!unknownCode);
+                    if (!unknownCode) {
+                      setPiece({
+                        ...piece, code: 'unknown'
+                      });
+                    } else {
+                      if (originalPiece.code === 'unknown') {
+                        setPiece({
+                          ...piece, code: ''
+                        });
+                      } else {
+                        setPiece({
+                          ...piece, code: originalPiece.code
+                        });
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
 
             <div className='flex flex-col'>
@@ -465,6 +538,7 @@ export default function Form ({
                 className={`${FORM_INPUT_CLASSES} cursor-pointer`}
                 onChange={(event) => {
                   setPiece({ ...piece, weightUnit: event.target.value });
+                  weightInputRef.current?.focus();
                 }}
               >
                 <option value=''>-- weight unit for values below --</option>
@@ -478,6 +552,7 @@ export default function Form ({
               <input
                 id='weight'
                 name='weight'
+                ref={weightInputRef}
                 type='number'
                 value={piece.weight}
                 min={0.01}

@@ -9,6 +9,8 @@ import { useQuery } from '@tanstack/react-query';
 import { getMembershipsByCountry } from '../../../../../../utils/api';
 import { IconContext } from '../../../../../../utils/contexts';
 
+import Error from '../../../../../Error';
+import Loading from '../../../../../Loading';
 import { Form as MembershipForm } from '../../../Memberships/Form/Index';
 import MembershipList from '../../../MembershipList';
 import ReturnButton from '../../../ReturnButton';
@@ -51,11 +53,11 @@ export default function Form ({
   const [createMode, setCreateMode] = useState('');
 
   if (isPending) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
-    return <p>Error: {error.message}</p>;
+    return <Error message={error.message} />;
   }
 
   const chainMemberships = data.filter((membership) => {

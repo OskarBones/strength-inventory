@@ -77,6 +77,7 @@ export default function AvailableWeights ({
                   = availableWeights
                     .filter((availableWeight) => availableWeight !== weight);
                 setAvailableWeights(newWeights);
+                newWeightInputRef.current?.focus();
               }}
             >
               {weight}
