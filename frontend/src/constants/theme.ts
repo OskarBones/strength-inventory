@@ -9,6 +9,7 @@ export const PLUS_EDIT_MINUS_BUTTON_CLASSES
 export const FORM_INPUT_CLASSES
   = `border bg-tertiary dark:bg-tertiary-dark pl-1
     disabled:bg-secondary dark:disabled:bg-secondary-dark
+    read-only:bg-secondary dark:read-only:bg-secondary-dark
     invalid:border-red dark:invalid:border-red-dark`;
 
 export const FORM_RETURN_BUTTON_CLASSES

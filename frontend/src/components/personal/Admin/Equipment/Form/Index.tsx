@@ -443,7 +443,7 @@ export default function Form ({
                   ref={manufacturerInputRef}
                   type='text'
                   value={piece.manufacturer}
-                  disabled={piece.manufacturer === 'unknown'}
+                  readOnly={piece.manufacturer === 'unknown'}
                   required
                   className={FORM_INPUT_CLASSES}
                   onChange={(event) => {
@@ -490,7 +490,7 @@ export default function Form ({
                   name='code'
                   type='text'
                   value={piece.code}
-                  disabled={piece.code === 'unknown'}
+                  readOnly={piece.code === 'unknown'}
                   required
                   className={FORM_INPUT_CLASSES}
                   onChange={(event) => {
