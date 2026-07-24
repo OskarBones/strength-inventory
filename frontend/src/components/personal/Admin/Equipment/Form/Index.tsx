@@ -425,7 +425,9 @@ export default function Form ({
                 className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
                 onChange={(event) => {
                   setPiece({ ...piece, subcategory: event.target.value });
-                  manufacturerInputRef.current?.focus();
+                  if (!unknownManufacturer) {
+                    manufacturerInputRef.current?.focus();
+                  }
                 }}
               >
                 <option value=''>-- please select a subcategory --</option>
