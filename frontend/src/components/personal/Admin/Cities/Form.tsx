@@ -1,4 +1,4 @@
-import { use, useActionState, useState } from 'react';
+import { use, useActionState, useRef, useState } from 'react';
 
 import {
   skipToken, useMutation, useQuery, useQueryClient
@@ -45,6 +45,8 @@ export default function Form ({
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   const queryClient = useQueryClient();
 
@@ -251,6 +253,7 @@ export default function Form ({
                 className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
                 onChange={(event) => {
                   setCity({ ...city, country: event.target.value });
+                  nameInputRef.current?.focus();
                 }}
               >
                 <option value=''>-- please select a country</option>
@@ -267,6 +270,7 @@ export default function Form ({
               <input
                 id='name'
                 name='name'
+                ref={nameInputRef}
                 type='text'
                 value={city.name}
                 required

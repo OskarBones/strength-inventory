@@ -297,6 +297,7 @@ export const BARS_AND_PLATES = [
   'collar pair',
   'other',
   '50 kg plate',
+  '40 kg plate',
   '25 kg plate',
   '20 kg plate',
   '15 kg plate',
@@ -315,7 +316,7 @@ export type BarOrPlateCategory = z.infer<typeof BarOrPlateCategorySchema>
 
 export const FREE_WEIGHTS = [
   'dumbbell',
-  'barbell',
+  'fixed barbell',
   'kettlebell',
   'sandbag',
   'other'
@@ -381,18 +382,19 @@ export const ACCESSORIES_AND_TOOLS = [
   'dip belt',
   'powerlifting mat',
   'squat ramp',
-  'lifting strap',
+  'wearable strap / wrap / grip',
   'suspension strap',
   'hanging strap',
   'bar grip',
-  'exercise stick',
+  'training stick',
   'exercise mat',
-  'ab roller',
+  'ab wheel',
   'ab mat',
   'resistance band/tube',
   'roller or arch',
   'inflated ball',
   'medicine ball',
+  'yoga block',
   'jump rope',
   'balance trainer',
   'push-up grip pair',
@@ -400,6 +402,7 @@ export const ACCESSORIES_AND_TOOLS = [
   'head harness',
   'sled strap',
   'boxing gloves',
+  'gymnastics equipment',
   'other'
 ];
 export const AccessoryOrToolCategorySchema = z.enum(ACCESSORIES_AND_TOOLS)

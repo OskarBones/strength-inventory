@@ -428,6 +428,7 @@ export default function Form (
                 type='text'
                 value={gym.name}
                 required
+                autoFocus={formMode === 'create'}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setGym({ ...gym, name: event.target.value });

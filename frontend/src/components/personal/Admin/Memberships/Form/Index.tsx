@@ -497,6 +497,7 @@ export function Form (
                 value={membership.name}
                 disabled={readOnly}
                 required
+                autoFocus={formMode === 'create'}
                 className={FORM_INPUT_CLASSES}
                 onChange={(event) => {
                   setMembership({ ...membership, name: event.target.value });

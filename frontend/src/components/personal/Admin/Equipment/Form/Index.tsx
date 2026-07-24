@@ -366,6 +366,7 @@ export default function Form ({
                   type='text'
                   value={piece.name}
                   required
+                  autoFocus={formMode === 'create'}
                   className={FORM_INPUT_CLASSES}
                   onChange={(event) => {
                     setPiece({ ...piece, name: event.target.value });
@@ -445,7 +446,9 @@ export default function Form ({
                   value={piece.manufacturer}
                   readOnly={piece.manufacturer === 'unknown'}
                   required
-                  className={FORM_INPUT_CLASSES}
+                  className={`
+                    ${FORM_INPUT_CLASSES}
+                    read-only:bg-secondary dark:read-only:bg-secondary-dark`}
                   onChange={(event) => {
                     setPiece({ ...piece, manufacturer: event.target.value });
                   }}
@@ -492,7 +495,9 @@ export default function Form ({
                   value={piece.code}
                   readOnly={piece.code === 'unknown'}
                   required
-                  className={FORM_INPUT_CLASSES}
+                  className={`
+                    ${FORM_INPUT_CLASSES}
+                    read-only:bg-secondary dark:read-only:bg-secondary-dark`}
                   onChange={(event) => {
                     setPiece({ ...piece, code: event.target.value });
                   }}

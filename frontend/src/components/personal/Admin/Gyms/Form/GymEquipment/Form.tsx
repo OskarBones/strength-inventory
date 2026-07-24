@@ -159,7 +159,9 @@ export default function Form ({
 
         <button
           type='button'
-          className='group relative flex cursor-pointer'
+          disabled={isPending}
+          className='
+            group relative flex cursor-pointer disabled:cursor-progress'
           onClick={() => {
             if (number > 1) {
               setNumber(number - 1);
@@ -168,12 +170,14 @@ export default function Form ({
         >
           <IoRemoveCircleOutline
             className='
-              text-xl group-hover:opacity-0 group-active:opacity-0'
+              text-xl group-enabled:group-hover:opacity-0
+              group-enabled:group-active:opacity-0'
           />
           <IoRemoveCircle
             className='
               absolute opacity-0 text-xl
-              group-hover:opacity-100 group-active:opacity-100'
+              group-enabled:group-hover:opacity-100
+              group-enabled:group-active:opacity-100'
           />
         </button>
         <span className='w-6 text-center'>
@@ -181,19 +185,23 @@ export default function Form ({
         </span>
         <button
           type='button'
-          className='group relative flex cursor-pointer'
+          disabled={isPending}
+          className='
+            group relative flex cursor-pointer disabled:cursor-progress'
           onClick={() => {
             setNumber(number + 1);
           }}
         >
           <IoAddCircleOutline
             className='
-              text-xl group-hover:opacity-0 group-active:opacity-0'
+              text-xl group-enabled:group-hover:opacity-0
+              group-enabled:group-active:opacity-0'
           />
           <IoAddCircle
             className='
               absolute opacity-0 text-xl
-              group-hover:opacity-100 group-active:opacity-100'
+              group-enabled:group-hover:opacity-100
+              group-enabled:group-active:opacity-100'
           />
         </button>
 
