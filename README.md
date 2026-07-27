@@ -32,7 +32,6 @@ Prioritized database: **PostgreSQL** (Postgres-specific implementations are avoi
 
 ## Known deficiencies
 - Timezones are yet to be implemented. All times are in UTC.
-- Database connection is slow with the current hosting setup.
 
 ## In the TODO list
 - Timezones
