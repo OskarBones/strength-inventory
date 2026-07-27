@@ -11,19 +11,42 @@ import RegularHours from './RegularHours';
 
 import { WEEKDAYS } from '../../../../constants/values';
 
-import type { GymGet, Hours } from '@strength-inventory/schemas';
+import type { GymGet } from '@strength-inventory/schemas';
 
 export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
-  function noHours (hours: Hours) {
-    let hoursFound = true;
+  function noHours (group: 'everyone' | 'members') {
+    let noHoursFound = true;
+
+    const hours = group === 'everyone'
+      ? gym.openingHoursEveryone
+      : gym.openingHoursMembers;
+    const exceptions = gym.openingHoursExceptions.data;
 
     WEEKDAYS.forEach((weekday) => {
       if (hours[weekday][0] || hours[weekday][1]) {
-        hoursFound = false;
+        noHoursFound = false;
       }
     });
 
-    return hoursFound;
+    if (group === 'everyone') {
+      exceptions.forEach((exception) => {
+        if (exception.concerns === 'everyone'
+          || exception.concerns === 'non-members') {
+          noHoursFound = false;
+        }
+      });
+    }
+
+    if (group === 'members') {
+      exceptions.forEach((exception) => {
+        if (exception.concerns === 'everyone'
+          || exception.concerns === 'non-members') {
+          noHoursFound = false;
+        }
+      });
+    }
+
+    return noHoursFound;
   }
 
   const iconMode = use(IconContext);
@@ -31,7 +54,7 @@ export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
   const [hoursMode, setHoursMode] = useState('regular');
   const [membersOnly, setMembersOnly] = useState(
     () => {
-      if (noHours(gym.openingHoursEveryone)) {
+      if (noHours('everyone')) {
         return true;
       } else {
         return false;
@@ -42,8 +65,8 @@ export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
 
   let disableMembersOnlySwitch: boolean;
   if (
-    noHours(gym.openingHoursEveryone)
-    || noHours(gym.openingHoursMembers)
+    noHours('everyone')
+    || noHours('members')
   ) {
     disableMembersOnlySwitch = true;
   } else {

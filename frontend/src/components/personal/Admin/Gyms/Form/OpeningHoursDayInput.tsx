@@ -24,8 +24,8 @@ export default function OpeningHoursDayInput (
     : '');
 
   return (
-    <div className='flex gap-1'>
-      <span className='p-1 w-7'>{day}</span>
+    <div className='flex gap-0.5'>
+      <span className='px-1 w-7'>{day}</span>
       <input
         id={`${group}${day}Open`}
         name={`${group}${day}Open`}
@@ -55,6 +55,18 @@ export default function OpeningHoursDayInput (
           setHoursChanged(true);
         }}
       />
+      <button
+        type='button'
+        className='
+          border px-0.5 cursor-pointer
+          hover:bg-red dark:hover:bg-red-dark'
+        onClick={() => {
+          setOpenTime('');
+          setCloseTime('');
+        }}
+      >
+        X
+      </button>
     </div>
   );
 }

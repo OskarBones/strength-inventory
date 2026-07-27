@@ -141,13 +141,11 @@ export default function Form (
       putGym({
         id: id, gym: updatedGym, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ['gym', selectedGymId]
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['gymsIdAndName']
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['gym', selectedGymId] }),
+        queryClient.invalidateQueries({ queryKey: ['gymsIdAndName'] })
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({
@@ -643,7 +641,7 @@ export default function Form (
                   ? <BsPeople className='text-base' />
                   : 'everyone'}
               </h5>
-              <div className='flex flex-row gap-10'>
+              <div className='flex flex-row gap-2.5'>
                 <div className='flex flex-col gap-1'>
                   <OpeningHoursDayInput
                     group='everyone'
@@ -699,7 +697,7 @@ export default function Form (
                   ? <FaRegAddressCard className='text-base' />
                   : 'members'}
               </h5>
-              <div className='flex flex-row gap-10'>
+              <div className='flex flex-row gap-2.5'>
                 <div className='flex flex-col gap-1'>
                   <OpeningHoursDayInput
                     group='members'
@@ -763,7 +761,7 @@ export default function Form (
               >
                 {iconMode
                   ? <span className='flex w-5 text-base'><CgGym /></span>
-                  : <span className='flex w-30'>equipment visible</span>}
+                  : <span className='flex w-35'>equipment visible</span>}
               </label>
               <input
                 id='equipmentVisible'
@@ -788,7 +786,7 @@ export default function Form (
                       <FaRegAddressCard />
                     </span>
                   )
-                  : <span className='flex w-30'>memberships visible</span>}
+                  : <span className='flex w-35'>memberships visible</span>}
               </label>
               <input
                 id='membershipsVisible'
@@ -808,7 +806,7 @@ export default function Form (
               <label htmlFor='openingHoursVisible'>
                 {iconMode
                   ? <span className='flex w-5 text-base'><TbClock /></span>
-                  : <span className='flex w-30'>opening hours visible</span>}
+                  : <span className='flex w-35'>opening hours visible</span>}
               </label>
               <input
                 id='openingHoursVisible'

@@ -71,8 +71,8 @@ export default function Form ({
       postEquipment({
         piece: newPiece, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: (newPieceFromServer) => {
-      void queryClient.invalidateQueries({
+    onSuccess: async (newPieceFromServer) => {
+      await queryClient.invalidateQueries({
         queryKey: ['equipment']
       });
       setSelectedPieceId(newPieceFromServer.id);
@@ -91,13 +91,15 @@ export default function Form ({
       putEquipment({
         id: id, piece: updatedPiece, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ['piece', selectedPieceId]
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['equipment']
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['piece', selectedPieceId]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['equipment']
+        })
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({

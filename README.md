@@ -21,7 +21,7 @@ Runtime validation and type definitions: **Zod**
 
 Runtime environment: **Node v24.13.0**
 
-Intended database: **PostgreSQL** (Postgres-specific implementations have been avoided to keep things as plug-and-play as possible with other databases. Sequalize, according to its docs, is compatible with several others.)
+Prioritized database: **PostgreSQL** (Postgres-specific implementations are avoided to keep things as plug-and-play as possible with other databases. Sequelize, according to its docs, is compatible with several others.)
 
 ## Applied principles
 - [Semantic Versioning](https://semver.org/)
@@ -32,7 +32,7 @@ Intended database: **PostgreSQL** (Postgres-specific implementations have been a
 
 ## Known deficiencies
 - Timezones are yet to be implemented. All times are in UTC.
-- Database operations are somewhat slow with the current host.
+- Database connection is slow with the current hosting setup.
 
 ## In the TODO list
 - Timezones

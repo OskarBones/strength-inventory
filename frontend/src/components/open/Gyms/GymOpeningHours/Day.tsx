@@ -19,7 +19,7 @@ export default function Day ({
 
   return (
     <button
-      className={`rounded-md px-2 w-29 text-sm md:w-32 md:text-base
+      className={`rounded-md px-1 w-27 text-sm md:w-32 md:text-base
         ${highlighted
       ? 'bg-secondary dark:bg-secondary-dark'
       : ''
@@ -45,12 +45,19 @@ export default function Day ({
         : iconMode
           ? (
             <p className='flex justify-between items-center w-full'>
-              <span>{day}</span> <FaLock className='text-sm' />
+              <span className='text-xs md:text-sm'>{day}</span>
+              <span
+                className='
+                  flex justify-center items-center ml-2 w-full h-5 md:h-6'
+              >
+                <FaLock className='text-base' />
+              </span>
             </p>
           )
           : (
-            <p className='flex justify-between w-full'>
-              <span>{day}</span> <span>closed</span>
+            <p className='flex justify-between items-center w-full'>
+              <span className='text-xs md:text-sm'>{day}</span>
+              <span>closed</span>
             </p>
           )}
     </button>

@@ -147,8 +147,8 @@ export function Form (
       postMembership({
         membership: newMembership, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries(
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(
         { queryKey: ['membershipsByCountry', membership.country] }
       );
       // Exit the form immediately if addToGymMutation won't be run afterwards.
@@ -172,8 +172,8 @@ export function Form (
         refresh: auth.refresh,
         logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries(
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(
         { queryKey: ['gymMemberships', gymId] }
       );
       setFormMode('hidden');
@@ -194,17 +194,19 @@ export function Form (
         refresh: auth.refresh,
         logout: auth.logout
       }),
-    onSuccess: (editedMembershipFromServer) => {
-      void queryClient.setQueryData(
-        ['membership', selectedMembershipId],
-        editedMembershipFromServer
-      );
-      void queryClient.invalidateQueries(
-        { queryKey: ['membershipsByCountry', membership.country] }
-      );
-      void queryClient.invalidateQueries(
-        { queryKey: ['gymMemberships', gymId] }
-      );
+    onSuccess: async (editedMembershipFromServer) => {
+      await Promise.all([
+        queryClient.setQueryData(
+          ['membership', selectedMembershipId],
+          editedMembershipFromServer
+        ),
+        queryClient.invalidateQueries(
+          { queryKey: ['membershipsByCountry', membership.country] }
+        ),
+        queryClient.invalidateQueries(
+          { queryKey: ['gymMemberships', gymId] }
+        )
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({
@@ -217,13 +219,15 @@ export function Form (
   const deleteMutation = useMutation({
     mutationFn: (id: string) =>
       deleteMembership({ id: id, refresh: auth.refresh, logout: auth.logout }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries(
-        { queryKey: ['membershipsByCountry', membership.country] }
-      );
-      void queryClient.invalidateQueries(
-        { queryKey: ['gymMemberships', gymId] }
-      );
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries(
+          { queryKey: ['membershipsByCountry', membership.country] }
+        ),
+        queryClient.invalidateQueries(
+          { queryKey: ['gymMemberships', gymId] }
+        )
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({
@@ -420,6 +424,21 @@ export function Form (
   let readOnly = false;
   if (usedInGymMemberships && membership.chain) {
     readOnly = true;
+  }
+
+  function handleMinus () {
+    if (!readOnly) {
+      deleteMutation.mutateAsync(selectedMembershipId)
+        .catch((err: unknown) => {
+          handleSubmitError({ err, setNotification });
+        });
+    } else {
+      removeMutation
+        .mutateAsync({ gymId: gymId, membershipId: selectedMembershipId })
+        .catch((err: unknown) => {
+          handleSubmitError({ err, setNotification });
+        });
+    }
   }
 
   return (
@@ -770,22 +789,15 @@ export function Form (
             disabled={deleteMutation.isPending}
             hidden={formMode === 'create'}
             className={`
-              flex justify-center border rounded-sm border-black
-              dark:border-white bg-red dark:bg-red-dark px-3 w-full
-              text-primary-text dark:text-primary-text-dark text-base
-              hover:border-white hover:dark:border-black
-              active:border-white active:dark:border-black active:font-bold
+              flex justify-center border rounded-sm bg-red dark:bg-red-dark px-3
+              w-full text-base hover:inset-ring
+              active:inset-ring active:font-bold
               ${!deleteMutation.isPending
       ? 'cursor-pointer'
       : 'cursor-progress'
     }`}
             onClick={() => {
-              if (!readOnly) {
-                deleteMutation.mutate(selectedMembershipId);
-              } else {
-                removeMutation
-                  .mutate({ gymId: gymId, membershipId: selectedMembershipId });
-              }
+              handleMinus();
             }}
           >
             {!deleteMutation.isPending && !removeMutation.isPending

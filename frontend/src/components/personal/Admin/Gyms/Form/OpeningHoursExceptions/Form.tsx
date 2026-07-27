@@ -147,7 +147,7 @@ export default function Form ({
           : 'add new exception'}
       </h5>
 
-      <div className='flex gap-1'>
+      <div className='flex'>
         <input
           id='date'
           name='date'
@@ -155,7 +155,7 @@ export default function Form ({
           value={date}
           required
           min={currentDate}
-          className={`p-1 w-30 invalid:text-red-dark dark:invalid:text-red
+          className={`mr-3 px-1 w-30 invalid:text-red-dark dark:invalid:text-red
             ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'
@@ -164,7 +164,8 @@ export default function Form ({
             setDate(event.target.value);
           }}
         />
-        <div className='flex gap-1'>
+
+        <div className='flex gap-0.5'>
           <input
             id='from'
             name='from'
@@ -173,7 +174,7 @@ export default function Form ({
             placeholder='from'
             max={to}
             className={`
-              w-12 invalid:text-red-dark dark:invalid:text-red text-center
+              w-11 invalid:text-red-dark dark:invalid:text-red text-center
               ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'
@@ -191,7 +192,8 @@ export default function Form ({
             placeholder='to'
             min={from}
             className={`
-              w-12 invalid:text-red-dark dark:invalid:text-red text-center
+              mr-0.5 w-11
+              invalid:text-red-dark dark:invalid:text-red text-center
               ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'
@@ -201,6 +203,19 @@ export default function Form ({
             }}
           />
         </div>
+
+        <button
+          type='button'
+          className='
+            border px-0.5 cursor-pointer
+            hover:bg-red dark:hover:bg-red-dark'
+          onClick={() => {
+            setFrom('');
+            setTo('');
+          }}
+        >
+          X
+        </button>
       </div>
 
       <div className='flex gap-1'>
@@ -210,7 +225,7 @@ export default function Form ({
           name='concerns'
           value={concerns}
           required
-          className={`pl-1 invalid:text-red-dark dark:invalid:text-red
+          className={`pl-1 w-46 invalid:text-red-dark dark:invalid:text-red
             ${exception
       ? 'bg-secondary dark:bg-tertiary-dark'
       : 'bg-tertiary dark:bg-background-dark'

@@ -83,13 +83,15 @@ export default function Form ({
       putCity({
         id: id, city: updatedCity, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ['city', selectedCityId]
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['cities']
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['city', selectedCityId]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['cities']
+        })
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({

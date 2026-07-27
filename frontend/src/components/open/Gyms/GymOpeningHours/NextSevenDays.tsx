@@ -83,10 +83,7 @@ export default function NextSevenDays ({
       exception.date.getDate() === nextSeven[i].getDate());
 
     if (exception) {
-      if (typeof exception.hours[0] === 'number'
-        || typeof exception.hours[1] === 'number') {
-        openingHours[days[i]] = exception.hours.join('-');
-      }
+      openingHours[days[i]] = exception.hours.join('-');
       exceptionReasons.push(exception.reason);
     } else {
       let hours;
@@ -103,7 +100,7 @@ export default function NextSevenDays ({
   return (
     <div className='flex w-full divide-x'>
       <div
-        className='flex flex-col justify-center items-center gap-1 w-1/3'
+        className='flex flex-col justify-center items-center w-1/3'
       >
         <Day
           day={days[0]}

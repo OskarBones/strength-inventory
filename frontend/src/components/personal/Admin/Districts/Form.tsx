@@ -67,13 +67,15 @@ export default function Form ({
       postDistrict({
         district: newDistrict, refresh: auth.refresh, logout: auth.logout
       }),
-    onSuccess: (newDistrictFromServer) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['districts']
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['cities']
-      });
+    onSuccess: async (newDistrictFromServer) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['districts']
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['cities']
+        })
+      ]);
       setSelectedDistrictId(newDistrictFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
@@ -93,16 +95,18 @@ export default function Form ({
         refresh: auth.refresh,
         logout: auth.logout
       }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: ['district', selectedDistrictId]
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['districts']
-      });
-      void queryClient.invalidateQueries({
-        queryKey: ['cities']
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['district', selectedDistrictId]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['districts']
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['cities']
+        })
+      ]);
       setFormMode('hidden');
       setTimeout(() => {
         setParentNotification({
