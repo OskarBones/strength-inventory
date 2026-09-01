@@ -7,21 +7,21 @@ import { CgGym } from 'react-icons/cg';
 import { MdClear } from 'react-icons/md';
 import { TbEdit } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '../../../../../../utils/contexts';
+import { AuthContext, IconContext } from '@/utils/contexts';
 import {
   deleteGymEquipment,
   getEquipment,
   getGymEquipment,
   postGymEquipment,
   setGymEquipmentCount
-} from '../../../../../../utils/api';
+} from '@/utils/api';
 
 import AvailableList from './AvailableList';
 import CurrentList from './CurrentList';
 import EditFormReturnButton from '../EditFormReturnButton';
-import Error from '../../../../../Error';
+import Error from '@/components/Error';
 import Form from './Form';
-import Loading from '../../../../../Loading';
+import Loading from '@/components/Loading';
 
 import { type Equipment } from '@strength-inventory/schemas';
 

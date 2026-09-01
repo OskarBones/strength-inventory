@@ -6,7 +6,7 @@ import {
 } from 'react-icons/tb';
 import { MdOutlineAdminPanelSettings } from 'react-icons/md';
 
-import { AuthContext } from '../../utils/contexts';
+import { AuthContext } from '@/utils/contexts';
 
 import { type UserRole } from '@strength-inventory/schemas';
 

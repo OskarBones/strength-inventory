@@ -2,7 +2,7 @@
 
 /* ReturnButton has permanent unsavedChanges === true after
 any opening hours value has been changed,
-whether or not the change was subsequently reverted.
+whether or not the change is subsequently reverted.
 The current structure of the component does not
 facilitate comparisons with original hours without
 adding new lines of clumsy code. */
@@ -19,22 +19,21 @@ import { BsPeople } from 'react-icons/bs';
 import { CgGym } from 'react-icons/cg';
 import { LuSave } from 'react-icons/lu';
 
-import { AuthContext, IconContext } from '../../../../../utils/contexts';
-import { getCities, getDistricts, getGym, postGym, putGym }
-  from '../../../../../utils/api';
-import handleSubmitError from '../../../../../utils/handleSubmitError';
+import { AuthContext, IconContext } from '@/utils/contexts';
+import { getCities, getDistricts, getGym, postGym, putGym } from '@/utils/api';
+import handleSubmitError from '@/utils/handleSubmitError';
 
-import Error from '../../../../Error';
+import Error from '@/components/Error';
 import GymEquipment from './GymEquipment/Index';
 import GymMemberships from './GymMemberships/Index';
-import Loading from '../../../../Loading';
-import Notification from '../../../../Notification';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
 import OpeningHoursDayInput from './OpeningHoursDayInput';
 import OpeningHoursExceptions from './OpeningHoursExceptions/Index';
 import ReturnButton from '../../ReturnButton';
 
-import { FORM_INPUT_CLASSES } from '../../../../../constants/theme';
-import { WEEKDAYS } from '../../../../../constants/values';
+import { FORM_INPUT_CLASSES } from '@/constants/theme';
+import { WEEKDAYS } from '@/constants/values';
 
 import {
   type District,

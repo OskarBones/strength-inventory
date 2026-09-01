@@ -4,9 +4,9 @@ import { use } from 'react';
 
 import { IoReturnDownBack } from 'react-icons/io5';
 
-import { IconContext } from '../../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '../../../../../constants/theme';
+import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
 
 interface EditFormReturnButtonProps {
   model: string

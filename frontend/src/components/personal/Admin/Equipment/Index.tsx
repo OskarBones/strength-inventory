@@ -4,15 +4,15 @@ import { mutationOptions, useQuery, useQueryClient }
   from '@tanstack/react-query';
 import { CgGym } from 'react-icons/cg';
 
-import { deleteEquipment, getEquipment } from '../../../../utils/api';
+import { deleteEquipment, getEquipment } from '@/utils/api';
 
-import { AuthContext, IconContext } from '../../../../utils/contexts';
+import { AuthContext, IconContext } from '@/utils/contexts';
 
-import Error from '../../../Error';
+import Error from '@/components/Error';
 import Form from './Form/Index';
 import List from './List';
-import Loading from '../../../Loading';
-import Notification from '../../../Notification';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
 
 export default function AdminEquipment () {
   const auth = use(AuthContext);

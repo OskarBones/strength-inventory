@@ -1,7 +1,5 @@
 // reference [4]
 
-import 'ts-node/register';  // Required by Node.js to read .ts migration files.
-
 import { SequelizeStorage, Umzug } from 'umzug';
 import { Sequelize } from 'sequelize';
 

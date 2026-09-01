@@ -2,7 +2,7 @@ import { use } from 'react';
 
 import { FaLock } from 'react-icons/fa6';
 
-import { IconContext } from '../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 interface DayProps {
   day: string,

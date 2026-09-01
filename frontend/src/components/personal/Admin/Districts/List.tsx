@@ -4,10 +4,10 @@ import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FaRegClone } from 'react-icons/fa6';
 
-import { AuthContext, IconContext } from '../../../../utils/contexts';
-import { deleteDistrict } from '../../../../utils/api';
+import { AuthContext, IconContext } from '@/utils/contexts';
+import { deleteDistrict } from '@/utils/api';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../../constants/theme';
+import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
 import { type DistrictGet } from '@strength-inventory/schemas';
 

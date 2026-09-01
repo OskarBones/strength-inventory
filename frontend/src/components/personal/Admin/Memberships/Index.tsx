@@ -2,11 +2,11 @@ import { use, useRef, useState } from 'react';
 
 import { FaRegAddressCard } from 'react-icons/fa';
 
-import { IconContext } from '../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 import { Form } from './Form/Index';
 import List from './List';
-import Notification from '../../../Notification';
+import Notification from '@/components/Notification';
 
 export default function AdminMemberships () {
   const iconMode = use(IconContext);

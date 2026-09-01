@@ -1,5 +1,3 @@
-// console.logs temporarily for debugging purposes
-
 import { jwtDecode } from 'jwt-decode';
 
 export function isTokenValid (token: string) {

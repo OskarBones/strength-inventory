@@ -6,9 +6,9 @@ import { IoReturnDownBack } from 'react-icons/io5';
 import { LuSaveOff } from 'react-icons/lu';
 import { useQueryClient } from '@tanstack/react-query';
 
-import { IconContext } from '../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '../../../constants/theme';
+import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
 
 interface ReturnButtonProps {
   queriesToInvalidate: string[][]

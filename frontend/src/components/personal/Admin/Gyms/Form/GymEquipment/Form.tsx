@@ -14,9 +14,9 @@ import {
 } from 'react-icons/io5';
 import { type UseMutationResult } from '@tanstack/react-query';
 
-import handleSubmitError from '../../../../../../utils/handleSubmitError';
+import handleSubmitError from '@/utils/handleSubmitError';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '../../../../../../constants/theme';
+import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
 
 import type { Equipment, GymGetEquipment } from '@strength-inventory/schemas';
 

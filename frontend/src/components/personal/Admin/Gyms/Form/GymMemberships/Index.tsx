@@ -4,14 +4,14 @@ import { FaRegAddressCard } from 'react-icons/fa';
 import { TbEdit } from 'react-icons/tb';
 import { useQuery } from '@tanstack/react-query';
 
-import { getGymMemberships } from '../../../../../../utils/api';
-import { IconContext } from '../../../../../../utils/contexts';
+import { getGymMemberships } from '@/utils/api';
+import { IconContext } from '@/utils/contexts';
 
-import Error from '../../../../../Error';
+import Error from '@/components/Error';
 import Form from './Form';
 import List from './List';
-import Loading from '../../../../../Loading';
-import Notification from '../../../../../Notification';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
 
 interface GymMembershipsProps {
   gymId: string

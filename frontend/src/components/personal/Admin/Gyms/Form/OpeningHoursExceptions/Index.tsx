@@ -2,13 +2,12 @@ import { use, useState } from 'react';
 
 import { TbClockExclamation, TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 
-import { IconContext } from '../../../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 import Exception from './Exception';
 import Form from './Form';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES }
-  from '../../../../../../constants/theme';
+import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
 import { type OpeningHoursException } from '@strength-inventory/schemas';
 

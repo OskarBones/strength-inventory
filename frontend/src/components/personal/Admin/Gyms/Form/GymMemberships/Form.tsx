@@ -6,16 +6,16 @@ import { IoAddCircleOutline } from 'react-icons/io5';
 import { MdOutlineLocationOn } from 'react-icons/md';
 import { useQuery } from '@tanstack/react-query';
 
-import { getMembershipsByCountry } from '../../../../../../utils/api';
-import { IconContext } from '../../../../../../utils/contexts';
+import { getMembershipsByCountry } from '@/utils/api';
+import { IconContext } from '@/utils/contexts';
 
-import Error from '../../../../../Error';
-import Loading from '../../../../../Loading';
+import Error from '@/components/Error';
+import Loading from '@/components/Loading';
 import { Form as MembershipForm } from '../../../Memberships/Form/Index';
 import MembershipList from '../../../MembershipList';
 import ReturnButton from '../../../ReturnButton';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '../../../../../../constants/theme';
+import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
 
 interface FormProps {
   gymId: string

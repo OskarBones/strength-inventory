@@ -8,7 +8,7 @@ import { use } from 'react';
 import { LuSave } from 'react-icons/lu';
 import { TbPlus } from 'react-icons/tb';
 
-import { IconContext } from '../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 interface SubmitButtonProps {
   formMode: string

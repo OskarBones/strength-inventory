@@ -4,7 +4,7 @@ import { BiCalendarWeek } from 'react-icons/bi';
 import { BsCalendar4Week } from 'react-icons/bs';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
-import { IconContext } from '../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 function ModeButtonIcon ({ title }: { title: string }) {
   if (title === 'next seven days') {

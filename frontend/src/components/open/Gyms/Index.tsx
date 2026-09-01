@@ -4,12 +4,12 @@ import { BsInfoCircle } from 'react-icons/bs';
 import { useQuery } from '@tanstack/react-query';
 
 import { getCities, getDistricts, getGyms } from '../../../utils/api';
-import calcDistanceInKm from '../../../utils/calcDistanceInKm';
+import calcDistanceInKm from '@/utils/calcDistanceInKm';
 
-import Error from '../../Error';
+import Error from '@/components/Error';
 import Filters from './Filters';
 import Gym from './Gym';
-import Loading from '../../Loading';
+import Loading from '@/components/Loading';
 
 import type { CityGet, DistrictGet, GymWithDistance }
   from '@strength-inventory/schemas';

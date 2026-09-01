@@ -1,4 +1,4 @@
-import calcDistanceInKm from '../../../utils/calcDistanceInKm';
+import calcDistanceInKm from '@/utils/calcDistanceInKm';
 
 import type { CityGet, District, DistrictGet }
   from '@strength-inventory/schemas';

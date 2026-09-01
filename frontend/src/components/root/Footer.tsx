@@ -1,7 +1,7 @@
 import { CiHeart } from 'react-icons/ci';
 import { FaGithub } from 'react-icons/fa';
 
-import { VERSION } from '../../constants/values';
+import { VERSION } from '@/constants/values';
 
 export default function Footer () {
   return (
