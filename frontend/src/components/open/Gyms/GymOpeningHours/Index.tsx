@@ -9,7 +9,7 @@ import ModeButton from './ModeButton';
 import NextSevenDays from './NextSevenDays';
 import RegularHours from './RegularHours';
 
-import { WEEKDAYS } from '../../../../constants/values';
+import { WEEKDAYS } from '@/constants/values';
 
 import type { GymGet } from '@strength-inventory/schemas';
 

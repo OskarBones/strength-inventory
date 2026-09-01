@@ -4,7 +4,7 @@ import { CgGym } from 'react-icons/cg';
 import { FaRegAddressCard } from 'react-icons/fa';
 import { TbClock } from 'react-icons/tb';
 
-import { IconContext } from '../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 function ButtonIcon ({ title }: { title: string }) {
   if (title === 'equipment') {

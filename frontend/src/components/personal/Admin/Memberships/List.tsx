@@ -2,7 +2,7 @@ import { type RefObject, useEffect, useRef } from 'react';
 
 import { skipToken, useQuery } from '@tanstack/react-query';
 
-import { getMembershipsByCountry } from '../../../../utils/api';
+import { getMembershipsByCountry } from '@/utils/api';
 
 import MembershipList from '../MembershipList';
 

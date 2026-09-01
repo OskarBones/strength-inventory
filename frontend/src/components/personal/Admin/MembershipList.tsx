@@ -11,8 +11,8 @@ import { GiMeshNetwork } from 'react-icons/gi';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { MdOutlinePlaylistAddCheckCircle } from 'react-icons/md';
 
-import { AuthContext, IconContext } from '../../../utils/contexts';
-import { postGymMembership } from '../../../utils/api';
+import { AuthContext, IconContext } from '@/utils/contexts';
+import { postGymMembership } from '@/utils/api';
 
 import type { Membership } from '@strength-inventory/schemas';
 

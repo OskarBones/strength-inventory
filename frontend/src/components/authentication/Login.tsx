@@ -4,10 +4,10 @@ import {
   TbLogin2, TbPassword, TbUser, TbUserPlus, TbUserQuestion
 } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '../../utils/contexts';
-import handleSubmitError from '../../utils/handleSubmitError';
+import { AuthContext, IconContext } from '@/utils/contexts';
+import handleSubmitError from '@/utils/handleSubmitError';
 
-import { Route } from '../../routes/(auth)/login';
+import { Route } from '@/routes/(auth)/login';
 
 import Notification from '../Notification';
 

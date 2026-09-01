@@ -4,15 +4,15 @@ import { mutationOptions, useQuery, useQueryClient }
   from '@tanstack/react-query';
 import { MdOutlineLocationOn } from 'react-icons/md';
 
-import { deleteGym, getGymsIdAndName } from '../../../../utils/api';
+import { deleteGym, getGymsIdAndName } from '@/utils/api';
 
-import { AuthContext, IconContext } from '../../../../utils/contexts';
+import { AuthContext, IconContext } from '@/utils/contexts';
 
 import CreateEditDeleteList from '../CreateEditDeleteList.tsx';
-import Error from '../../../Error.tsx';
+import Error from '@/components/Error.tsx';
 import Form from './Form/Index.tsx';
-import Loading from '../../../Loading.tsx';
-import Notification from '../../../Notification.tsx';
+import Loading from '@/components/Loading.tsx';
+import Notification from '@/components/Notification.tsx';
 
 export default function AdminGyms () {
   const auth = use(AuthContext);

@@ -6,19 +6,19 @@ import {
 import { TbEdit, TbPlus } from 'react-icons/tb';
 import { z } from 'zod';
 
-import { AuthContext, IconContext } from '../../../../../utils/contexts';
+import { AuthContext, IconContext } from '@/utils/contexts';
 import { getPiece, postEquipment, putEquipment }
-  from '../../../../../utils/api';
-import handleSubmitError from '../../../../../utils/handleSubmitError';
+  from '@/utils/api';
+import handleSubmitError from '@/utils/handleSubmitError';
 
 import AvailableWeights from './AvailableWeights';
-import Error from '../../../../Error';
-import Loading from '../../../../Loading';
-import Notification from '../../../../Notification';
+import Error from '@/components/Error';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
 
-import { FORM_INPUT_CLASSES } from '../../../../../constants/theme';
+import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import {
   ACCESSORIES_AND_TOOLS,

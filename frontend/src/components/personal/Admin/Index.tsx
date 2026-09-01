@@ -7,7 +7,7 @@ import { LiaDrawPolygonSolid } from 'react-icons/lia';
 import { MdOutlineLocationOn } from 'react-icons/md';
 import { PiCity } from 'react-icons/pi';
 
-import { IconContext } from '../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 function Icon ({ pathname }: { pathname: string }) {
   if (pathname === 'gyms') {

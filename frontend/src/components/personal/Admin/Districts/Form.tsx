@@ -5,18 +5,17 @@ import {
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '../../../../utils/contexts';
-import { getCities, getDistrict, postDistrict, putDistrict }
-  from '../../../../utils/api';
-import handleSubmitError from '../../../../utils/handleSubmitError';
+import { AuthContext, IconContext } from '@/utils/contexts';
+import { getCities, getDistrict, postDistrict, putDistrict } from '@/utils/api';
+import handleSubmitError from '@/utils/handleSubmitError';
 
-import Error from '../../../Error';
-import Loading from '../../../Loading';
-import Notification from '../../../Notification';
+import Error from '@/components/Error';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
 
-import { FORM_INPUT_CLASSES } from '../../../../constants/theme';
+import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import {
   type DistrictPostAndPut,

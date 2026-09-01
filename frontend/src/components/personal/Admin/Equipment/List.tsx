@@ -4,11 +4,11 @@ import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
 import { FaRegClone } from 'react-icons/fa6';
 
-import { IconContext } from '../../../../utils/contexts';
+import { IconContext } from '@/utils/contexts';
 
 import SimpleList from '../SimpleList';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '../../../../constants/theme';
+import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
 import { type Equipment } from '@strength-inventory/schemas';
 
