@@ -146,7 +146,7 @@ export default function Form ({
     } else {  // createMode === 'chain'
       return (
         <div className='flex flex-col gap-3'>
-          <h3 className='flex justify-center text-base'>
+          <h4 className='flex justify-center text-base'>
             {iconMode
               ? (
                 <span className='flex justify-center gap-1 text-2xl'>
@@ -154,7 +154,7 @@ export default function Form ({
                 </span>
               )
               : 'select a chain membership to add'}
-          </h3>
+          </h4>
 
           <div className='bg-background dark:bg-background-dark'>
             <MembershipList

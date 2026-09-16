@@ -111,6 +111,7 @@ export default function Form ({
 
   interface PieceProps {
     name: string,
+    generic: boolean,
     category: string,
     subcategory: string,
     manufacturer: string,
@@ -127,6 +128,7 @@ export default function Form ({
 
   const [piece, setPiece] = useState<PieceProps>({
     name: '',
+    generic: false,
     category: '',
     subcategory: '',
     manufacturer: '',
@@ -142,6 +144,7 @@ export default function Form ({
   });
   const [originalPiece, setOriginalPiece] = useState<PieceProps>({
     name: '',
+    generic: false,
     category: '',
     subcategory: '',
     manufacturer: '',
@@ -212,21 +215,12 @@ export default function Form ({
         }
       }, z.string().min(1)
         .nullable());
-      const preprocessOutOfProduction = z.preprocess((val) => {
-        if (val) {
-          return true;
-        } else {
-          return false;
-        }
-      }, z.boolean());
+
       const preprocessedWeightUnit = preprocessWeightUnit.parse(req.weightUnit);
-      const preprocessedOutOfProduction
-        = preprocessOutOfProduction.parse(req.outOfProduction);
       const piece = {
         ...req,
         weightUnit: preprocessedWeightUnit,
-        availableWeights: availableWeights,
-        outOfProduction: preprocessedOutOfProduction
+        availableWeights: availableWeights
       };
       const validatedPiece = EquipmentPostAndPutSchema.parse(piece);
 
@@ -271,6 +265,7 @@ export default function Form ({
   if (selectedPieceId && pieceQuery.isSuccess && firstRender) {
     const {
       name,
+      generic,
       category,
       subcategory,
       manufacturer,
@@ -288,6 +283,7 @@ export default function Form ({
 
     setPiece({
       name: name,
+      generic: generic,
       category: category,
       subcategory: subcategory,
       manufacturer: manufacturer,
@@ -309,6 +305,7 @@ export default function Form ({
     });
     setOriginalPiece({
       name: name,
+      generic: generic,
       category: category,
       subcategory: subcategory,
       manufacturer: manufacturer,
@@ -359,19 +356,35 @@ export default function Form ({
           className='flex flex-col gap-3'
         >
           <div className='flex flex-col gap-1'>
-            <div className='flex gap-3'>
-              <div className='flex flex-1 flex-col'>
-                <label htmlFor='name'>name*</label>
+            <div className='flex flex-1 flex-col'>
+              <label htmlFor='name'>name*</label>
+              <input
+                id='name'
+                name='name'
+                type='text'
+                value={piece.name}
+                required
+                autoFocus={formMode === 'create'}
+                className={FORM_INPUT_CLASSES}
+                onChange={(event) => {
+                  setPiece({ ...piece, name: event.target.value });
+                }}
+              />
+            </div>
+
+            <div className='flex justify-around'>
+              <div className='flex items-end gap-1'>
+                <label htmlFor='outOfProduction'>generic</label>
                 <input
-                  id='name'
-                  name='name'
-                  type='text'
-                  value={piece.name}
-                  required
-                  autoFocus={formMode === 'create'}
-                  className={FORM_INPUT_CLASSES}
-                  onChange={(event) => {
-                    setPiece({ ...piece, name: event.target.value });
+                  id='generic'
+                  name='generic'
+                  type='checkbox'
+                  value='generic'
+                  checked={piece.generic}
+                  onChange={() => {
+                    setPiece({
+                      ...piece, generic: !piece.generic
+                    });
                   }}
                 />
               </div>

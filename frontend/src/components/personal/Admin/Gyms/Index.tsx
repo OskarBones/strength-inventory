@@ -8,9 +8,9 @@ import { deleteGym, getGymsIdAndName } from '@/utils/api';
 
 import { AuthContext, IconContext } from '@/utils/contexts';
 
-import CreateEditDeleteList from '../CreateEditDeleteList.tsx';
 import Error from '@/components/Error.tsx';
 import Form from './Form/Index.tsx';
+import List from './List.tsx';
 import Loading from '@/components/Loading.tsx';
 import Notification from '@/components/Notification.tsx';
 
@@ -71,7 +71,7 @@ export default function AdminGyms () {
 
         {formMode === 'hidden'
           ? (
-            <CreateEditDeleteList
+            <List
               scrollTopRef={scrollTopRef}
               search={search}
               setSearch={setSearch}

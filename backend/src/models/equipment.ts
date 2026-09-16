@@ -24,6 +24,7 @@ class Equipment extends Model<
 > {
   declare id: CreationOptional<string>;
   declare name: string;
+  declare generic: boolean;
   declare category: EquipmentCategory;
   declare subcategory: string;
   declare manufacturer: string;
@@ -55,6 +56,10 @@ Equipment.init({
     validate: {
       notEmpty: true
     }
+  },
+  generic: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false
   },
   category: {
     type: DataTypes

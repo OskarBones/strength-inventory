@@ -1,20 +1,16 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
-import { FaStoreSlash } from 'react-icons/fa';
-import { LuEqualApproximately } from 'react-icons/lu';
 import { type UseMutationOptions } from '@tanstack/react-query';
 
 import ListSearchAndButtons from '../ListSearchAndButtons';
-
-import { type Equipment } from '@strength-inventory/schemas';
 
 interface ListProps {
   scrollTopRef: RefObject<number>
   search: string
   setSearch: React.Dispatch<React.SetStateAction<string>>
-  equipment: Equipment[] | undefined
-  selectedPieceId: string
-  setSelectedPieceId: React.Dispatch<React.SetStateAction<string>>
+  data: { id: string, name: string }[] | undefined
+  selectedItemId: string
+  setSelectedItemId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   deleteMutationOptions: Omit<
     UseMutationOptions<void, Error, string>, 'mutationKey'>
@@ -24,9 +20,9 @@ export default function List ({
   scrollTopRef,
   search,
   setSearch,
-  equipment,
-  selectedPieceId,
-  setSelectedPieceId,
+  data,
+  selectedItemId,
+  setSelectedItemId,
   setFormMode,
   deleteMutationOptions
 }: ListProps) {
@@ -39,25 +35,12 @@ export default function List ({
     }
   });
 
-  let filteredEquipment: {
-    id: string,
-    name: string,
-    generic: boolean,
-    outOfProduction: boolean
-  }[] | undefined = equipment;
-  if (search !== '' && equipment) {
-    filteredEquipment = equipment.filter((piece) => {
+  let filteredItems: { id: string, name: string }[] | undefined = data;
+  if (search !== '' && data) {
+    filteredItems = data.filter((item) => {
       return (
-        piece.name.toLowerCase().includes(search.toLowerCase())
-        || piece.subcategory.toLowerCase().includes(search.toLowerCase())
-        || piece.manufacturer.toLowerCase().includes(search.toLowerCase()));
-    }).map(({ id, name, generic, outOfProduction }) => {
-      return {
-        id: id,
-        name: name,
-        generic: generic,
-        outOfProduction: outOfProduction
-      };
+        item.name.toLowerCase().includes(search.toLowerCase())
+        || item.id === selectedItemId);
     })
       .sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()
         ? 1
@@ -67,11 +50,11 @@ export default function List ({
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
       <ListSearchAndButtons
-        searchPlaceholder='name, subcategory or manufacturer'
+        searchPlaceholder='name'
         search={search}
         setSearch={setSearch}
-        selectedItemId={selectedPieceId}
-        setSelectedItemId={setSelectedPieceId}
+        selectedItemId={selectedItemId}
+        setSelectedItemId={setSelectedItemId}
         setFormMode={setFormMode}
         deleteMutationOptions={deleteMutationOptions}
       />
@@ -85,32 +68,25 @@ export default function List ({
           scrollTopRef.current = event.currentTarget.scrollTop;
         }}
       >
-        {filteredEquipment && filteredEquipment.length > 0
+        {filteredItems && filteredItems.length > 0
           ? (
             <ul className='min-w-full text-sm'>
-              {filteredEquipment.map((piece) => (
-                <li key={piece.id}>
+              {filteredItems.map((item) => (
+                <li key={item.id}>
                   <button
-                    aria-pressed={piece.id === selectedPieceId}
+                    aria-pressed={item.id === selectedItemId}
                     className='
-                      flex items-center space-x-1
-                      px-1 min-w-full whitespace-nowrap
+                      flex px-1 min-w-full whitespace-nowrap
                       aria-pressed:bg-gray-300 dark:aria-pressed:bg-gray-600'
                     onClick={() => {
-                      setSelectedPieceId(piece.id);
+                      setSelectedItemId(item.id);
                     }}
                     onDoubleClick={() => {
-                      setSelectedPieceId(piece.id);
+                      setSelectedItemId(item.id);
                       setFormMode('edit');
                     }}
                   >
-                    {piece.generic
-                      ? <LuEqualApproximately />
-                      : null}
-                    {piece.outOfProduction
-                      ? <FaStoreSlash />
-                      : null}
-                    <p>{piece.name}</p>
+                    <p>{item.name}</p>
                   </button>
                 </li>
               ))}

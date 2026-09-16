@@ -41,6 +41,7 @@ equipmentRouter.post(
   ) => {
     const {
       name,
+      generic,
       category,
       subcategory,
       manufacturer,
@@ -58,6 +59,7 @@ equipmentRouter.post(
 
     const equipment = await Equipment.create({
       name,
+      generic,
       category,
       subcategory,
       manufacturer,
@@ -96,6 +98,7 @@ equipmentRouter.put(
     const equipment = req.targetEquipment;
     const {
       name,
+      generic,
       category,
       subcategory,
       manufacturer,
@@ -113,6 +116,7 @@ equipmentRouter.put(
 
     await equipment.update({
       name: name,
+      generic: generic,
       category: category,
       subcategory: subcategory,
       manufacturer: manufacturer,

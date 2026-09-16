@@ -116,7 +116,7 @@ export default function List ({
         }}
       >
         {isPending
-          ? 'loading...'
+          ? <p className='p-1 w-full text-center'>loading...</p>
           : chain
             ? (
               <MembershipList

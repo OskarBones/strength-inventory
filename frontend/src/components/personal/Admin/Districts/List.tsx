@@ -1,13 +1,11 @@
 import { type RefObject, use, useEffect, useRef } from 'react';
 
-import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FaRegClone } from 'react-icons/fa6';
+import { mutationOptions, useQueryClient } from '@tanstack/react-query';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import ListSearchAndButtons from '../ListSearchAndButtons';
+
+import { AuthContext } from '@/utils/contexts';
 import { deleteDistrict } from '@/utils/api';
-
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
 import { type DistrictGet } from '@strength-inventory/schemas';
 
@@ -45,11 +43,10 @@ export default function List ({
   });
 
   const auth = use(AuthContext);
-  const iconMode = use(IconContext);
 
   const queryClient = useQueryClient();
 
-  const deleteMutation = useMutation({
+  const deleteMutationOptions = mutationOptions({
     mutationFn: (id: string) =>
       deleteDistrict({ id: id, refresh: auth.refresh, logout: auth.logout }),
     onSuccess: () => {
@@ -70,63 +67,15 @@ export default function List ({
 
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
-      <input
-        type='text'
-        value={search}
-        placeholder='search by name'
-        autoFocus
-        autoComplete='off'
-        className='rounded-sm bg-background dark:bg-background-dark pl-1'
-        onChange={(event) => {
-          setSearch(event.target.value);
-        }}
+      <ListSearchAndButtons
+        searchPlaceholder='name'
+        search={search}
+        setSearch={setSearch}
+        selectedItemId={selectedDistrictId}
+        setSelectedItemId={setSelectedDistrictId}
+        setFormMode={setFormMode}
+        deleteMutationOptions={deleteMutationOptions}
       />
-      <div className='flex gap-1 justify-around'>
-        <button
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
-          onClick={() => {
-            setSelectedDistrictId('');
-            setFormMode('create');
-          }}
-        >
-          {iconMode
-            ? <TbPlus className='text-xl md:text-2xl' />
-            : 'create'}
-        </button>
-        <button
-          disabled={!selectedDistrictId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
-          onClick={() => {
-            setFormMode('create');
-          }}
-        >
-          {iconMode
-            ? <FaRegClone className='my-0.5 text-base md:text-xl' />
-            : 'clone'}
-        </button>
-        <button
-          disabled={!selectedDistrictId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
-          onClick={() => {
-            setFormMode('edit');
-          }}
-        >
-          {iconMode
-            ? <TbEdit className='text-xl md:text-2xl' />
-            : 'edit'}
-        </button>
-        <button
-          disabled={!selectedDistrictId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
-          onClick={() => {
-            deleteMutation.mutate(selectedDistrictId);
-          }}
-        >
-          {iconMode
-            ? <TbTrashX className='text-xl md:text-2xl' />
-            : 'delete'}
-        </button>
-      </div>
 
       <div
         ref={listRef}

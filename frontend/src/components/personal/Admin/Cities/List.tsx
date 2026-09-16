@@ -75,6 +75,11 @@ export default function List ({
 
   return (
     <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
+      {/* Due to the need to disable the delete button,
+      ListSearchAndButtons component is not used here
+      unlike in the other similar admin lists.
+      However, aside from the button behavior,
+      this part of the code remains a clone of ListSearchAndButtons. */}
       <input
         type='text'
         value={search}

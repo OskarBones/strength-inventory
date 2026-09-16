@@ -1,3 +1,4 @@
+import 'zod/compile';
 import { z } from 'zod';
 
 /* NOTE ABOUT STRINGS
@@ -433,6 +434,7 @@ export type EquipmentMaximumWeightType = z.infer<typeof EquipmentMaximumWeightTy
 const EquipmentBaseSchema = z.object({
   id: z.uuidv4(),
   name: z.string().min(1),
+  generic: z.boolean(),
   manufacturer: z.string().min(1),
   code: z.string().min(1),
   maximumWeightType: EquipmentMaximumWeightTypeEnum,
@@ -603,7 +605,18 @@ export const EquipmentSchema = z.intersection(EquipmentBaseSchema, EquipmentUnio
 export type Equipment = z.infer<typeof EquipmentSchema>;
 
 export const EquipmentPostAndPutSchema = z.intersection(
-  EquipmentBaseSchema.omit({ id: true, createdAt: true, updatedAt: true }),
+  EquipmentBaseSchema
+    .omit({ id: true, createdAt: true, updatedAt: true })
+    .extend({
+      generic: z.preprocess(
+        (val) => (val ? true : false),
+        z.boolean()
+      ),
+      outOfProduction: z.preprocess(
+        (val) => (val ? true : false),
+        z.boolean()
+      ),
+    }),
   EquipmentUnions)
 export type EquipmentPostAndPut = z.infer<typeof EquipmentPostAndPutSchema>;
 

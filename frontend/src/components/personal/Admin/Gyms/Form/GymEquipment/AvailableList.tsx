@@ -1,7 +1,8 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
-import { MdOutlinePlaylistAddCheckCircle, MdOutlineStarRate }
-  from 'react-icons/md';
+import { FaStoreSlash } from 'react-icons/fa';
+import { LuEqualApproximately } from 'react-icons/lu';
+import { MdOutlinePlaylistAddCheckCircle } from 'react-icons/md';
 import { TbWorldWww } from 'react-icons/tb';
 
 import { type Equipment, type GymGetEquipment }
@@ -62,7 +63,7 @@ export default function AvailableList (
 
             <button
               className='
-                flex flex-1 items-center gap-1 whitespace-nowrap
+                flex flex-1 items-center space-x-1 whitespace-nowrap
                 enabled:cursor-pointer'
               onClick={() => {
                 setEquipmentToAdd(piece);
@@ -77,10 +78,13 @@ export default function AvailableList (
                   )
                   : null}
               </span>
-              <p>{piece.name}</p>
-              {piece.outOfProduction
-                ? <MdOutlineStarRate className='text-base' />
+              {piece.generic
+                ? <LuEqualApproximately className='text-base' />
                 : null}
+              {piece.outOfProduction
+                ? <FaStoreSlash className='text-base' />
+                : null}
+              <p>{piece.name}</p>
             </button>
             <hr />
           </li>

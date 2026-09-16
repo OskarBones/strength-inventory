@@ -1,4 +1,4 @@
-import { MdOutlineStarRate } from 'react-icons/md';
+import { FaStoreSlash } from 'react-icons/fa';
 import { TbWorldWww } from 'react-icons/tb';
 
 import { type GymGetEquipment } from '@strength-inventory/schemas';
@@ -61,6 +61,14 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
           {notNullUrl
             ? (
               <p className='flex items-center gap-1'>
+                {outOfProduction
+                  ? (
+                    <span>
+                      <FaStoreSlash aria-hidden='true' />
+                      <span className='sr-only'>out of production</span>
+                    </span>
+                  )
+                  : null}
                 {subcategory.includes('plate')
                   ? <span>{gymequipment.count}x</span>
                   : null}
@@ -73,30 +81,22 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
                 >
                   {name} <TbWorldWww className='text-xl' />
                 </a>
-                {outOfProduction
-                  ? (
-                    <span>
-                      <MdOutlineStarRate aria-hidden='true' />
-                      <span className='sr-only'>out of production</span>
-                    </span>
-                  )
-                  : null}
               </p>
             )
             : (
               <p className='flex items-center gap-1'>
-                {subcategory.includes('plate')
-                  ? <span>{gymequipment.count}x</span>
-                  : null}
-                <span className='font-bold'>{name}</span>
                 {outOfProduction
                   ? (
                     <span>
-                      <MdOutlineStarRate aria-hidden='true' />
+                      <FaStoreSlash aria-hidden='true' />
                       <span className='sr-only'>out of production</span>
                     </span>
                   )
                   : null}
+                {subcategory.includes('plate')
+                  ? <span>{gymequipment.count}x</span>
+                  : null}
+                <span className='font-bold'>{name}</span>
               </p>
             )}
         </h3>
@@ -113,7 +113,7 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
                   ? (
                     <p className='flex gap-1 items-center'>
                       <span>no</span>
-                      <MdOutlineStarRate aria-hidden='true' />
+                      <FaStoreSlash aria-hidden='true' />
                     </p>
                   )
                   : 'yes'}

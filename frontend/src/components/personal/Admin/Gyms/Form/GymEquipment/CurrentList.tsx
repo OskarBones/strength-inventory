@@ -5,7 +5,8 @@ import {
   IoRemoveCircleOutline
 } from 'react-icons/io5';
 import { TiDelete, TiDeleteOutline } from 'react-icons/ti';
-import { MdOutlineStarRate } from 'react-icons/md';
+import { FaStoreSlash } from 'react-icons/fa';
+import { LuEqualApproximately } from 'react-icons/lu';
 import { type UseMutationResult } from '@tanstack/react-query';
 
 import {
@@ -56,9 +57,15 @@ function Category ({
       >
         <div
           className='
-            flex flex-1 items-center gap-1
+            flex flex-1 items-center space-x-1
             overflow-hidden text-clip whitespace-nowrap'
         >
+          {piece.generic
+            ? <LuEqualApproximately className='text-base' />
+            : null}
+          {piece.outOfProduction
+            ? <FaStoreSlash className='text-base' />
+            : null}
           {piece.url
             ? (
               <a
@@ -70,9 +77,6 @@ function Category ({
               </a>
             )
             : <p>{piece.name}</p>}
-          {piece.outOfProduction
-            ? <MdOutlineStarRate className='text-base' />
-            : null}
         </div>
 
         <div
@@ -151,7 +155,7 @@ function Category ({
 
   return (
     <div className='flex flex-col'>
-      <h3 className='mb-1 text-sm font-bold'>{name}</h3>
+      <h4 className='mb-1 text-sm font-bold'>{name}</h4>
       {equipment.length > 0
         ? (
           <ul

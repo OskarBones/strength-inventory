@@ -1,6 +1,11 @@
-// used by Gyms
+// imported by
+// - Districts/List
+// - Equipment/List
+// - Gyms/List
 
-import { type RefObject, use, useEffect, useRef } from 'react';
+/* Cities/List contains a visual clone that needs to be kept updated! */
+
+import { use } from 'react';
 
 import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
@@ -8,15 +13,12 @@ import { FaRegClone } from 'react-icons/fa6';
 
 import { IconContext } from '@/utils/contexts';
 
-import SimpleList from './SimpleList';
-
 import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
-interface CreateEditDeleteListProps {
-  scrollTopRef: RefObject<number>
+interface ListSearchAndButtonsProps {
+  searchPlaceholder: string
   search: string
   setSearch: React.Dispatch<React.SetStateAction<string>>
-  data: { id: string, name: string }[] | undefined
   selectedItemId: string
   setSelectedItemId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
@@ -24,44 +26,25 @@ interface CreateEditDeleteListProps {
     UseMutationOptions<void, Error, string>, 'mutationKey'>
 }
 
-export default function CreateEditDeleteList ({
-  scrollTopRef,
+export default function ListSearchAndButtons ({
+  searchPlaceholder,
   search,
   setSearch,
-  data,
   selectedItemId,
   setSelectedItemId,
   setFormMode,
   deleteMutationOptions
-}: CreateEditDeleteListProps) {
-  const listRef = useRef<HTMLDivElement>(null);
-
-  // reference [2]
-  useEffect(() => {
-    if (listRef.current) {
-      listRef.current.scrollTop = scrollTopRef.current;
-    }
-  });
-
+}: ListSearchAndButtonsProps) {
   const iconMode = use(IconContext);
 
   const deleteMutation = useMutation(deleteMutationOptions);
 
-  let filteredItems: { id: string, name: string }[] | undefined = data;
-  if (search !== '' && data) {
-    filteredItems = data.filter((item) => {
-      return (
-        item.name.toLowerCase().includes(search.toLowerCase())
-        || item.id === selectedItemId);
-    });
-  }
-
   return (
-    <div className='flex flex-1 flex-col gap-1 rounded-sm overflow-y-scroll'>
+    <div className='flex flex-col gap-1'>
       <input
         type='text'
         value={search}
-        placeholder='name'
+        placeholder={searchPlaceholder}
         autoFocus
         autoComplete='off'
         className='rounded-sm bg-background dark:bg-background-dark pl-1'
@@ -114,22 +97,6 @@ export default function CreateEditDeleteList ({
             ? <TbTrashX className='text-xl md:text-2xl' />
             : 'delete'}
         </button>
-      </div>
-      <div
-        ref={listRef}
-        className='
-          flex flex-1 bg-background dark:bg-background-dark
-          overflow-y-scroll overflow-x-scroll'
-        onScroll={(event) => {
-          scrollTopRef.current = event.currentTarget.scrollTop;
-        }}
-      >
-        <SimpleList
-          data={filteredItems}
-          selectedItemId={selectedItemId}
-          setSelectedItemId={setSelectedItemId}
-          setFormMode={setFormMode}
-        />
       </div>
     </div>
   );

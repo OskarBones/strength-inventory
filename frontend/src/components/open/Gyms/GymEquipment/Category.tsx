@@ -1,7 +1,7 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
-import { FaCaretLeft } from 'react-icons/fa';
-import { MdOutlineStarRate } from 'react-icons/md';
+import { FaCaretLeft, FaStoreSlash } from 'react-icons/fa';
+import { LuEqualApproximately } from 'react-icons/lu';
 
 import {
   ACCESSORIES_AND_TOOLS,
@@ -40,7 +40,7 @@ ModelListProps) {
             setClickedEquipment(piece);
           }}
         >
-          <p className='flex items-center'>
+          <div className='flex items-center'>
             {!piece.subcategory.includes('plate')
               ? piece.gymequipment.count < 5
                 ? (
@@ -50,21 +50,31 @@ ModelListProps) {
                 )
                 : (
                   <span className='font-light min-w-8'>
-                    {/* display counts higher than five as 5+, 10+, 15+...*/}
+                    {/* display counts higher than five as 5+, 10+, 15+ ...*/}
                     {Math.round(piece.gymequipment.count / 5) * 5}+
                   </span>
                 )
               : <span className='font-light min-w-8'>:</span>}
-            <span>{piece.name}</span>
-            {piece.outOfProduction
-              ? (
-                <span>
-                  <MdOutlineStarRate aria-hidden='true' className='ml-1' />
-                  <span className='sr-only'>out of production</span>
-                </span>
-              )
-              : null}
-          </p>
+            <div className='flex items-center space-x-1'>
+              {piece.generic
+                ? (
+                  <span>
+                    <LuEqualApproximately aria-hidden='true' />
+                    <span className='sr-only'>generic</span>
+                  </span>
+                )
+                : null}
+              {piece.outOfProduction
+                ? (
+                  <span>
+                    <FaStoreSlash aria-hidden='true' />
+                    <span className='sr-only'>out of production</span>
+                  </span>
+                )
+                : null}
+              <span>{piece.name}</span>
+            </div>
+          </div>
         </button>
       </li>
     ))
