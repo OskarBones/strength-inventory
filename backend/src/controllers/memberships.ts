@@ -2,7 +2,8 @@ import Express, { type Request, type Response } from 'express';
 
 import {
   isAdmin,
-  membershipParser,
+  membershipPostParser,
+  membershipPutParser,
   targetMembershipExtractor
 } from '../utils/middleware.ts';
 
@@ -10,7 +11,8 @@ import { Membership } from '../models/index.ts';
 
 import {
   type Membership as FullMembership,
-  type MembershipPostAndPut,
+  type MembershipPost,
+  type MembershipPut,
   MembershipSchema
 } from '@strength-inventory/schemas';
 
@@ -46,47 +48,13 @@ membershipsRouter.get('/:id', targetMembershipExtractor, (req, res) => {
 // POST for admins to create a new membership
 membershipsRouter.post(
   '/',
-  membershipParser,
+  membershipPostParser,
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, MembershipPostAndPut>,
+    req: Request<unknown, unknown, MembershipPost>,
     res: Response<FullMembership>
   ) => {
-    const {
-      chain,
-      country,
-      name,
-      initiationFee,
-      membershipFee,
-      feeCurrency,
-      visits,
-      validity,
-      validityUnit,
-      commitment,
-      commitmentUnit,
-      autoRenewal,
-      availability,
-      url,
-      notes
-    } = req.body;
-
-    const membership = await Membership.create({
-      chain,
-      country,
-      name,
-      initiationFee,
-      membershipFee,
-      feeCurrency,
-      visits,
-      validity,
-      validityUnit,
-      commitment,
-      commitmentUnit,
-      autoRenewal,
-      availability,
-      url,
-      notes
-    });
+    const membership = await Membership.create(req.body);
 
     /* Satisfy TS when it comes to commitment's discriminated union. */
     const validatedMembership = MembershipSchema.parse(membership);
@@ -97,11 +65,11 @@ membershipsRouter.post(
 // PUT for admins to modify everything except id and timestamps
 membershipsRouter.put(
   '/:id',
-  membershipParser,
+  membershipPutParser,
   ...isAdmin,
   targetMembershipExtractor,
   async (
-    req: Request<{ id: string; }, unknown, MembershipPostAndPut>,
+    req: Request<{ id: string; }, unknown, MembershipPut>,
     res: Response<FullMembership>
   ) => {
     if (!req.targetMembership) {
@@ -109,39 +77,8 @@ membershipsRouter.put(
     }  // Should never trigger after middleware.
 
     const membership = req.targetMembership;
-    const {
-      chain,
-      name,
-      initiationFee,
-      membershipFee,
-      feeCurrency,
-      visits,
-      validity,
-      validityUnit,
-      commitment,
-      commitmentUnit,
-      autoRenewal,
-      availability,
-      url,
-      notes
-    } = req.body;
 
-    await membership.update({
-      chain: chain,
-      name: name,
-      initiationFee: initiationFee,
-      membershipFee: membershipFee,
-      feeCurrency: feeCurrency,
-      visits: visits,
-      validity: validity,
-      validityUnit: validityUnit,
-      commitment: commitment,
-      commitmentUnit: commitmentUnit,
-      autoRenewal: autoRenewal,
-      availability: availability,
-      url: url,
-      notes: notes
-    });
+    await membership.update(req.body);
     await membership.save();
 
     /* Satisfy TS when it comes to commitment's discriminated union. */

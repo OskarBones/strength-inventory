@@ -9,7 +9,7 @@ z.string() = optional string i.e. empty strings accepted */
 // shared utility schemas
 
 const TimeSchema = z.array(z.iso.time().nullable()).length(2);
-const ExceptionTimeSchema = z.array(z.iso.time().nullish()).length(2);
+const ExceptionTimeSchema = z.array(z.iso.time().nullable()).length(2);
 
 export const HoursSchema = z.object({
   MO: TimeSchema,
@@ -20,29 +20,16 @@ export const HoursSchema = z.object({
   SA: TimeSchema,
   SU: TimeSchema
 });
-export type Hours = z.infer<typeof HoursSchema>;  // used in gym and membership
+export type Hours = z.infer<typeof HoursSchema>;
 
-// used in gym, city and district
-const LatitudeSchema = z.preprocess((val) => {
-  if (typeof val === 'string') {
-    return Number(Number.parseFloat(val).toFixed(5))
-  }
-  return val;
-}, z.number().gte(-90).lte(90))
-const LongitudeSchema = z.preprocess((val) => {
-  if (typeof val === 'string') {
-    return Number(Number.parseFloat(val).toFixed(5))
-  }
-  return val;
-}, z.number().gte(-90).lte(90))
-
-// used in gym and city
 export const COUNTRY_MAX_LEN = 40
 const CountrySchema = z.string().min(1).max(COUNTRY_MAX_LEN)
 
-// used in gym, city and district
 export const LOCATION_MAX_LEN = 60
 const SubLocationNameSchema = z.string().min(1).max(LOCATION_MAX_LEN)
+
+export const LatitudeSchema = z.number().gte(-90).lte(90)
+export const LongitudeSchema = z.number().gte(-180).lte(180)
 
 
 // membership
@@ -58,49 +45,31 @@ export const MembershipAvailabilitySchema = z.object({
 })
 export type MembershipAvailability = z.infer<typeof MembershipAvailabilitySchema>;
 
-const MembershipBaseSchema = z.object({
+export const MembershipBaseSchema = z.object({
   id: z.uuidv4(),
   name: z.string().min(1),
-  initiationFee: z.preprocess((val) => {
-    return(Number(val))
-  }, z.number().nullish()),
-  membershipFee: z.preprocess((val) => {
-    return(Number(val))
-  }, z.number()),
+  initiationFee: z.number().nullable(),
+  membershipFee: z.number(),
   feeCurrency: z.string().min(1),
-  visits: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.int().nullable()),
-  validity: z.preprocess((val) => {
-    return(Number(val))
-  }, z.int()),
+  visits: z.int().nullable(),
+  validity: z.int(),
   validityUnit: MembershipTimeUnitEnum,
   autoRenewal: z.boolean(),
   availability: MembershipAvailabilitySchema,
-  url: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.url().nullish()
-  ),
-  notes: z.string(),
+  url: z.url().nullable(),
+  notes: z.string().min(1).max(255).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 })
 
-const MembershipWithChainSchema = z.object({
+export const MembershipWithChainSchema = z.object({
   chain: z.string().min(1),
-  country: z.string().min(1).max(40)
+  country: z.string().min(1).max(COUNTRY_MAX_LEN)
 })
 
 const MembershipWithoutChainSchema = z.object({
-  chain: z.literal(''),
-  country: z.literal('')
+  chain: z.null(),
+  country: z.null()
 })
 
 const MembershipChainSchema = z.union([
@@ -109,30 +78,12 @@ const MembershipChainSchema = z.union([
 
 const MembershipWithCommitmentSchema = z.object({
   commitmentUnit: MembershipTimeUnitEnum,
-  commitment: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseInt(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.int())
+  commitment: z.int()
 })
 
 const MembershipWithoutCommitmentSchema = z.object({
   commitmentUnit: z.null(),
-  commitment: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseInt(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.null('select a commitment unit to add commitment'))
+  commitment: z.null('select a commitment unit to add commitment')
 })
 
 const MembershipCommitmentSchema = z.discriminatedUnion('commitmentUnit', [
@@ -144,10 +95,35 @@ const MembershipUnions = z.intersection(MembershipChainSchema, MembershipCommitm
 export const MembershipSchema = z.intersection(MembershipBaseSchema, MembershipUnions)
 export type Membership = z.infer<typeof MembershipSchema>;
 
-export const MembershipPostAndPutSchema = z.intersection(
-    MembershipBaseSchema.omit({ id: true, createdAt: true, updatedAt: true }),
-    MembershipUnions)
-export type MembershipPostAndPut = z.infer<typeof MembershipPostAndPutSchema>;
+export const MembershipPostSchema = z.intersection(MembershipBaseSchema.exactPartial({
+  id: true,
+  initiationFee: true,
+  visits: true,
+  availability: true,
+  url: true,
+  notes: true,
+  createdAt: true,
+  updatedAt: true
+}), MembershipUnions)
+export type MembershipPost = z.infer<typeof MembershipPostSchema>
+
+/* With the contents of .extend, the two union schemas
+are disregarded at the schema level and
+validation of the resulting object as a whole
+is left on the shoulders of the ORM and DB.
+This is done to facilitate PUT requests with
+a freely selected set of fields. */
+export const MembershipPutSchema = MembershipBaseSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+}).extend({
+  chain: z.string().min(1).nullable(),
+  country: z.string().min(1).max(COUNTRY_MAX_LEN).nullable(),
+  commitmentUnit: MembershipTimeUnitEnum.nullable(),
+  commitment: z.int().nullable()
+}).exactPartial()
+export type MembershipPut = z.infer<typeof MembershipPutSchema>
 
 
 // gymmanagers
@@ -161,81 +137,11 @@ export const GymManagerSchema = z.object({
 });
 export type GymManager = z.infer<typeof GymManagerSchema>;
 
-export const GymManagerPostSchema = GymManagerSchema.pick({
+export const GymManagerPostAndDeleteSchema = GymManagerSchema.pick({
   userId: true,
   gymId: true
 });
-export type GymManagerPost = z.infer<typeof GymManagerPostSchema>;
-
-
-// user
-
-export const PasswordSchema = z
-  .string()
-  .min(15)  // without MFA, shorter than 15 is considered weak (NIST SP800-63B)
-  .max(100);  // upper limit prevents extremely long passwords that would take too long to hash (NIST SP800-63B)
-
-export const UserRoleEnum = z.enum(['SUPERUSER', 'ADMIN', 'MANAGER', 'GYM-GOER']);
-export type UserRole = z.infer<typeof UserRoleEnum>;
-
-export const USERNAME_MAX_LEN = 30
-export const USERS_NAME_MAX_LEN = 100
-export const UserSchema = z.object({
-  id: z.uuidv4(),
-  username: z.string().min(1).max(USERNAME_MAX_LEN),
-  email: z.email(),
-  emailVerified: z.boolean(),
-  passwordHash: z.string().min(1),
-  name: z.string().min(1).max(USERS_NAME_MAX_LEN),
-  role: UserRoleEnum,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
-});
-export type User = z.infer<typeof UserSchema>;
-
-export const UserPostSchema = UserSchema.pick({
-  username: true,
-  email: true,
-  name: true
-}).extend({
-  password: PasswordSchema
-});
-export type UserPost = z.infer<typeof UserPostSchema>;
-
-export const UserPutSchema = UserSchema.pick({
-  username: true,
-  email: true,
-  emailVerified: true,
-  name: true,
-  role: true
-}).extend({
-  password: PasswordSchema.optional()
-});
-export type UserPut = z.infer<typeof UserPutSchema>;
-
-export const UserTokenPayloadSchema = UserSchema.pick({
-  id: true,
-  username: true
-}).extend({
-  userContext: z.string().min(1)
-});
-export type UserTokenPayload = z.infer<typeof UserTokenPayloadSchema>;
-
-export const UserNamesSchema = UserSchema.pick({
-  username: true,
-  name: true
-});
-
-export const UserFrontendQuerySchema = UserSchema.pick({
-  id: true,
-  username: true,
-  email: true,
-  emailVerified: true,
-  name: true,
-  role: true
-})
-export const UserFrontendSchema = UserFrontendQuerySchema.nullish()
-export type UserFrontend = z.infer<typeof UserFrontendSchema>
+export type GymManagerPostAndDelete = z.infer<typeof GymManagerPostAndDeleteSchema>;
 
 
 // equipment
@@ -425,25 +331,33 @@ export const CARDIO = [
 export const CardioCategorySchema = z.enum(CARDIO)
 export type CardioCategory = z.infer<typeof CardioCategorySchema>
 
+const CategorySchema = z.enum([
+  'accessoryOrTool',
+  'barOrPlate',
+  'cardio',
+  'freeWeight',
+  'handleAttachment',
+  'strengthMachine',
+  'system'
+])
+const SubcategorySchema = z.enum(ACCESSORIES_AND_TOOLS.concat(BARS_AND_PLATES, CARDIO, FREE_WEIGHTS, HANDLE_ATTACHMENTS, STRENGTH_MACHINES, SYSTEMS))
+
 export const EquipmentWeightUnitEnum = z.enum(['kg', 'lbs'])
 export type EquipmentWeightUnit = z.infer<typeof EquipmentWeightUnitEnum>;
 
 export const EquipmentMaximumWeightTypeEnum = z.enum(['load', 'weight'])
 export type EquipmentMaximumWeightType = z.infer<typeof EquipmentMaximumWeightTypeEnum>;
 
-const EquipmentBaseSchema = z.object({
+export const EquipmentBaseSchema = z.object({
   id: z.uuidv4(),
-  name: z.string().min(1),
+  name: z.string().min(1).max(255),
   generic: z.boolean(),
-  manufacturer: z.string().min(1),
-  code: z.string().min(1),
+  manufacturer: z.string().min(1).max(255),
+  code: z.string().min(1).max(255),
   maximumWeightType: EquipmentMaximumWeightTypeEnum,
   outOfProduction: z.boolean(),
-  url: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.url().nullish()
-  ),
-  notes: z.string(),
+  url: z.url().nullable(),
+  notes: z.string().min(1).max(255).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 })
@@ -486,7 +400,7 @@ const CardioSchema = z.object({
   subcategory: CardioCategorySchema
 })
 
-const EquipmentCategorySchema = z.discriminatedUnion('category', [
+export const EquipmentCategorySchema = z.discriminatedUnion('category', [
   SystemSchema,
   BarOrPlateSchema,
   FreeWeightSchema,
@@ -496,44 +410,14 @@ const EquipmentCategorySchema = z.discriminatedUnion('category', [
   CardioSchema
 ])
 
-const WeightSchema = z.float32().positive().lte(MAX_WEIGHT)
+export const WeightSchema = z.number().positive().lte(MAX_WEIGHT)
 
-const EquipmentWithWeightsSchema = z.object({
+export const EquipmentWithWeightsSchema = z.object({
   weightUnit: EquipmentWeightUnitEnum,
-  weight: z.preprocess((val) => {
-    if (!val) {
-      return null
-    }
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, WeightSchema.nullish()),
-  startingWeight: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, WeightSchema.nullish()),
+  weight: WeightSchema.nullable(),
+  startingWeight: WeightSchema.nullable(),
   availableWeights: z.array(WeightSchema),
-  maximumWeight: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, WeightSchema.nullish()),
+  maximumWeight: WeightSchema.nullable(),
 })
 .refine((data) => {
   if (data.startingWeight && data.maximumWeight) {
@@ -557,42 +441,12 @@ const EquipmentWithWeightsSchema = z.object({
   }
 }, { error: 'highest available weight must equal maximum weight' })
 
-const EquipmentWithoutWeightsSchema = z.object({
+export const EquipmentWithoutWeightsSchema = z.object({
   weightUnit: z.null(),
-  weight: z.preprocess((val) => {
-    if (!val) {
-      return null
-    }
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.null('select a weight unit to use weights')),
-  startingWeight: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.null('select a weight unit to use weights')),
-  availableWeights: z.array(z.float32()).length(0, 'select a weight unit to use weights'),
-  maximumWeight: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      if (val) {
-        return Number.parseFloat(val)
-      } else {
-        return null
-      }
-    }
-    return val;
-  }, z.null('select a weight unit to use weights'))
+  weight: z.null('select a weight unit to use weights'),
+  startingWeight: z.null('select a weight unit to use weights'),
+  availableWeights: z.array(z.number()).length(0, 'select a weight unit to use weights'),
+  maximumWeight: z.null('select a weight unit to use weights')
 })
 
 const EquipmentWeightsSchema = z.discriminatedUnion('weightUnit', [
@@ -604,21 +458,35 @@ const EquipmentUnions = z.intersection(EquipmentCategorySchema, EquipmentWeights
 export const EquipmentSchema = z.intersection(EquipmentBaseSchema, EquipmentUnions)
 export type Equipment = z.infer<typeof EquipmentSchema>;
 
-export const EquipmentPostAndPutSchema = z.intersection(
-  EquipmentBaseSchema
-    .omit({ id: true, createdAt: true, updatedAt: true })
-    .extend({
-      generic: z.preprocess(
-        (val) => (val ? true : false),
-        z.boolean()
-      ),
-      outOfProduction: z.preprocess(
-        (val) => (val ? true : false),
-        z.boolean()
-      ),
-    }),
-  EquipmentUnions)
-export type EquipmentPostAndPut = z.infer<typeof EquipmentPostAndPutSchema>;
+export const EquipmentPostSchema = z.intersection(EquipmentBaseSchema.exactPartial({
+  id: true,
+  url: true,
+  notes: true,
+  createdAt: true,
+  updatedAt: true
+}), EquipmentUnions)
+export type EquipmentPost = z.infer<typeof EquipmentPostSchema>
+
+/* With the contents of .extend, the two union schemas
+are disregarded at the schema level and
+validation of the resulting object as a whole
+is left on the shoulders of the ORM and DB.
+This is done to facilitate PUT requests with
+a freely selected set of fields. */
+export const EquipmentPutSchema = EquipmentBaseSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+}).extend({
+  category: CategorySchema,
+  subcategory: SubcategorySchema,
+  weightUnit: EquipmentWeightUnitEnum.nullable(),
+  weight: WeightSchema.nullable(),
+  startingWeight: WeightSchema.nullable(),
+  availableWeights: z.array(WeightSchema),
+  maximumWeight: WeightSchema.nullable()
+}).exactPartial()
+export type EquipmentPut = z.infer<typeof EquipmentPutSchema>
 
 
 // gymequipment
@@ -709,17 +577,7 @@ export const GymSchema = z.object({
 });
 export type Gym = z.infer<typeof GymSchema>;
 
-export const GymGetEquipmentSchema = z.intersection(
-  EquipmentBaseSchema.extend({ gymequipment: GymEquipmentSchema }),
-  EquipmentUnions)
-export type GymGetEquipment = z.infer<typeof GymGetEquipmentSchema>;
-
-export const GymGetMembershipsSchema = z.intersection(
-  MembershipBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
-  MembershipUnions)
-export type GymGetMemberships = z.infer<typeof GymGetMembershipsSchema>;
-
-export const GymPostSchema = GymSchema.partial({
+export const GymPostSchema = GymSchema.exactPartial({
   id: true,
   chain: true,
   openingHoursEveryone: true,
@@ -735,131 +593,137 @@ export const GymPostSchema = GymSchema.partial({
 })
 export type GymPost = z.infer<typeof GymPostSchema>;
 
-const GymFrontendBaseSchema = GymSchema.omit({
+export const GymPutSchema = GymSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+}).exactPartial();
+export type GymPut = z.infer<typeof GymPutSchema>;
+
+
+// city ad district
+
+export const REF_POINT_MAX_LEN = 23;
+
+const LocationBaseSchema = z.object({
+  id: z.uuidv4(),
+  name: SubLocationNameSchema,
+  referencePoint: z.string().min(1).max(REF_POINT_MAX_LEN),
+  latitude: LatitudeSchema,
+  longitude: LongitudeSchema,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date()
+})
+
+export const CitySchema = LocationBaseSchema.extend({
+  country: CountrySchema
+})
+export type City = z.infer<typeof CitySchema>;
+
+export const CityPostSchema = CitySchema.exactPartial({
   id: true,
   createdAt: true,
   updatedAt: true
 })
+export type CityPost = z.infer<typeof CityPostSchema>
 
-export const GymPutSchema = GymFrontendBaseSchema.partial();
-export type GymPut = z.infer<typeof GymPutSchema>;
+export const CityPutSchema = CitySchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+}).exactPartial();
+export type CityPut = z.infer<typeof CityPutSchema>
 
-export const GymGetSchema = GymSchema.omit({
-  chain: true,
-  url: true,
-  notes: true
-}).extend({
-  chain: z.preprocess(
-    (val) => (val === null ? '' : val),
-    z.string().max(255)
-  ),
-  url: z.preprocess(
-    (val) => (val === null ? '' : val),
-    z.string()
-  ),
-  notes: z.preprocess(
-    (val) => (val === null ? '' : val),
-    z.string().max(255)
-  ),
-  managers: z.array(UserSchema.pick({
+export const DistrictSchema = LocationBaseSchema.extend({
+  cityId: z.uuidv4()
+})
+export type District = z.infer<typeof DistrictSchema>;
+
+export const DistrictPostSchema = DistrictSchema.exactPartial({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+})
+export type DistrictPost = z.infer<typeof DistrictPostSchema>
+
+export const DistrictPutSchema = DistrictSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+}).exactPartial()
+export type DistrictPut = z.infer<typeof DistrictPutSchema>
+
+
+// user
+
+export const PasswordSchema = z
+  .string()
+  .min(15)  // without MFA, shorter than 15 is considered weak (NIST SP800-63B)
+  .max(100);  // upper limit prevents extremely long passwords that would take too long to hash (NIST SP800-63B)
+
+export const UserRoleEnum = z.enum(['SUPERUSER', 'ADMIN', 'MANAGER', 'GYM-GOER']);
+export type UserRole = z.infer<typeof UserRoleEnum>;
+
+export const USERNAME_MAX_LEN = 30
+export const USERS_NAME_MAX_LEN = 100
+export const UserSchema = z.object({
+  id: z.uuidv4(),
+  username: z.string().min(1).max(USERNAME_MAX_LEN),
+  email: z.email(),
+  emailVerified: z.boolean(),
+  passwordHash: z.string().min(1),
+  name: z.string().min(1).max(USERS_NAME_MAX_LEN),
+  role: UserRoleEnum,
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date()
+});
+export type User = z.infer<typeof UserSchema>;
+
+export const UserPostSchema = UserSchema
+  .omit({ emailVerified: true, passwordHash: true })
+  .extend({ password: PasswordSchema })
+  .exactPartial({
     id: true,
-    username: true,
-    email: true,
-    name: true
+    role: true,
+    createdAt: true,
+    updatedAt: true
+  })
+export type UserPost = z.infer<typeof UserPostSchema>;
+
+export const UserPutSchema = UserSchema
+  .omit({
+    id: true,
+    passwordHash: true,
+    createdAt: true,
+    updatedAt: true
   }).extend({
-    gymmanagers: GymManagerSchema
-  })),
-  memberships: z.array(MembershipSchema),
-  equipment: z.array(GymGetEquipmentSchema)
-})
-export type GymGet = z.infer<typeof GymGetSchema>;
+    password: PasswordSchema
+  }).exactPartial()
+export type UserPut = z.infer<typeof UserPutSchema>;
 
-export const GymWithDistanceSchema = GymGetSchema.extend({
-  distance: z.number(),
-  referencePoint: z.string()
-})
-export type GymWithDistance = z.infer<typeof GymWithDistanceSchema>;
-
-export const GymFrontendPostAndPutSchema = GymFrontendBaseSchema.omit({
-  chain: true,
-  latitude: true,
-  longitude: true,
-  equipmentVisible: true,
-  membershipsVisible: true,
-  openingHoursVisible: true,
-  url: true,
-  notes: true
+export const UserTokenPayloadSchema = UserSchema.pick({
+  id: true,
+  username: true
 }).extend({
-  chain: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.string().min(1).max(255).nullable()
-  ),
-  latitude: z.preprocess(
-    (val) => (Number(val)),
-    LatitudeSchema
-  ),
-  longitude: z.preprocess(
-    (val) => (Number(val)),
-    LongitudeSchema
-  ),
-  equipmentVisible: z.preprocess(
-    (val) => (val ? true : false),
-    z.boolean()
-  ),
-  membershipsVisible: z.preprocess(
-    (val) => (val ? true : false),
-    z.boolean()
-  ),
-  openingHoursVisible: z.preprocess(
-    (val) => (val ? true : false),
-    z.boolean()
-  ),
-  url: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.url().nullable()
-  ),
-  notes: z.preprocess(
-    (val) => (val === '' ? null : val),
-    z.string().min(1).max(255).nullable()
-  ),
-})
-export type GymFrontendPostAndPut = z.infer<typeof GymFrontendPostAndPutSchema>;
+  userContext: z.string().min(1)
+});
+export type UserTokenPayload = z.infer<typeof UserTokenPayloadSchema>;
 
-const GymFrontendHourSchema = z.preprocess(
-  (val) => (val === '' ? null : val),
-  z.iso.time().nullable()
-)
-export const GymFormHoursSchema = z.object({
-  everyoneMOOpen: GymFrontendHourSchema,
-  everyoneMOClose: GymFrontendHourSchema,
-  everyoneTUOpen: GymFrontendHourSchema,
-  everyoneTUClose: GymFrontendHourSchema,
-  everyoneWEOpen: GymFrontendHourSchema,
-  everyoneWEClose: GymFrontendHourSchema,
-  everyoneTHOpen: GymFrontendHourSchema,
-  everyoneTHClose: GymFrontendHourSchema,
-  everyoneFROpen: GymFrontendHourSchema,
-  everyoneFRClose: GymFrontendHourSchema,
-  everyoneSAOpen: GymFrontendHourSchema,
-  everyoneSAClose: GymFrontendHourSchema,
-  everyoneSUOpen: GymFrontendHourSchema,
-  everyoneSUClose: GymFrontendHourSchema,
-  membersMOOpen: GymFrontendHourSchema,
-  membersMOClose: GymFrontendHourSchema,
-  membersTUOpen: GymFrontendHourSchema,
-  membersTUClose: GymFrontendHourSchema,
-  membersWEOpen: GymFrontendHourSchema,
-  membersWEClose: GymFrontendHourSchema,
-  membersTHOpen: GymFrontendHourSchema,
-  membersTHClose: GymFrontendHourSchema,
-  membersFROpen: GymFrontendHourSchema,
-  membersFRClose: GymFrontendHourSchema,
-  membersSAOpen: GymFrontendHourSchema,
-  membersSAClose: GymFrontendHourSchema,
-  membersSUOpen: GymFrontendHourSchema,
-  membersSUClose: GymFrontendHourSchema
+export const UserNamesSchema = UserSchema.pick({
+  username: true,
+  name: true
+});
+
+export const UserFrontendQuerySchema = UserSchema.pick({
+  id: true,
+  username: true,
+  email: true,
+  emailVerified: true,
+  name: true,
+  role: true
 })
-export type GymFormHours = z.infer<typeof GymFormHoursSchema>;
+const UserFrontendSchema = UserFrontendQuerySchema.nullable()
+export type UserFrontend = z.infer<typeof UserFrontendSchema>
 
 
 // login
@@ -895,52 +759,3 @@ export const LoginRefreshResponseSchema = z.object({
   token: z.jwt()
 })
 export type LoginRefreshResponse = z.infer<typeof LoginRefreshResponseSchema>;
-
-
-// locations
-
-export const REF_POINT_MAX_LEN = 23;
-
-const LocationBaseSchema = z.object({
-  id: z.uuidv4(),
-  name: SubLocationNameSchema,
-  referencePoint: z.string().min(1).max(REF_POINT_MAX_LEN),
-  latitude: LatitudeSchema,
-  longitude: LongitudeSchema,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date()
-})
-
-export const CitySchema = LocationBaseSchema.extend({
-  country: CountrySchema
-})
-export type City = z.infer<typeof CitySchema>;
-
-export const CityPostAndPutSchema = CitySchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-})
-export type CityPostAndPut = z.infer<typeof CityPostAndPutSchema>;
-
-export const DistrictSchema = LocationBaseSchema.extend({
-  cityId: z.uuidv4()
-})
-export type District = z.infer<typeof DistrictSchema>;
-
-export const DistrictPostAndPutSchema = DistrictSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true
-})
-export type DistrictPostAndPut = z.infer<typeof DistrictPostAndPutSchema>;
-
-export const CityGetSchema = CitySchema.extend({
-  districts: z.array(DistrictSchema)
-})
-export type CityGet = z.infer<typeof CityGetSchema>;
-
-export const DistrictGetSchema = DistrictSchema.extend({
-  city: CitySchema
-})
-export type DistrictGet = z.infer<typeof DistrictGetSchema>;

@@ -1,9 +1,9 @@
 import Day from './Day';
 
-import type { GymGet } from '@strength-inventory/schemas';
+import type { GymFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface RegularHoursProps {
-  gym: GymGet
+  gym: GymFrontendGet
   membersOnly: boolean
   setExceptionReason: React.Dispatch<React.SetStateAction<string>>
 }

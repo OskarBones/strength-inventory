@@ -29,15 +29,15 @@ class Equipment extends Model<
   declare subcategory: string;
   declare manufacturer: string;
   declare code: string;
-  declare weightUnit: EquipmentWeightUnit | null | undefined;
-  declare weight: number | null | undefined;
-  declare startingWeight: number | null | undefined;
-  declare availableWeights: number[];
-  declare maximumWeight: number | null | undefined;
-  declare maximumWeightType: EquipmentMaximumWeightType;
+  declare weightUnit: EquipmentWeightUnit | null;
+  declare weight: number | null;
+  declare startingWeight: number | null;
+  declare availableWeights: CreationOptional<number[]>;
+  declare maximumWeight: number | null;
+  declare maximumWeightType: CreationOptional<EquipmentMaximumWeightType>;
   declare outOfProduction: boolean;
-  declare url: string | null | undefined;
-  declare notes: string;
+  declare url: string | null;
+  declare notes: string | null;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -122,8 +122,9 @@ Equipment.init({
     }
   },
   availableWeights: {
-    type: DataTypes.JSON
+    type: DataTypes.JSON,
     // as per customValidator(), using this field requires weightUnit !== null
+    defaultValue: []
   },
   maximumWeight: {
     type: DataTypes.DECIMAL(5, 2),
@@ -146,7 +147,10 @@ Equipment.init({
     }
   },
   notes: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    validate: {
+      notEmpty: true
+    }
   },
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE

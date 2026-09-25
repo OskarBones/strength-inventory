@@ -149,7 +149,7 @@ gymsRouter.put(
 
     const gym = req.targetGym;
 
-    await gym.update(req.body as Partial<FullGym>);
+    await gym.update(req.body);
     await gym.save();
 
     return res.status(200).json(gym);

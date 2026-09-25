@@ -1,21 +1,25 @@
 import { useRef, useState } from 'react';
 
+import { FaStoreSlash } from 'react-icons/fa';
+import { LuEqualApproximately } from 'react-icons/lu';
+
 import Category from './Category';
 import Piece from './Piece';
+
+import type { GymFrontendGet, GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
 
 import {
   ACCESSORIES_AND_TOOLS,
   BARS_AND_PLATES,
   CARDIO,
   FREE_WEIGHTS,
-  type GymGet,
-  type GymGetEquipment,
   HANDLE_ATTACHMENTS,
   STRENGTH_MACHINES,
   SYSTEMS
 } from '@strength-inventory/schemas';
 
-export default function GymEquipment ({ gym }: { gym: GymGet }) {
+export default function GymEquipment ({ gym }: { gym: GymFrontendGet }) {
   const systemsScrollTopRef = useRef(0);
   const barsAndPlatesScrollTopRef = useRef(0);
   const freeWeightsScrollTopRef = useRef(0);
@@ -26,7 +30,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
 
   const [modelView, setModelView] = useState(false);
   const [clickedEquipment, setClickedEquipment]
-    = useState<GymGetEquipment | null>(null);
+    = useState<GymFrontendGetEquipment | null>(null);
   const [systemsSubcategory, setSystemsSubcategory] = useState('');
   const [barsAndPlatesSubcategory, setBarsAndPlatesSubcategory] = useState('');
   const [freeWeightsSubcategory, setFreeWeightsSubcategory] = useState('');
@@ -141,6 +145,7 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
       className='relative flex flex-col flex-1 gap-3 border-x border-b'
     >
       <h4 className='sr-only'>equipment at {gym.name}</h4>
+
       <div
         className={`
           flex flex-col flex-1 gap-3 p-3
@@ -149,18 +154,27 @@ export default function GymEquipment ({ gym }: { gym: GymGet }) {
       : ''
     }`}
       >
-        <div className='flex gap-2'>
-          <input
-            id='modelView'
-            name='modelView'
-            type='checkbox'
-            value='showModels'
-            checked={modelView}
-            onChange={() => {
-              setModelView(!modelView);
-            }}
-          />
-          <label htmlFor='modelView' className='text-sm'>show models</label>
+        <div className='flex gap-4 items-center text-sm'>
+          <div className='flex gap-2'>
+            <input
+              id='modelView'
+              name='modelView'
+              type='checkbox'
+              value='showModels'
+              checked={modelView}
+              onChange={() => {
+                setModelView(!modelView);
+              }}
+            />
+            <label htmlFor='modelView'>show models</label>
+          </div>
+
+          <p className='flex gap-1 items-center italic text-xs'>
+            <LuEqualApproximately />generic
+          </p>
+          <p className='flex gap-1 items-center italic text-xs'>
+            <FaStoreSlash />out of production
+          </p>
         </div>
 
         <div className='flex flex-1'>

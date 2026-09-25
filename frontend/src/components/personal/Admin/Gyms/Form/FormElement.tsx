@@ -7,10 +7,11 @@ import OpeningHoursDayInput from './OpeningHoursDayInput';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
+import type { CityFrontendGet, GymFrontendGet }
+  from '@strength-inventory/schemas/frontend';
+
 import {
-  type CityGet,
   type District,
-  type GymGet,
   LOCATION_MAX_LEN,
   STREET_NO_MAX_LEN
 } from '@strength-inventory/schemas';
@@ -52,10 +53,10 @@ interface FormElementProps {
     openingHoursVisible: boolean;
     notes: string;
   }>>,
-  cities: CityGet[],
+  cities: CityFrontendGet[],
   filteredDistricts: District[],
   iconMode: boolean,
-  selectedGym: GymGet | undefined,
+  selectedGym: GymFrontendGet | undefined,
   setHoursChanged: React.Dispatch<React.SetStateAction<boolean>>,
   isPending: boolean
 }

@@ -61,11 +61,8 @@ gymEquipmentRouter.patch(
     }  // Should never trigger after middleware.
 
     const junction = req.targetGymEquipment;
-    const { count } = req.body;
 
-    await junction.update({
-      count: count
-    });
+    await junction.update(req.body);
     await junction.save();
 
     return res.status(200).json(junction);

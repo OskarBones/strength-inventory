@@ -7,13 +7,13 @@ import ListSearchAndButtons from '../ListSearchAndButtons';
 import { AuthContext } from '@/utils/contexts';
 import { deleteDistrict } from '@/utils/api';
 
-import { type DistrictGet } from '@strength-inventory/schemas';
+import { type DistrictFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface ListProps {
   scrollTopRef: RefObject<number>
   search: string
   setSearch: React.Dispatch<React.SetStateAction<string>>
-  districts: DistrictGet[]
+  districts: DistrictFrontendGet[]
   selectedDistrictId: string
   setSelectedDistrictId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
@@ -56,7 +56,7 @@ export default function List ({
     }
   });
 
-  let filteredDistricts: DistrictGet[] = districts;
+  let filteredDistricts: DistrictFrontendGet[] = districts;
   if (search) {
     filteredDistricts = districts.filter((district) => {
       return (

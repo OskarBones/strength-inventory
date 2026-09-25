@@ -1,15 +1,19 @@
 import calcDistanceInKm from '@/utils/calcDistanceInKm';
 
-import type { CityGet, District, DistrictGet }
-  from '@strength-inventory/schemas';
+import type { CityFrontendGet, DistrictFrontendGet }
+  from '@strength-inventory/schemas/frontend';
+
+import type { District } from '@strength-inventory/schemas';
 
 interface FiltersProps {
-  cities: CityGet[]
-  selectedCity: CityGet | null
-  setSelectedCity: React.Dispatch<React.SetStateAction<CityGet | null>>
-  districts: DistrictGet[]
-  selectedDistrict: DistrictGet | null
-  setSelectedDistrict: React.Dispatch<React.SetStateAction<DistrictGet | null>>
+  cities: CityFrontendGet[]
+  selectedCity: CityFrontendGet | null
+  setSelectedCity: React.Dispatch<React.SetStateAction<CityFrontendGet | null>>
+  districts: DistrictFrontendGet[]
+  selectedDistrict: DistrictFrontendGet | null
+  setSelectedDistrict: React.Dispatch<
+    React.SetStateAction<DistrictFrontendGet | null>
+  >
 }
 
 export default function Filters ({

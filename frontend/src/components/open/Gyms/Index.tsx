@@ -11,8 +11,8 @@ import Filters from './Filters';
 import Gym from './Gym';
 import Loading from '@/components/Loading';
 
-import type { CityGet, DistrictGet, GymWithDistance }
-  from '@strength-inventory/schemas';
+import type { CityFrontendGet, DistrictFrontendGet, GymWithDistance }
+  from '@strength-inventory/schemas/frontend';
 
 export default function Gyms () {
   const gymsQuery = useQuery({
@@ -30,9 +30,10 @@ export default function Gyms () {
     queryFn: () => getDistricts()
   });
 
-  const [selectedCity, setSelectedCity] = useState<CityGet | null>(null);
+  const [selectedCity, setSelectedCity]
+    = useState<CityFrontendGet | null>(null);
   const [selectedDistrict, setSelectedDistrict]
-    = useState<DistrictGet | null>(null);
+    = useState<DistrictFrontendGet | null>(null);
 
   if (
     citiesQuery.isPending || districtsQuery.isPending || gymsQuery.isPending
@@ -94,7 +95,7 @@ export default function Gyms () {
     >
       <h1 className='sr-only'>gyms</h1>
 
-      <p
+      <div
         className='
           flex justify-center items-center gap-3 rounded-sm
           bg-tertiary dark:bg-tertiary-dark p-3 text-center'
@@ -103,12 +104,12 @@ export default function Gyms () {
           <BsInfoCircle aria-hidden='true' className='text-2xl' />
           <span className='sr-only'>info</span>
         </h2>
-        <span className='text-sm'>
+        <p className='text-sm'>
           This preview showcases the functionalities of the website.
           The underlying database currently lacks sufficient coverage
           of any area to be very useful in practice.
-        </span>
-      </p>
+        </p>
+      </div>
 
       <Filters
         cities={citiesQuery.data}

@@ -9,13 +9,13 @@ import { deleteCity } from '@/utils/api';
 
 import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
-import { type CityGet } from '@strength-inventory/schemas';
+import { type CityFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface ListProps {
   scrollTopRef: RefObject<number>
   search: string
   setSearch: React.Dispatch<React.SetStateAction<string>>
-  cities: CityGet[]
+  cities: CityFrontendGet[]
   selectedCityId: string
   setSelectedCityId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
@@ -64,7 +64,7 @@ export default function List ({
     cities.find((city) => city.id === selectedCityId)?.districts
   );
 
-  let filteredCities: CityGet[] = cities;
+  let filteredCities: CityFrontendGet[] = cities;
   if (search) {
     filteredCities = cities.filter((city) => {
       return (

@@ -9,12 +9,14 @@ import { FaStoreSlash } from 'react-icons/fa';
 import { LuEqualApproximately } from 'react-icons/lu';
 import { type UseMutationResult } from '@tanstack/react-query';
 
+import type { GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
+
 import {
   ACCESSORIES_AND_TOOLS,
   BARS_AND_PLATES,
   CARDIO,
   FREE_WEIGHTS,
-  type GymGetEquipment,
   HANDLE_ATTACHMENTS,
   STRENGTH_MACHINES,
   SYSTEMS
@@ -23,7 +25,7 @@ import {
 interface CategoryProps {
   name: string
   gymId: string
-  equipment: GymGetEquipment[]
+  equipment: GymFrontendGetEquipment[]
   setEquipmentCountMutation: UseMutationResult<{
     id: string;
     gymId: string;
@@ -171,7 +173,7 @@ function Category ({
 
 interface CurrentListProps {
   gymId: string,
-  gymEquipment: GymGetEquipment[]
+  gymEquipment: GymFrontendGetEquipment[]
   setEquipmentCountMutation: UseMutationResult<{
     id: string;
     gymId: string;

@@ -29,22 +29,22 @@ import SubmitButton from '../../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
-import { type MembershipPostAndPut, MembershipPostAndPutSchema }
-  from '@strength-inventory/schemas';
+import { type MembershipFrontendPostAndPut, MembershipFrontendPostAndPutSchema }
+  from '@strength-inventory/schemas/frontend';
 
 interface FormProps {
-  formMode: string
-  setFormMode: React.Dispatch<React.SetStateAction<string>>
-  selectedMembershipId: string
-  defaultCountry: string
-  defaultChain: string
-  usedInGymMemberships: boolean
-  addToGym: boolean
-  gymId: string
+  formMode: string;
+  setFormMode: React.Dispatch<React.SetStateAction<string>>;
+  selectedMembershipId: string;
+  defaultCountry: string;
+  defaultChain: string;
+  usedInGymMemberships: boolean;
+  addToGym: boolean;
+  gymId: string;
   setParentNotification: React.Dispatch<React.SetStateAction<{
     type: string,
-    message: string
-  }>>
+    message: string;
+  }>>;
 }
 
 /* This type is explicitly defined for AvailabilityButtons.
@@ -66,10 +66,10 @@ export interface FormMembership {
     Desk: boolean,
     Web: boolean,
     App: boolean,
-    Other: boolean
+    Other: boolean;
   },
   url: string,
-  notes: string
+  notes: string;
 }
 
 export function Form (
@@ -143,7 +143,7 @@ export function Form (
   });
 
   const postMutation = useMutation({
-    mutationFn: (newMembership: MembershipPostAndPut) =>
+    mutationFn: (newMembership: MembershipFrontendPostAndPut) =>
       postMembership({
         membership: newMembership, refresh: auth.refresh, logout: auth.logout
       }),
@@ -165,7 +165,7 @@ export function Form (
 
   const addToGymMutation = useMutation({
     mutationFn: ({ gymId, membershipId }:
-    { gymId: string, membershipId: string }) =>
+    { gymId: string, membershipId: string; }) =>
       postGymMembership({
         gymId: gymId,
         membershipId: membershipId,
@@ -187,7 +187,7 @@ export function Form (
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedMembership }:
-    { id: string, updatedMembership: MembershipPostAndPut }) =>
+    { id: string, updatedMembership: MembershipFrontendPostAndPut; }) =>
       putMembership({
         id: id,
         membership: updatedMembership,
@@ -239,7 +239,7 @@ export function Form (
 
   const removeMutation = useMutation({
     mutationFn: ({ gymId, membershipId }:
-    { gymId: string, membershipId: string }) =>
+    { gymId: string, membershipId: string; }) =>
       deleteGymMembership({
         gymId: gymId,
         membershipId: membershipId,
@@ -273,8 +273,8 @@ export function Form (
   });
 
   interface State {
-    success: boolean
-    error: string | null
+    success: boolean;
+    error: string | null;
   }
 
   async function submit (_previousState: State, formData: FormData) {
@@ -300,7 +300,7 @@ export function Form (
         availability: membership.availability
       };
       const validatedMembership
-        = MembershipPostAndPutSchema.parse(unvalidatedMembership);
+        = MembershipFrontendPostAndPutSchema.parse(unvalidatedMembership);
 
       if (formMode === 'create') {
         try {
@@ -365,8 +365,8 @@ export function Form (
 
     setMembership({
       name: name,
-      chain: chain,
-      country: country,
+      chain: chain ?? '',
+      country: country ?? '',
       initiationFee: initiationFee
         ? String(initiationFee)
         : '',
@@ -388,12 +388,12 @@ export function Form (
       autoRenewal: autoRenewal,
       availability: availability,
       url: url ?? '',
-      notes: notes
+      notes: notes ?? ''
     });
     setOriginalMembership({
       name: name,
-      chain: chain,
-      country: country,
+      chain: chain ?? '',
+      country: country ?? '',
       initiationFee: initiationFee
         ? String(initiationFee)
         : '',
@@ -415,7 +415,7 @@ export function Form (
       autoRenewal: autoRenewal,
       availability: availability,
       url: url ?? '',
-      notes: notes
+      notes: notes ?? ''
     });
 
     setFirstRender(false);

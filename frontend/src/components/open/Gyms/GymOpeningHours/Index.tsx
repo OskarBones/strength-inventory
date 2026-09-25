@@ -11,9 +11,9 @@ import RegularHours from './RegularHours';
 
 import { WEEKDAYS } from '@/constants/values';
 
-import type { GymGet } from '@strength-inventory/schemas';
+import type { GymFrontendGet } from '@strength-inventory/schemas/frontend';
 
-export default function GymOpeningHours ({ gym }: { gym: GymGet }) {
+export default function GymOpeningHours ({ gym }: { gym: GymFrontendGet }) {
   function noHours (group: 'everyone' | 'members') {
     let noHoursFound = true;
 

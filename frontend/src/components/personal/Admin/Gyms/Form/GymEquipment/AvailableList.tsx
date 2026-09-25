@@ -5,12 +5,14 @@ import { LuEqualApproximately } from 'react-icons/lu';
 import { MdOutlinePlaylistAddCheckCircle } from 'react-icons/md';
 import { TbWorldWww } from 'react-icons/tb';
 
-import { type Equipment, type GymGetEquipment }
-  from '@strength-inventory/schemas';
+import { type GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
+
+import { type Equipment } from '@strength-inventory/schemas';
 
 interface AvailableListProps {
   scrollTopRef: RefObject<number>
-  currentEquipment: GymGetEquipment[]
+  currentEquipment: GymFrontendGetEquipment[]
   filteredEquipment: Equipment[]
   setEquipmentToAdd: React.Dispatch<React.SetStateAction<Equipment | null>>
 }

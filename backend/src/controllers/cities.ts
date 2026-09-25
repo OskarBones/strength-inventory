@@ -1,11 +1,11 @@
 import Express, { type Request, type Response } from 'express';
 
-import { cityParser, isAdmin, targetCityExtractor }
+import { cityPostParser, cityPutParser, isAdmin, targetCityExtractor }
   from '../utils/middleware.ts';
 
 import { City, District } from '../models/index.ts';
 
-import type { CityPostAndPut, City as FullCity }
+import type { CityPost, CityPut, City as FullCity }
   from '@strength-inventory/schemas';
 
 const citiesRouter = Express.Router();
@@ -30,28 +30,13 @@ citiesRouter.get('/:id', targetCityExtractor, (req, res) => {
 // POST for admins to create a city
 citiesRouter.post(
   '/',
-  cityParser,
+  cityPostParser,
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, CityPostAndPut>,
+    req: Request<unknown, unknown, CityPost>,
     res: Response<FullCity>
   ) => {
-    const {
-      name,
-      referencePoint,
-      latitude,
-      longitude,
-      country
-    } = req.body;
-
-    const city = await City.create({
-      name,
-      referencePoint,
-      latitude,
-      longitude,
-      country
-    });
-
+    const city = await City.create(req.body);
     return res.status(201).json(city);
   }
 );
@@ -59,11 +44,11 @@ citiesRouter.post(
 // PUT for admins to modify everything except id and timestamps
 citiesRouter.put(
   '/:id',
-  cityParser,
+  cityPutParser,
   ...isAdmin,
   targetCityExtractor,
   async (
-    req: Request<{ id: string }, unknown, CityPostAndPut>,
+    req: Request<{ id: string }, unknown, CityPut>,
     res: Response<FullCity>
   ) => {
     if (!req.targetCity) {
@@ -71,21 +56,8 @@ citiesRouter.put(
     }  // Should never trigger after middleware.
 
     const city = req.targetCity;
-    const {
-      name,
-      referencePoint,
-      latitude,
-      longitude,
-      country
-    } = req.body;
 
-    await city.update({
-      name: name,
-      referencePoint: referencePoint,
-      latitude: latitude,
-      longitude: longitude,
-      country: country
-    });
+    await city.update(req.body);
     await city.save();
 
     return res.status(200).json(city);

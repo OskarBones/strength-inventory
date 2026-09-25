@@ -6,7 +6,7 @@ import { GymManagers } from '../models/index.ts';
 
 import type {
   GymManager as FullGymManager,
-  GymManagerPost
+  GymManagerPostAndDelete
 } from '@strength-inventory/schemas';
 
 const gymManagersRouter = Express.Router();
@@ -23,12 +23,10 @@ gymManagersRouter.post(
   '/',
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, GymManagerPost>,
+    req: Request<unknown, unknown, GymManagerPostAndDelete>,
     res: Response<FullGymManager>
   ) => {
-    const { userId, gymId } = req.body;
-
-    const junction = await GymManagers.create({ userId, gymId });
+    const junction = await GymManagers.create(req.body);
 
     return res.status(201).json(junction);
   }

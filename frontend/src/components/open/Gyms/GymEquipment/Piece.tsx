@@ -1,12 +1,13 @@
 import { FaStoreSlash } from 'react-icons/fa';
 import { TbWorldWww } from 'react-icons/tb';
 
-import { type GymGetEquipment } from '@strength-inventory/schemas';
+import { type GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
 
 interface PieceProps {
-  equipment: GymGetEquipment
+  equipment: GymFrontendGetEquipment
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymGetEquipment | null>>
+  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {

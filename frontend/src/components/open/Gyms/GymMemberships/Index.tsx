@@ -4,7 +4,7 @@ import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
 
 import Membership from './Membership';
 
-import type { GymGet } from '@strength-inventory/schemas';
+import type { GymFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface LeftArrowProps {
   membershipIndex: number
@@ -85,7 +85,7 @@ function RightArrow ({
   );
 }
 
-export default function GymMemberships ({ gym }: { gym: GymGet }) {
+export default function GymMemberships ({ gym }: { gym: GymFrontendGet }) {
   const [membershipIndex, setMembershipIndex] = useState(0);
 
   const memberships = gym.memberships;

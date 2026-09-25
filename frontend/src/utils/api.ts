@@ -5,21 +5,26 @@ import { z } from 'zod';
 import syncToken from './syncToken';
 
 import {
-  CityGetSchema,
-  type CityPostAndPut,
+  CityFrontendGetSchema,
+  type CityFrontendPostAndPut,
+  DistrictFrontendGetSchema,
+  type DistrictFrontendPostAndPut,
+  EquipmentFrontendGetSchema,
+  type EquipmentFrontendPostAndPut,
+  GymFrontendGetEquipmentSchema,
+  GymFrontendGetMembershipsSchema,
+  GymFrontendGetSchema,
+  type GymFrontendPostAndPut,
+  MembershipFrontendGetSchema,
+  type MembershipFrontendPostAndPut
+} from '@strength-inventory/schemas/frontend';
+
+import {
   CitySchema,
-  DistrictGetSchema,
-  type DistrictPostAndPut,
   DistrictSchema,
-  type EquipmentPostAndPut,
   EquipmentSchema,
   GymEquipmentSchema,
-  type GymFrontendPostAndPut,
-  GymGetEquipmentSchema,
-  GymGetMembershipsSchema,
-  GymGetSchema,
   GymSchema,
-  type MembershipPostAndPut,
   MembershipSchema
 } from '@strength-inventory/schemas';
 
@@ -43,7 +48,7 @@ export const getGyms = async () => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(GymGetSchema).parse(data);
+  const validatedData = z.array(GymFrontendGetSchema).parse(data);
   return validatedData;
 };
 
@@ -54,7 +59,7 @@ export const getGymsIdAndName = async () => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(GymGetSchema).parse(data);
+  const validatedData = z.array(GymFrontendGetSchema).parse(data);
   return validatedData.map(({ id, name }) => ({ id, name }));
 };
 
@@ -65,7 +70,7 @@ export const getGym = async ({ id }: { id: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = GymGetSchema.parse(data);
+  const validatedData = GymFrontendGetSchema.parse(data);
   return validatedData;
 };
 
@@ -76,7 +81,7 @@ export const getGymEquipment = async ({ gymId }: { gymId: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(GymGetEquipmentSchema).parse(data);
+  const validatedData = z.array(GymFrontendGetEquipmentSchema).parse(data);
   return validatedData;
 };
 
@@ -87,7 +92,7 @@ export const getGymMemberships = async ({ gymId }: { gymId: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(GymGetMembershipsSchema).parse(data);
+  const validatedData = z.array(GymFrontendGetMembershipsSchema).parse(data);
   return validatedData;
 };
 
@@ -356,7 +361,7 @@ export const getEquipment = async () => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(EquipmentSchema).parse(data);
+  const validatedData = z.array(EquipmentFrontendGetSchema).parse(data);
   return validatedData;
 };
 
@@ -367,12 +372,12 @@ export const getPiece = async ({ id }: { id: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = EquipmentSchema.parse(data);
+  const validatedData = EquipmentFrontendGetSchema.parse(data);
   return validatedData;
 };
 
 interface postEquipmentProps extends TokenValidationProps {
-  piece: EquipmentPostAndPut
+  piece: EquipmentFrontendPostAndPut
 }
 
 export const postEquipment
@@ -404,7 +409,7 @@ export const postEquipment
 
 interface putEquipmentProps extends TokenValidationProps {
   id: string
-  piece: EquipmentPostAndPut
+  piece: EquipmentFrontendPostAndPut
 }
 
 export const putEquipment
@@ -466,7 +471,7 @@ export const getMembershipsByCountry
     }
 
     const data: unknown = await res.json();
-    const validatedData = z.array(MembershipSchema).parse(data);
+    const validatedData = z.array(MembershipFrontendGetSchema).parse(data);
     return validatedData;
   };
 
@@ -477,12 +482,12 @@ export const getMembership = async ({ id }: { id: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = MembershipSchema.parse(data);
+  const validatedData = MembershipFrontendGetSchema.parse(data);
   return validatedData;
 };
 
 interface postMembershipProps extends TokenValidationProps {
-  membership: MembershipPostAndPut
+  membership: MembershipFrontendPostAndPut
 }
 
 export const postMembership
@@ -514,7 +519,7 @@ export const postMembership
 
 interface putMembershipProps extends TokenValidationProps {
   id: string
-  membership: MembershipPostAndPut
+  membership: MembershipFrontendPostAndPut
 }
 
 export const putMembership
@@ -575,7 +580,7 @@ export const getCities = async () => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(CityGetSchema).parse(data);
+  const validatedData = z.array(CityFrontendGetSchema).parse(data);
   return validatedData;
 };
 
@@ -586,12 +591,12 @@ export const getCity = async ({ id }: { id: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = CityGetSchema.parse(data);
+  const validatedData = CityFrontendGetSchema.parse(data);
   return validatedData;
 };
 
 interface postCityProps extends TokenValidationProps {
-  city: CityPostAndPut
+  city: CityFrontendPostAndPut
 }
 
 export const postCity = async ({ city, refresh, logout }: postCityProps) => {
@@ -622,7 +627,7 @@ export const postCity = async ({ city, refresh, logout }: postCityProps) => {
 
 interface putCityProps extends TokenValidationProps {
   id: string
-  city: CityPostAndPut
+  city: CityFrontendPostAndPut
 }
 
 export const putCity
@@ -682,7 +687,7 @@ export const getDistricts = async () => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = z.array(DistrictGetSchema).parse(data);
+  const validatedData = z.array(DistrictFrontendGetSchema).parse(data);
   return validatedData;
 };
 
@@ -693,12 +698,12 @@ export const getDistrict = async ({ id }: { id: string }) => {
   }
 
   const data: unknown = await res.json();
-  const validatedData = DistrictGetSchema.parse(data);
+  const validatedData = DistrictFrontendGetSchema.parse(data);
   return validatedData;
 };
 
 interface postDistrictProps extends TokenValidationProps {
-  district: DistrictPostAndPut
+  district: DistrictFrontendPostAndPut
 }
 
 export const postDistrict = async ({
@@ -731,7 +736,7 @@ export const postDistrict = async ({
 
 interface putDistrictProps extends TokenValidationProps {
   id: string
-  district: DistrictPostAndPut
+  district: DistrictFrontendPostAndPut
 }
 
 export const putDistrict

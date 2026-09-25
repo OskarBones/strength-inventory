@@ -12,17 +12,17 @@ import {
 
 import { adjustUserRole } from '../utils/middleware.ts';
 
-import type {
-  Hours,
-  HoursExceptions
+import {
+  COUNTRY_MAX_LEN,
+  type Hours,
+  type HoursExceptions,
+  LOCATION_MAX_LEN,
+  STREET_NO_MAX_LEN
 } from '@strength-inventory/schemas';
 
 import { sequelize } from '../utils/db.js';
 
 import { Equipment, Membership, User } from './index.ts';
-
-import { COUNTRY_MAX_LEN, LOCATION_MAX_LEN, STREET_NO_MAX_LEN }
-  from '@strength-inventory/schemas';
 
 /* the fields declared as 'string | null' do not need
 CreationOptional<> for functional reasons but to conveniently
@@ -30,7 +30,7 @@ satisfy TS in the .post() route in controllers/gyms.ts */
 class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare id: CreationOptional<string>;
   declare name: string;
-  declare chain: CreationOptional<string | null>;
+  declare chain: string | null;
   declare street: string;
   declare streetNumber: string;
   declare district: string;
@@ -41,12 +41,12 @@ class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare openingHoursEveryone: CreationOptional<Hours>;
   declare openingHoursMembers: CreationOptional<Hours>;
   declare openingHoursExceptions: CreationOptional<HoursExceptions>;
-  declare url: CreationOptional<string | null>;
+  declare url: string | null;
   declare location: string;
   declare equipmentVisible: CreationOptional<boolean>;
   declare membershipsVisible: CreationOptional<boolean>;
   declare openingHoursVisible: CreationOptional<boolean>;
-  declare notes: CreationOptional<string | null>;
+  declare notes: string | null;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
@@ -76,7 +76,6 @@ Gym.init({
   },
   chain: {
     type: DataTypes.STRING,
-    defaultValue: null,
     validate: {
       notEmpty: true
     }
@@ -118,11 +117,19 @@ Gym.init({
   },
   latitude: {
     type: DataTypes.DECIMAL(8, 5),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      max: 90,
+      min: -90
+    }
   },
   longitude: {
     type: DataTypes.DECIMAL(8, 5),
-    allowNull: false
+    allowNull: false,
+    validate: {
+      max: 180,
+      min: -180
+    }
   },
   openingHoursEveryone: {
     type: DataTypes.JSON,
@@ -157,7 +164,6 @@ Gym.init({
   },
   url: {
     type: DataTypes.STRING,
-    defaultValue: null,
     validate: {
       isUrl: true
     }
@@ -186,7 +192,6 @@ Gym.init({
   },
   notes: {
     type: DataTypes.STRING,
-    defaultValue: null,
     validate: {
       notEmpty: true
     }

@@ -3,12 +3,14 @@ import { type RefObject, useEffect, useRef } from 'react';
 import { FaCaretLeft, FaStoreSlash } from 'react-icons/fa';
 import { LuEqualApproximately } from 'react-icons/lu';
 
+import type { GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
+
 import {
   ACCESSORIES_AND_TOOLS,
   BARS_AND_PLATES,
   CARDIO,
   FREE_WEIGHTS,
-  type GymGetEquipment,
   HANDLE_ATTACHMENTS,
   STRENGTH_MACHINES,
   SYSTEMS
@@ -16,9 +18,9 @@ import {
 
 interface ModelListProps {
   subcategory: string | undefined
-  equipment: GymGetEquipment[]
+  equipment: GymFrontendGetEquipment[]
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymGetEquipment | null>>
+  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 function ModelList ({ subcategory, equipment, setClickedEquipment }:
@@ -31,11 +33,11 @@ ModelListProps) {
     filteredEquipment.map((piece) => (
       <li key={piece.id}>
         <button
-          disabled={piece.name.includes('generic')}
+          disabled={piece.generic}
           className='
             rounded-sm px-1 w-full text-left enabled:cursor-pointer
             enabled:hover:bg-primary enabled:dark:hover:bg-background-dark
-            active:font-semibold'
+            enabled:active:font-semibold'
           onClick={() => {
             setClickedEquipment(piece);
           }}
@@ -85,11 +87,11 @@ interface CategoryProps {
   scrollTopRef: RefObject<number>
   modelView: boolean
   name: string
-  equipment: GymGetEquipment[]
+  equipment: GymFrontendGetEquipment[]
   selectedSubcategory: string
   setSelectedSubcategory: React.Dispatch<React.SetStateAction<string>>
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymGetEquipment | null>>
+  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 export default function Category ({

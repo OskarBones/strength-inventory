@@ -1,12 +1,17 @@
 import Express, { type Request, type Response } from 'express';
 
-import { equipmentParser, isAdmin, targetEquipmentExtractor }
-  from '../utils/middleware.ts';
+import {
+  equipmentPostParser,
+  equipmentPutParser,
+  isAdmin,
+  targetEquipmentExtractor
+} from '../utils/middleware.ts';
 
 import { Equipment } from '../models/index.js';
 
 import {
-  type EquipmentPostAndPut,
+  type EquipmentPost,
+  type EquipmentPut,
   EquipmentSchema,
   type Equipment as FullEquipment
 } from '@strength-inventory/schemas';
@@ -33,47 +38,13 @@ equipmentRouter.get('/:id', targetEquipmentExtractor, (req, res) => {
 // POST for admins to create a new equipment
 equipmentRouter.post(
   '/',
-  equipmentParser,
+  equipmentPostParser,
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, EquipmentPostAndPut>,
+    req: Request<unknown, unknown, EquipmentPost>,
     res: Response<FullEquipment>
   ) => {
-    const {
-      name,
-      generic,
-      category,
-      subcategory,
-      manufacturer,
-      code,
-      weightUnit,
-      weight,
-      startingWeight,
-      availableWeights,
-      maximumWeight,
-      maximumWeightType,
-      outOfProduction,
-      url,
-      notes
-    } = req.body;
-
-    const equipment = await Equipment.create({
-      name,
-      generic,
-      category,
-      subcategory,
-      manufacturer,
-      code,
-      weightUnit,
-      weight,
-      startingWeight,
-      availableWeights,
-      maximumWeight,
-      maximumWeightType,
-      outOfProduction,
-      url,
-      notes
-    });
+    const equipment = await Equipment.create(req.body);
 
     /* Satisfy TS when it comes to weights' discriminated union. */
     const validatedEquipment = EquipmentSchema.parse(equipment);
@@ -84,11 +55,11 @@ equipmentRouter.post(
 // PUT for admins to modify everything except id and timestamps
 equipmentRouter.put(
   '/:id',
-  equipmentParser,
+  equipmentPutParser,
   ...isAdmin,
   targetEquipmentExtractor,
   async (
-    req: Request<{ id: string; }, unknown, EquipmentPostAndPut>,
+    req: Request<{ id: string; }, unknown, EquipmentPut>,
     res: Response<FullEquipment>
   ) => {
     if (!req.targetEquipment) {
@@ -96,41 +67,8 @@ equipmentRouter.put(
     }  // Should never trigger after middleware.
 
     const equipment = req.targetEquipment;
-    const {
-      name,
-      generic,
-      category,
-      subcategory,
-      manufacturer,
-      code,
-      weightUnit,
-      weight,
-      startingWeight,
-      availableWeights,
-      maximumWeight,
-      maximumWeightType,
-      outOfProduction,
-      url,
-      notes
-    } = req.body;
 
-    await equipment.update({
-      name: name,
-      generic: generic,
-      category: category,
-      subcategory: subcategory,
-      manufacturer: manufacturer,
-      code: code,
-      weightUnit: weightUnit,
-      weight: weight,
-      startingWeight: startingWeight,
-      availableWeights: availableWeights,
-      maximumWeight: maximumWeight,
-      maximumWeightType: maximumWeightType,
-      outOfProduction: outOfProduction,
-      url: url,
-      notes: notes
-    });
+    await equipment.update(req.body);
     await equipment.save();
 
     /* Satisfy TS when it comes to weights' discriminated union. */

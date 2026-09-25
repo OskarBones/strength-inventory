@@ -17,12 +17,11 @@ import SubmitButton from '../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
-import {
-  type DistrictPostAndPut,
-  DistrictPostAndPutSchema,
-  LOCATION_MAX_LEN,
-  REF_POINT_MAX_LEN
-} from '@strength-inventory/schemas';
+import { type DistrictFrontendPostAndPut, DistrictFrontendPostAndPutSchema }
+  from '@strength-inventory/schemas/frontend';
+
+import { LOCATION_MAX_LEN, REF_POINT_MAX_LEN }
+  from '@strength-inventory/schemas';
 
 interface FormProps {
   formMode: string;
@@ -62,7 +61,7 @@ export default function Form ({
   });
 
   const postMutation = useMutation({
-    mutationFn: (newDistrict: DistrictPostAndPut) =>
+    mutationFn: (newDistrict: DistrictFrontendPostAndPut) =>
       postDistrict({
         district: newDistrict, refresh: auth.refresh, logout: auth.logout
       }),
@@ -87,7 +86,7 @@ export default function Form ({
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedDistrict }:
-    { id: string, updatedDistrict: DistrictPostAndPut; }) =>
+    { id: string, updatedDistrict: DistrictFrontendPostAndPut; }) =>
       putDistrict({
         id: id,
         district: updatedDistrict,
@@ -160,7 +159,7 @@ export default function Form ({
     const req = Object.fromEntries(formData.entries());
 
     try {
-      const validatedDistrict = DistrictPostAndPutSchema.parse(req);
+      const validatedDistrict = DistrictFrontendPostAndPutSchema.parse(req);
 
       if (formMode === 'create') {
         try {

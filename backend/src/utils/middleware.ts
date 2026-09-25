@@ -21,9 +21,12 @@ import {
 } from '../models/index.ts';
 
 import {
-  CityPostAndPutSchema,
-  DistrictPostAndPutSchema,
-  EquipmentPostAndPutSchema,
+  CityPostSchema,
+  CityPutSchema,
+  DistrictPostSchema,
+  DistrictPutSchema,
+  EquipmentPostSchema,
+  EquipmentPutSchema,
   type Gym as FullGym,
   GymEquipmentDeleteSchema,
   GymEquipmentPostSchema,
@@ -31,7 +34,8 @@ import {
   GymPostSchema,
   GymPutSchema,
   LoginRequestSchema,
-  MembershipPostAndPutSchema,
+  MembershipPostSchema,
+  MembershipPutSchema,
   PasswordSchema,
   UserNamesSchema,
   UserPostSchema,
@@ -536,13 +540,26 @@ export async function targetEquipmentExtractor (
   next();
 }
 
-export function equipmentParser (
+export function equipmentPostParser (
   req: Request,
   _res: Response,
   next: NextFunction
 ) {
   try {
-    EquipmentPostAndPutSchema.parse(req.body);
+    EquipmentPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function equipmentPutParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    EquipmentPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
@@ -574,13 +591,26 @@ export async function targetMembershipExtractor (
   next();
 }
 
-export function membershipParser (
+export function membershipPostParser (
   req: Request,
   _res: Response,
   next: NextFunction
 ) {
   try {
-    MembershipPostAndPutSchema.parse(req.body);
+    MembershipPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function membershipPutParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    MembershipPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
@@ -744,13 +774,26 @@ export async function targetCityExtractor (
   next();
 }
 
-export function cityParser (
+export function cityPostParser (
   req: Request,
   _res: Response,
   next: NextFunction
 ) {
   try {
-    CityPostAndPutSchema.parse(req.body);
+    CityPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function cityPutParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    CityPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);
@@ -782,13 +825,26 @@ export async function targetDistrictExtractor (
   next();
 }
 
-export function districtParser (
+export function districtPostParser (
   req: Request,
   _res: Response,
   next: NextFunction
 ) {
   try {
-    DistrictPostAndPutSchema.parse(req.body);
+    DistrictPostSchema.parse(req.body);
+    next();
+  } catch (e: unknown) {
+    next(e);
+  }
+}
+
+export function districtPutParser (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  try {
+    DistrictPutSchema.parse(req.body);
     next();
   } catch (e: unknown) {
     next(e);

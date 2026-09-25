@@ -18,12 +18,11 @@ import SubmitButton from '../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
-import {
-  type CityPostAndPut,
-  CityPostAndPutSchema,
-  LOCATION_MAX_LEN,
-  REF_POINT_MAX_LEN
-} from '@strength-inventory/schemas';
+import { type CityFrontendPostAndPut, CityFrontendPostAndPutSchema }
+  from '@strength-inventory/schemas/frontend';
+
+import { LOCATION_MAX_LEN, REF_POINT_MAX_LEN }
+  from '@strength-inventory/schemas';
 
 interface FormProps {
   formMode: string;
@@ -58,7 +57,7 @@ export default function Form ({
   });
 
   const postMutation = useMutation({
-    mutationFn: (newCity: CityPostAndPut) =>
+    mutationFn: (newCity: CityFrontendPostAndPut) =>
       postCity({
         city: newCity, refresh: auth.refresh, logout: auth.logout
       }),
@@ -79,7 +78,7 @@ export default function Form ({
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedCity }:
-    { id: string, updatedCity: CityPostAndPut; }) =>
+    { id: string, updatedCity: CityFrontendPostAndPut; }) =>
       putCity({
         id: id, city: updatedCity, refresh: auth.refresh, logout: auth.logout
       }),
@@ -146,7 +145,7 @@ export default function Form ({
     const req = Object.fromEntries(formData.entries());
 
     try {
-      const validatedCity = CityPostAndPutSchema.parse(req);
+      const validatedCity = CityFrontendPostAndPutSchema.parse(req);
 
       if (formMode === 'create') {
         try {

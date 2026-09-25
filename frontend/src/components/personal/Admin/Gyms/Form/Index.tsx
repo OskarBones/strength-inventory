@@ -33,11 +33,14 @@ import ReturnButton from '../../ReturnButton';
 import { WEEKDAYS } from '@/constants/values';
 
 import {
-  type District,
   type GymFormHours,
   GymFormHoursSchema,
   type GymFrontendPostAndPut,
-  GymFrontendPostAndPutSchema,
+  GymFrontendPostAndPutSchema
+} from '@strength-inventory/schemas/frontend';
+
+import {
+  type District,
   type Hours,
   type OpeningHoursException
 } from '@strength-inventory/schemas';
@@ -303,7 +306,7 @@ export default function Form (
 
     setGym({
       name: name,
-      chain: chain,
+      chain: chain ?? '',
       street: street,
       streetNumber: streetNumber,
       district: district,
@@ -315,16 +318,16 @@ export default function Form (
       longitude: longitude
         ? String(longitude)
         : '',
-      url: url,
+      url: url ?? '',
       location: location,
       equipmentVisible: equipmentVisible,
       membershipsVisible: membershipsVisible,
       openingHoursVisible: openingHoursVisible,
-      notes: notes
+      notes: notes ?? ''
     });
     setOriginalGym({
       name: name,
-      chain: chain,
+      chain: chain ?? '',
       street: street,
       streetNumber: streetNumber,
       district: district,
@@ -336,12 +339,12 @@ export default function Form (
       longitude: longitude
         ? String(longitude)
         : '',
-      url: url,
+      url: url ?? '',
       location: location,
       equipmentVisible: equipmentVisible,
       membershipsVisible: membershipsVisible,
       openingHoursVisible: openingHoursVisible,
-      notes: notes
+      notes: notes ?? ''
     });
 
     /* This is the only place in the entire application where old exceptions get

@@ -18,12 +18,15 @@ import handleSubmitError from '@/utils/handleSubmitError';
 
 import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
 
-import type { Equipment, GymGetEquipment } from '@strength-inventory/schemas';
+import type { GymFrontendGetEquipment }
+  from '@strength-inventory/schemas/frontend';
+
+import type { Equipment } from '@strength-inventory/schemas';
 
 interface FormProps {
   piece: Equipment
   gymId: string
-  currentEquipment: GymGetEquipment[]
+  currentEquipment: GymFrontendGetEquipment[]
   addEquipmentMutation: UseMutationResult<{
     gymId: string
     equipmentId: string

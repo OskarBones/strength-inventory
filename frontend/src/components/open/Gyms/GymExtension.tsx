@@ -2,11 +2,11 @@ import GymEquipment from './GymEquipment/Index';
 import GymMemberships from './GymMemberships/Index';
 import GymOpeningHours from './GymOpeningHours/Index';
 
-import type { GymGet } from '@strength-inventory/schemas';
+import type { GymFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface GymEntryExtensionProps {
   activeExtension: string | null
-  gym: GymGet
+  gym: GymFrontendGet
 }
 
 export default function GymExtension (

@@ -1,11 +1,15 @@
 import Express, { type Request, type Response } from 'express';
 
-import { districtParser, isAdmin, targetDistrictExtractor }
-  from '../utils/middleware.ts';
+import {
+  districtPostParser,
+  districtPutParser,
+  isAdmin,
+  targetDistrictExtractor
+} from '../utils/middleware.ts';
 
 import { City, District } from '../models/index.ts';
 
-import type { DistrictPostAndPut, District as FullDistrict }
+import type { DistrictPost, DistrictPut, District as FullDistrict }
   from '@strength-inventory/schemas';
 
 const districtsRouter = Express.Router();
@@ -30,28 +34,13 @@ districtsRouter.get('/:id', targetDistrictExtractor, (req, res) => {
 // POST for admins to create a district
 districtsRouter.post(
   '/',
-  districtParser,
+  districtPostParser,
   ...isAdmin,
   async (
-    req: Request<unknown, unknown, DistrictPostAndPut>,
+    req: Request<unknown, unknown, DistrictPost>,
     res: Response<FullDistrict>
   ) => {
-    const {
-      name,
-      cityId,
-      referencePoint,
-      latitude,
-      longitude
-    } = req.body;
-
-    const district = await District.create({
-      name,
-      cityId,
-      referencePoint,
-      latitude,
-      longitude
-    });
-
+    const district = await District.create(req.body);
     return res.status(201).json(district);
   }
 );
@@ -59,11 +48,11 @@ districtsRouter.post(
 // PUT for admins to modify everything except id and timestamps
 districtsRouter.put(
   '/:id',
-  districtParser,
+  districtPutParser,
   ...isAdmin,
   targetDistrictExtractor,
   async (
-    req: Request<{ id: string }, unknown, DistrictPostAndPut>,
+    req: Request<{ id: string }, unknown, DistrictPut>,
     res: Response<FullDistrict>
   ) => {
     if (!req.targetDistrict) {
@@ -71,21 +60,8 @@ districtsRouter.put(
     }  // Should never trigger after middleware.
 
     const district = req.targetDistrict;
-    const {
-      name,
-      cityId,
-      referencePoint,
-      latitude,
-      longitude
-    } = req.body;
 
-    await district.update({
-      name: name,
-      cityId: cityId,
-      referencePoint: referencePoint,
-      latitude: latitude,
-      longitude: longitude
-    });
+    await district.update(req.body);
     await district.save();
 
     return res.status(200).json(district);

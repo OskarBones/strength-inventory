@@ -38,17 +38,12 @@ usersRouter.post(
   '/',
   newUserParser,
   async (req: Request<unknown, unknown, UserPost>, res: Response<FullUser>) => {
-    const { username, email, password, name } = req.body;
+    const { password, ...others } = req.body;
 
     const salt = genSaltSync(10);
     const passwordHash = hashSync(password, salt);
 
-    const user: FullUser = await User.create({
-      username,
-      email,
-      passwordHash,
-      name
-    });
+    const user: FullUser = await User.create({ passwordHash, ...others });
 
     return res.status(201).json(user);
   }
@@ -165,15 +160,9 @@ usersRouter.put(
     }  // Should never trigger after middleware.
 
     const user = req.targetUser;
-    const { username, email, emailVerified, name, role, password } = req.body;
+    const { password, ...others } = req.body;
 
-    await user.update({
-      username: username,
-      email: email,
-      emailVerified: emailVerified,
-      name: name,
-      role: role
-    });
+    await user.update({ ...others });
     if (password) {
       const salt = genSaltSync(10);
       const passwordHash = hashSync(password, salt);

@@ -20,12 +20,13 @@ import SubmitButton from '../../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
+import { type EquipmentFrontendPostAndPut, EquipmentFrontendPostAndPutSchema }
+  from '@strength-inventory/schemas/frontend';
+
 import {
   ACCESSORIES_AND_TOOLS,
   BARS_AND_PLATES,
   CARDIO,
-  type EquipmentPostAndPut,
-  EquipmentPostAndPutSchema,
   FREE_WEIGHTS,
   HANDLE_ATTACHMENTS,
   MAX_WEIGHT,
@@ -67,7 +68,7 @@ export default function Form ({
   });
 
   const postMutation = useMutation({
-    mutationFn: (newPiece: EquipmentPostAndPut) =>
+    mutationFn: (newPiece: EquipmentFrontendPostAndPut) =>
       postEquipment({
         piece: newPiece, refresh: auth.refresh, logout: auth.logout
       }),
@@ -87,7 +88,7 @@ export default function Form ({
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedPiece }:
-    { id: string, updatedPiece: EquipmentPostAndPut }) =>
+    { id: string, updatedPiece: EquipmentFrontendPostAndPut }) =>
       putEquipment({
         id: id, piece: updatedPiece, refresh: auth.refresh, logout: auth.logout
       }),
@@ -222,7 +223,7 @@ export default function Form ({
         weightUnit: preprocessedWeightUnit,
         availableWeights: availableWeights
       };
-      const validatedPiece = EquipmentPostAndPutSchema.parse(piece);
+      const validatedPiece = EquipmentFrontendPostAndPutSchema.parse(piece);
 
       if (formMode === 'create') {
         try {
@@ -301,7 +302,7 @@ export default function Form ({
       maximumWeightType: maximumWeightType,
       outOfProduction: outOfProduction,
       url: url ?? '',
-      notes: notes
+      notes: notes ?? ''
     });
     setOriginalPiece({
       name: name,
@@ -323,7 +324,7 @@ export default function Form ({
       maximumWeightType: maximumWeightType,
       outOfProduction: outOfProduction,
       url: url ?? '',
-      notes: notes
+      notes: notes ?? ''
     });
     setAvailableWeights(availableWeights);
     setUnknownManufacturer(manufacturer === 'unknown');

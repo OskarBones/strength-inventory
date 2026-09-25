@@ -8,7 +8,7 @@ import { TiInfoLarge } from 'react-icons/ti';
 import GymExtension from './GymExtension';
 import GymExtensionButton from './GymExtensionButton';
 
-import { type GymWithDistance } from '@strength-inventory/schemas';
+import { type GymWithDistance } from '@strength-inventory/schemas/frontend';
 
 export default function Gym ({ gym }: { gym: GymWithDistance }) {
   const [showNotes, setShowNotes] = useState<boolean>(false);
