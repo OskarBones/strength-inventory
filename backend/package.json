@@ -9,7 +9,7 @@
   "scripts": {
     "tsc": "tsc && npm run sentry:sourcemaps",
     "seed:admin": "tsx scripts/create-admin-on-startup.ts",
-    "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx --import ./instrument.js --watch src/index.ts",
+    "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx --import ./instrument.ts --watch src/index.ts",
     "test": "cross-env NODE_ENV=test vitest run",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",

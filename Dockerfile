@@ -43,4 +43,4 @@ USER node
 EXPOSE 3000
 
 WORKDIR /usr/src/app/backend
-CMD ["node", "build/src/index.js"]
+CMD ["node", "--import", "./build/instrument.js", "build/src/index.js"]
