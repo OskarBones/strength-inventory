@@ -1,7 +1,10 @@
+import * as Sentry from '@sentry/node';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { ValidationError } from 'sequelize';
 import { z } from 'zod';
+
+import HttpError from './HttpError.ts';
 
 import { JWT_ACCESS_SECRET } from './config.ts';
 
@@ -55,41 +58,43 @@ export function errorHandler (
   res: Response,
   next: NextFunction
 ): void {
+  /* the conditional below is straight from
+  https://expressjs.com/en/guide/error-handling/#the-default-error-handler */
+  if (res.headersSent) {
+    next(err);
+  }
+
   if (err instanceof z.ZodError) {
     console.error(err.name);
     const messages = err.issues.map((issue) => issue.message);
     console.error(messages);
     res.status(400).json({ errors: messages });
-    return;
   } else if (err instanceof ValidationError) {
     console.error(`${err.name}: ${err.message}`);
     res.status(400).json({ error: err.message });
-    return;
-  } else if (err instanceof Error) {
+  } else if (err instanceof HttpError) {
     console.error(`${err.name}: ${err.message}`);
-    if (err.name === 'AuthenticationError') {
-      res.status(401).json({ error: err.message });
-    } else {
-      res.status(400).json({ error: err.message });
+    if (err.status === 401 || err.status === 403 || err.status >= 500) {
+      Sentry.captureException(err);
     }
-    return;
+    res.status(err.status).json({ error: err.message });
   } else {
     console.error('Unhandled error type.');
     next(err);  // err passed to the Express built-in error handler
   }
+  return;
 }
 
 export function tokenExtractor (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void {
   const authorization = req.get('authorization');
   if (authorization?.toLowerCase().startsWith('bearer ')) {
     req.token = authorization.replace(/bearer /gi, '');
   } else {
-    res.status(401).json({ error: 'Token missing.' });
-    return;
+    throw new HttpError('Token missing', 401);
   }
   next();
 }
@@ -100,7 +105,7 @@ interface RequestWithUserContext extends Request {
 
 export async function userExtractor (
   req: RequestWithUserContext,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   if (req.token && req.cookies.userContext) {
@@ -128,49 +133,41 @@ export async function userExtractor (
     const bufferFromToken = Buffer.from(decodedToken.userContext);
     const bufferFromCookies = Buffer.from(userContextFromCookies);
     if (!crypto.timingSafeEqual(bufferFromToken, bufferFromCookies)) {
-      res.status(401).json({ error: 'Invalid user context.' });
+      throw new HttpError('Invalid user context.', 401);
     }
 
     const activeSession
       = await Session.findOne({ where: { accessToken: req.token } });
     if (!activeSession) {
-      res.status(401).json({ error: 'Token expired.' });
-      return;
+      throw new HttpError('Token expired.', 401);
     }
     if (decodedToken.id) {
       const foundUser = await User.findByPk(decodedToken.id);
       if (foundUser) {
         req.user = foundUser;
       } else {
-        res.status(401).json({
-          error: 'User corresponding to the token not found.'
-        });
-        return;
+        throw new HttpError('User corresponding to the token not found.', 401);
       }
     } else {
-      res.status(401).json({ error: 'Token is missing user information.' });
-      return;
+      throw new HttpError('Token is missing user information.', 401);
     }
   } else {
-    res.status(401).json({ error: 'Token or user context missing.' });
-    return;
+    throw new HttpError('Token or user context missing.', 401);
   }
   next();
 }
 
 export function isUserAdmin (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void {
   if (!req.user) {
-    res.status(401).json({ error: 'User missing from request.' });
-    return;
+    throw new HttpError('User missing from request.', 401);
   }
 
   if (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERUSER') {
-    res.status(403).json({ error: 'Admin rights required.' });
-    return;
+    throw new HttpError('Admin rights required.', 403);
   }
   next();
 }
@@ -179,17 +176,15 @@ export const isAdmin = [tokenExtractor, userExtractor, isUserAdmin];
 
 export async function isUserManager (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   if (!req.user) {
-    res.status(401).json({ error: 'User missing from request.' });
-    return;
+    throw new HttpError('User missing from request.', 401);
   }
 
   if (req.user.role !== 'MANAGER') {
-    res.status(403).json({ error: 'Manager rights required.' });
-    return;
+    throw new HttpError('Manager rights required.', 403);
   } else {
     let gymId: string;
     if (req.targetGym) {  // junction POSTs and Gym PATCHes
@@ -199,8 +194,7 @@ export async function isUserManager (
     } else if (req.targetGymMembership) {  // GymMembership DELETE
       gymId = req.targetGymMembership.gymId;
     } else {
-      res.status(400).json({ error: 'Gym id missing from request.' });
-      return;
+      throw new HttpError('Gym ID missing from request.', 400);
     }
 
     const junction = await GymManagers.findOne({
@@ -211,8 +205,7 @@ export async function isUserManager (
     });
 
     if (!junction) {
-      res.status(403).json({ error: 'Admin or manager rights required.' });
-      return;
+      throw new HttpError('Admin or manager rights required.', 403);
     }
   }
 
@@ -224,12 +217,11 @@ export const isManager = [tokenExtractor, userExtractor, isUserManager];
 
 export async function isUserAdminOrManager (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   if (!req.user) {
-    res.status(401).json({ error: 'User missing from request.' });
-    return;
+    throw new HttpError('User missing from request.', 401);
   }
 
   if (
@@ -237,8 +229,7 @@ export async function isUserAdminOrManager (
     && req.user.role !== 'SUPERUSER'
     && req.user.role !== 'MANAGER'
   ) {
-    res.status(403).json({ error: 'Admin or manager rights required.' });
-    return;
+    throw new HttpError('Admin or manager rights required.', 403);
   } else {
     if (req.user.role === 'MANAGER') {
       let gymId: string;
@@ -249,8 +240,7 @@ export async function isUserAdminOrManager (
       } else if (req.targetGymMembership) {  // GymMembership DELETE
         gymId = req.targetGymMembership.gymId;
       } else {
-        res.status(400).json({ error: 'Gym id missing from request.' });
-        return;
+        throw new HttpError('Gym ID missing from request.', 400);
       }
 
       const junction = await GymManagers.findOne({
@@ -261,8 +251,7 @@ export async function isUserAdminOrManager (
       });
 
       if (!junction) {
-        res.status(403).json({ error: 'Admin or manager rights required.' });
-        return;
+        throw new HttpError('Admin or manager rights required.', 403);
       }
     }
   }
@@ -282,20 +271,18 @@ export const isAdminOrManager = [
 
 export async function targetUserExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const user = await User.findByPk(id);
   if (!user) {
-    res.status(404).json({ error: `User with ID ${id} not found.` });
-    return;
+    throw new HttpError(`User with ID ${id} not found.`, 404);
   }
 
   req.targetUser = user;
@@ -379,19 +366,18 @@ export function putUserParser (
 
 export function isUserSelf (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void {
   if (!req.user || req.user.id !== req.params['id']) {
-    res.status(403).json({ error: 'You can only modify your own data.' });
-    return;
+    throw new HttpError('You can only edit your own data.', 403);
   }
   next();
 }
 
 export function isUserSelfOrAdmin (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): void {
   if (
@@ -401,7 +387,7 @@ export function isUserSelfOrAdmin (
       && (req.user.role !== 'ADMIN' && req.user.role !== 'SUPERUSER')
     )
   ) {
-    res.status(403).json({ error: 'You can only modify your own data.' });
+    throw new HttpError('You can only edit your own data.', 403);
   }
   next();
 }
@@ -414,14 +400,13 @@ export const isSelfOrAdmin = [tokenExtractor, userExtractor, isUserSelfOrAdmin];
 
 export async function targetGymExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const gym = await Gym.findByPk(id, {
@@ -442,8 +427,7 @@ export async function targetGymExtractor (
     ]
   });
   if (!gym) {
-    res.status(404).json({ error: `Gym with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Gym with ID ${id} not found.`, 404);
   }
 
   req.targetGym = gym;
@@ -520,20 +504,18 @@ export function gymMembershipParser (
 
 export async function targetEquipmentExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const equipment = await Equipment.findByPk(id);
   if (!equipment) {
-    res.status(404).json({ error: `Equipment with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Equipment with ID ${id} not found.`, 404);
   }
 
   req.targetEquipment = equipment;
@@ -571,20 +553,18 @@ export function equipmentPutParser (
 
 export async function targetMembershipExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const membership = await Membership.findByPk(id);
   if (!membership) {
-    res.status(404).json({ error: `Membership with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Membership with ID ${id} not found.`, 404);
   }
 
   req.targetMembership = membership;
@@ -634,20 +614,18 @@ export function loginParser (req: Request, _res: Response, next: NextFunction) {
 
 export async function targetGymEquipmentExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const junction = await GymEquipment.findByPk(id);
   if (!junction) {
-    res.status(404).json({ error: `Association with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Association with ID ${id} not found.`, 404);
   }
 
   req.targetGymEquipment = junction;
@@ -672,20 +650,18 @@ export function equipmentCountParser (
 
 export async function targetGymManagerExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const junction = await GymManagers.findByPk(id);
   if (!junction) {
-    res.status(404).json({ error: `Association with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Association with ID ${id} not found.`, 404);
   }
 
   req.targetGymManager = junction;
@@ -698,7 +674,7 @@ export async function adjustUserRole (
 ): Promise<void> {
   const user = await User.findByPk(userId);
   if (!user) {
-    throw Error(`User with ID ${userId} not found.`);
+    throw new HttpError(`User with ID ${userId} not found.`, 404);
   }
 
   if (user.role === 'ADMIN' || user.role === 'SUPERUSER') {
@@ -723,20 +699,18 @@ export async function adjustUserRole (
 
 export async function targetGymMembershipExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const junction = await GymMemberships.findByPk(id);
   if (!junction) {
-    res.status(404).json({ error: `Association with ID ${id} not found.` });
-    return;
+    throw new HttpError(`Association with ID ${id} not found.`, 404);
   }
 
   req.targetGymMembership = junction;
@@ -748,14 +722,13 @@ export async function targetGymMembershipExtractor (
 
 export async function targetCityExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const city = await City.findByPk(id, {
@@ -766,8 +739,7 @@ export async function targetCityExtractor (
     ]
   });
   if (!city) {
-    res.status(404).json({ error: `City with ID ${id} not found.` });
-    return;
+    throw new HttpError(`City with ID ${id} not found.`, 404);
   }
 
   req.targetCity = city;
@@ -805,20 +777,18 @@ export function cityPutParser (
 
 export async function targetDistrictExtractor (
   req: Request<{ id: string; }>,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   const { id } = req.params;
 
   if (!id) {
-    res.status(400).json({ error: 'ID missing from request.' });
-    return;
+    throw new HttpError('ID missing from request.', 400);
   }
 
   const district = await District.findByPk(id, { include: City });
   if (!district) {
-    res.status(404).json({ error: `District with ID ${id} not found.` });
-    return;
+    throw new HttpError(`District with ID ${id} not found.`, 404);
   }
 
   req.targetDistrict = district;

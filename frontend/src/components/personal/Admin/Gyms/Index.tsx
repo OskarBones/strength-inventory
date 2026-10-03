@@ -8,7 +8,7 @@ import { deleteGym, getGymsIdAndName } from '@/utils/api';
 
 import { AuthContext, IconContext } from '@/utils/contexts';
 
-import Error from '@/components/Error.tsx';
+import ErrorMessage from '@/components/ErrorMessage.tsx';
 import Form from './Form/Index.tsx';
 import List from './List.tsx';
 import Loading from '@/components/Loading.tsx';
@@ -52,7 +52,7 @@ export default function AdminGyms () {
   }
 
   if (isError) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   return (

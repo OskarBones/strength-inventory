@@ -7,3 +7,5 @@
 [4] db.ts of the backend is mostly copied from Part 13 of the Full Stack Open course by the University of Helsinki: https://courses.mooc.fi/org/uh-cs/courses/full-stack-open-relational-databases/chapter-4
 
 [5] Favicon is GiGymBag from react-icons/gi made transparent.
+
+[6] Example from Sentry docs directly adapted to Express: https://docs.sentry.io/platforms/javascript/guides/react/troubleshooting/#using-the-tunnel-option

@@ -14,10 +14,12 @@ COPY frontend ./frontend/
 COPY backend ./backend/
 
 WORKDIR /usr/src/app/frontend
-RUN npm run build:deploy
+RUN --mount=type=secret,id=FRONTEND_SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+  npm run build:deploy
 
 WORKDIR /usr/src/app/backend
-RUN npm run tsc
+RUN --mount=type=secret,id=BACKEND_SENTRY_AUTH_TOKEN,env=SENTRY_AUTH_TOKEN \
+  npm run tsc
 
 FROM node:24.13.0-alpine AS runner
 

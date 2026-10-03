@@ -21,7 +21,7 @@ import {
 import handleSubmitError from '@/utils/handleSubmitError';
 
 import AvailabilityButton from './AvailabilityButton';
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Notification from '@/components/Notification';
 import ReturnButton from '../../ReturnButton';
@@ -339,7 +339,7 @@ export function Form (
   }
 
   if (selectedMembershipId && membershipQuery.isError) {
-    return <Error message={membershipQuery.error.message} />;
+    return <ErrorMessage message={membershipQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

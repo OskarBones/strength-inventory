@@ -8,7 +8,7 @@ import { deleteEquipment, getEquipment } from '@/utils/api';
 
 import { AuthContext, IconContext } from '@/utils/contexts';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form/Index';
 import List from './List';
 import Loading from '@/components/Loading';
@@ -53,7 +53,7 @@ export default function AdminEquipment () {
   }
 
   if (isError) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   return (

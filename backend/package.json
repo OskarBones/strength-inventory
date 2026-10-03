@@ -1,21 +1,22 @@
 {
   "name": "backend",
   "private": true,
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "GPL-3.0-or-later",
   "author": "Oskar Bones",
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "tsc": "tsc",
+    "tsc": "tsc && npm run sentry:sourcemaps",
     "seed:admin": "tsx scripts/create-admin-on-startup.ts",
-    "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx watch src/index.ts",
+    "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx --import ./instrument.js --watch src/index.ts",
     "test": "cross-env NODE_ENV=test vitest run",
     "coverage": "vitest run --coverage",
     "lint": "eslint .",
     "migration:down_dev": "tsx src/utils/rollback.js",
     "migration:down_test": "NODE_ENV=test tsx src/utils/rollback.js",
-    "migration:down": "npm run migration:down_dev && npm run migration:down_test"
+    "migration:down": "npm run migration:down_dev && npm run migration:down_test",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org strength-inventory --project strory-backend ./build && sentry-cli sourcemaps upload --org strength-inventory --project strory-backend ./build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -40,6 +41,8 @@
     "vitest": "^5.0.0"
   },
   "dependencies": {
+    "@sentry/cli": "^3.8.0",
+    "@sentry/node": "^11.2.0",
     "bcrypt-ts": "^9.0.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",

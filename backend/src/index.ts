@@ -19,6 +19,7 @@ import gymsRouter from './controllers/gyms.js';
 import loginRouter from './controllers/login.ts';
 import logoutRouter from './controllers/logout.ts';
 import membershipsRouter from './controllers/memberships.ts';
+import tunnel from './controllers/tunnel.ts';
 import usersRouter from './controllers/users.js';
 
 const app = express();
@@ -38,6 +39,7 @@ if (NODE_ENV === 'development') {
 app.use(express.json());
 app.use(cookieParser());
 
+app.use('/tunnel', tunnel); // frontend's Sentry dodges ad blockers using this
 app.use('/api/cities', citiesRouter);
 app.use('/api/districts', districtsRouter);
 app.use('/api/equipment', equipmentRouter);

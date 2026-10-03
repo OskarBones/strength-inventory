@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getGymMemberships } from '@/utils/api';
 import { IconContext } from '@/utils/contexts';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form';
 import List from './List';
 import Loading from '@/components/Loading';
@@ -51,7 +51,7 @@ export default function GymMemberships (
   }
 
   if (isError) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   return (

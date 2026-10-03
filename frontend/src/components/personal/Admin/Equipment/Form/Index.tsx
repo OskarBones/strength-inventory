@@ -12,7 +12,7 @@ import { getPiece, postEquipment, putEquipment }
 import handleSubmitError from '@/utils/handleSubmitError';
 
 import AvailableWeights from './AvailableWeights';
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Notification from '@/components/Notification';
 import ReturnButton from '../../ReturnButton';
@@ -258,7 +258,7 @@ export default function Form ({
   }
 
   if (selectedPieceId && pieceQuery.isError) {
-    return <Error message={pieceQuery.error.message} />;
+    return <ErrorMessage message={pieceQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

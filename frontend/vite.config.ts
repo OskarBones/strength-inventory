@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 import path from 'path';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
@@ -12,12 +13,18 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src')
     }
   },
+
   plugins: [
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true
-    }),
-    react(),
-    tailwindcss()
-  ]
+    }), react(), tailwindcss(), sentryVitePlugin({
+      org: 'strength-inventory',
+      project: 'strory-frontend'
+    })
+  ],
+
+  build: {
+    sourcemap: true
+  }
 });

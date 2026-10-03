@@ -21,7 +21,7 @@ import { AuthContext, IconContext } from '@/utils/contexts';
 import { getCities, getDistricts, getGym, postGym, putGym } from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import FormElement from './FormElement';
 import GymEquipment from './GymEquipment/Index';
 import GymMemberships from './GymMemberships/Index';
@@ -271,15 +271,15 @@ export default function Form (
   }
 
   if (selectedGymId && gymQuery.isError) {
-    return <Error message={gymQuery.error.message} />;
+    return <ErrorMessage message={gymQuery.error.message} />;
   }
 
   if (citiesQuery.isError) {
-    return <Error message={citiesQuery.error.message} />;
+    return <ErrorMessage message={citiesQuery.error.message} />;
   }
 
   if (districtsQuery.isError) {
-    return <Error message={districtsQuery.error.message} />;
+    return <ErrorMessage message={districtsQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

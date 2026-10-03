@@ -9,7 +9,7 @@ import { AuthContext, IconContext } from '@/utils/contexts';
 import { getCities, getDistrict, postDistrict, putDistrict } from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Notification from '@/components/Notification';
 import ReturnButton from '../ReturnButton';
@@ -194,11 +194,11 @@ export default function Form ({
   }
 
   if ((selectedDistrictId && districtQuery.isError)) {
-    return <Error message={districtQuery.error.message} />;
+    return <ErrorMessage message={districtQuery.error.message} />;
   }
 
   if (cityQuery.isError) {
-    return <Error message={cityQuery.error.message} />;
+    return <ErrorMessage message={cityQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

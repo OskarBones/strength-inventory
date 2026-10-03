@@ -4,6 +4,8 @@ import { compare } from 'bcrypt-ts';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
+import HttpError from '../utils/HttpError.ts';
+
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET, NODE_ENV }
   from '../utils/config.ts';
 
@@ -67,7 +69,7 @@ loginRouter.post(
       : await compare(password, user.passwordHash);
 
     if (!(user && passwordCorrect)) {
-      return res.status(401).end();
+      throw new HttpError('Incorrect username or password.', 401);
     }
 
     const { id, email, emailVerified, name, role } = user;
@@ -146,9 +148,7 @@ loginRouter.post('/refresh', async (
   In theory, though, tokens only get invalidated through timeouts,
   so this check acts as a safeguard in addition to satisfying TS.*/
   if (!activeSession) {
-    const error = Error('Refresh token expired.');
-    error.name = 'AuthenticationError';
-    throw error;
+    throw new HttpError('Refresh token expired.', 401);
   }
 
   const userForToken = {

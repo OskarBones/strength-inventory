@@ -7,7 +7,7 @@ import { getDistricts } from '@/utils/api';
 
 import { IconContext } from '@/utils/contexts';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form';
 import List from './List';
 import Loading from '@/components/Loading';
@@ -37,7 +37,7 @@ export default function AdminDistricts () {
   }
 
   if (isError) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   data.sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase()

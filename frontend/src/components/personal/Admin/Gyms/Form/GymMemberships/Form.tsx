@@ -9,7 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getMembershipsByCountry } from '@/utils/api';
 import { IconContext } from '@/utils/contexts';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import { Form as MembershipForm } from '../../../Memberships/Form/Index';
 import MembershipList from '../../../MembershipList';
@@ -57,7 +57,7 @@ export default function Form ({
   }
 
   if (isError) {
-    return <Error message={error.message} />;
+    return <ErrorMessage message={error.message} />;
   }
 
   const chainMemberships = data.filter((membership) => {

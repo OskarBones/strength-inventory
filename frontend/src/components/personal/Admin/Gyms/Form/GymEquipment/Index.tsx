@@ -19,7 +19,7 @@ import {
 import AvailableList from './AvailableList';
 import CurrentList from './CurrentList';
 import EditFormReturnButton from '../EditFormReturnButton';
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form';
 import Loading from '@/components/Loading';
 
@@ -140,14 +140,14 @@ export default function GymEquipment (
     if (gymEquipmentQuery.isError && equipmentQuery.isError) {
       return (
         <div>
-          <Error message={gymEquipmentQuery.error.message} />
-          <Error message={equipmentQuery.error.message} />
+          <ErrorMessage message={gymEquipmentQuery.error.message} />
+          <ErrorMessage message={equipmentQuery.error.message} />
         </div>
       );
     } else if (gymEquipmentQuery.isError) {
-      return <Error message={gymEquipmentQuery.error.message} />;
+      return <ErrorMessage message={gymEquipmentQuery.error.message} />;
     } else if (equipmentQuery.isError) {
-      return <Error message={equipmentQuery.error.message} />;
+      return <ErrorMessage message={equipmentQuery.error.message} />;
     }
   }
 

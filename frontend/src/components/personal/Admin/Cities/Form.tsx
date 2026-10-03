@@ -10,7 +10,7 @@ import { getCity, postCity, putCity }
   from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import Notification from '@/components/Notification';
 import ReturnButton from '../ReturnButton';
@@ -180,7 +180,7 @@ export default function Form ({
   }
 
   if (selectedCityId && cityQuery.isError) {
-    return <Error message={cityQuery.error.message} />;
+    return <ErrorMessage message={cityQuery.error.message} />;
   }
 
   /* Initialize the form fields when opened in edit mode.

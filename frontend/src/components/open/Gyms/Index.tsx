@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
+import * as Sentry from '@sentry/react';
 import { BsInfoCircle } from 'react-icons/bs';
 import { useQuery } from '@tanstack/react-query';
 
 import { getCities, getDistricts, getGyms } from '../../../utils/api';
 import calcDistanceInKm from '@/utils/calcDistanceInKm';
 
-import Error from '@/components/Error';
+import ErrorMessage from '@/components/ErrorMessage';
 import Filters from './Filters';
 import Gym from './Gym';
 import Loading from '@/components/Loading';
@@ -42,15 +43,15 @@ export default function Gyms () {
   }
 
   if (gymsQuery.isError) {
-    return <Error message={gymsQuery.error.message} />;
+    return <ErrorMessage message={gymsQuery.error.message} />;
   }
 
   if (citiesQuery.isError) {
-    return <Error message={citiesQuery.error.message} />;
+    return <ErrorMessage message={citiesQuery.error.message} />;
   }
 
   if (districtsQuery.isError) {
-    return <Error message={districtsQuery.error.message} />;
+    return <ErrorMessage message={districtsQuery.error.message} />;
   }
 
   const filteredGyms = gymsQuery.data
@@ -110,6 +111,18 @@ export default function Gyms () {
           of any area to be very useful in practice.
         </p>
       </div>
+
+      <button
+        onClick={() => {
+          // Send a log before throwing the error
+          Sentry.logger.info('User triggered test error', {
+            action: 'test_error_button_click'
+          });
+          throw Error('This is your first error!');
+        }}
+      >
+        Break the world
+      </button>
 
       <Filters
         cities={citiesQuery.data}

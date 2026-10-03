@@ -8,6 +8,8 @@ z.string() = optional string i.e. empty strings accepted */
 
 // shared utility schemas
 
+export const VERSION = '1.4.1';
+
 const TimeSchema = z.array(z.iso.time().nullable()).length(2);
 const ExceptionTimeSchema = z.array(z.iso.time().nullable()).length(2);
 

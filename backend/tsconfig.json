@@ -3,25 +3,30 @@
   "compilerOptions": {
     // File Layout
     "outDir": "./build",
+
     "rewriteRelativeImportExtensions": true,
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
+
     "target": "es2017",
 
     // Other Outputs
     "sourceMap": true,
+
     "declaration": true,
     "declarationMap": true,
 
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
+
     "strictNullChecks": true,
     "exactOptionalPropertyTypes": true,
 
     // Style Options
     "noImplicitReturns": true,
+
     "noImplicitOverride": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -30,11 +35,17 @@
 
     // Recommended Options
     "verbatimModuleSyntax": true,
+
     "isolatedModules": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-
     "types": ["cors", "cookie-parser", "express", "jsonwebtoken", "node", "pg", "sequelize", "supertest"],
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
   },
   "exclude": ["build/**/*", "dev/**/*", "src/tests/**/*", "/vitest.config.ts", "src/migrations/pre-release/**/*"]
 }
