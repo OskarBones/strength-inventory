@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import * as Sentry from '@sentry/react';
 import { BsInfoCircle } from 'react-icons/bs';
 import { useQuery } from '@tanstack/react-query';
 
@@ -111,18 +110,6 @@ export default function Gyms () {
           of any area to be very useful in practice.
         </p>
       </div>
-
-      <button
-        onClick={() => {
-          // Send a log before throwing the error
-          Sentry.logger.info('User triggered test error', {
-            action: 'test_error_button_click'
-          });
-          throw Error('This is your first error!');
-        }}
-      >
-        Break the world
-      </button>
 
       <Filters
         cities={citiesQuery.data}

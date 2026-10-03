@@ -32,7 +32,6 @@ const pathToFrontendBuild = NODE_ENV === 'production'
   ? path.join(__dirname, '../../dist')
   : path.join(__dirname, '/dist');
 
-app.use(express.static(pathToFrontendBuild));
 if (NODE_ENV === 'development') {
   app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 }
@@ -51,6 +50,8 @@ app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter);
 app.use('/api/memberships', membershipsRouter);
 app.use('/api/users', usersRouter);
+
+app.use(express.static(pathToFrontendBuild));
 
 // Since Express 5, *splat is used instead of just *
 app.get('*splat', (_req, res) => {
