@@ -8,7 +8,8 @@ const { NODE_ENV } = process.env
 
 Sentry.init({
   dsn: 'https://6d9507cf45e1a5a699707d4c8f8dd612@o4512156987228160.ingest.de.sentry.io/4512185359138896',
-  debug: NODE_ENV === 'development',
+  // debug: NODE_ENV === 'development',
+  debug: true,
   release: VERSION,
   environment: NODE_ENV ?? NODE_ENV, // defaults to development or production depending on whether packaged
   integrations: [
