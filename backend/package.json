@@ -16,7 +16,7 @@
     "migration:down_dev": "tsx src/utils/rollback.js",
     "migration:down_test": "NODE_ENV=test tsx src/utils/rollback.js",
     "migration:down": "npm run migration:down_dev && npm run migration:down_test",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org strength-inventory --project strory-backend ./build && sentry-cli sourcemaps upload --org strength-inventory --project strory-backend ./build"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org strength-inventory --project strory-backend ./build && sentry-cli sourcemaps upload --auth-token $SENTRY_AUTH_TOKEN --org strength-inventory --project strory-backend ./build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
