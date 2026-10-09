@@ -199,11 +199,13 @@ const EquipmentFrontendBaseSchema = EquipmentBaseSchema.extend({
 export const EquipmentFrontendGetSchema = z.intersection(EquipmentFrontendBaseSchema, EquipmentFrontendUnions)
 export type EquipmentFrontendGet = z.infer<typeof EquipmentFrontendGetSchema>
 
-export const EquipmentFrontendPostAndPutSchema = z.intersection(EquipmentFrontendBaseSchema.omit({
+export const EquipmentFrontendPostAndPutSchema = z.intersection(EquipmentFrontendBaseSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
-}).extend({
+})
+.extend({
   generic: z.preprocess(
     (val) => (val ? true : false),
     z.boolean()
@@ -287,11 +289,13 @@ const MembershipFrontendBaseSchema = MembershipBaseSchema.extend({
 export const MembershipFrontendGetSchema = z.intersection(MembershipFrontendBaseSchema, MembershipFrontendUnions)
 export type MembershipFrontendGet = z.infer<typeof MembershipFrontendGetSchema>
 
-export const MembershipFrontendPostAndPutSchema = z.intersection(MembershipFrontendBaseSchema.omit({
+export const MembershipFrontendPostAndPutSchema = z.intersection(MembershipFrontendBaseSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
-}).extend({
+})
+.extend({
   visits: z.preprocess((val) => {
     if (typeof val === 'string') {
       if (val) {
@@ -352,11 +356,13 @@ export const GymWithDistanceSchema = GymFrontendGetSchema.extend({
 })
 export type GymWithDistance = z.infer<typeof GymWithDistanceSchema>;
 
-export const GymFrontendPostAndPutSchema = GymFrontendBaseSchema.omit({
+export const GymFrontendPostAndPutSchema = GymFrontendBaseSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
-}).extend({
+})
+.extend({
   equipmentVisible: z.preprocess(
     (val) => (val ? true : false),
     z.boolean()

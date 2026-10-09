@@ -14,7 +14,7 @@ import { skipToken, useMutation, useQuery, useQueryClient }
   from '@tanstack/react-query';
 import { TbEdit, TbPlus, TbUserStar } from 'react-icons/tb';
 import { CgGym } from 'react-icons/cg';
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { LuSave } from 'react-icons/lu';
 
 import { AuthContext, IconContext } from '@/utils/contexts';

@@ -5,7 +5,7 @@ import { use, useActionState, useState } from 'react';
 import { skipToken, useMutation, useQuery, useQueryClient }
   from '@tanstack/react-query';
 import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { IoRemoveCircleOutline } from 'react-icons/io5';
 import { z } from 'zod';
 
@@ -29,6 +29,7 @@ import SubmitButton from '../../SubmitButton';
 
 import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
+import { CURRENCIES, MEMBERSHIP_TIME_UNITS } from '@strength-inventory/schemas';
 import { type MembershipFrontendPostAndPut, MembershipFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
 
@@ -580,11 +581,9 @@ export function Form (
                   }}
                 >
                   <option value='' />
-                  <option value='DKK'>DKK</option>
-                  <option value='EUR'>EUR</option>
-                  <option value='ISK'>ISK</option>
-                  <option value='NOK'>NOK</option>
-                  <option value='SEK'>SEK</option>
+                  {CURRENCIES.map((currency) => (
+                    <option key={currency} value={currency}>{currency}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -644,11 +643,11 @@ export function Form (
                   }}
                 >
                   <option value=''>-- unit* --</option>
-                  <option value='hour'>hour(s)</option>
-                  <option value='day'>day(s)</option>
-                  <option value='week'>week(s)</option>
-                  <option value='month'>month(s)</option>
-                  <option value='year'>year(s)</option>
+                  {MEMBERSHIP_TIME_UNITS.map((timeUnit) => (
+                    <option key={timeUnit} value={timeUnit}>
+                      {timeUnit}(s)
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -689,11 +688,11 @@ export function Form (
                     }}
                   >
                     <option value=''>-- unit --</option>
-                    <option value='hour'>hour(s)</option>
-                    <option value='day'>day(s)</option>
-                    <option value='week'>week(s)</option>
-                    <option value='month'>month(s)</option>
-                    <option value='year'>year(s)</option>
+                    {MEMBERSHIP_TIME_UNITS.map((timeUnit) => (
+                      <option key={timeUnit} value={timeUnit}>
+                        {timeUnit}(s)
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>

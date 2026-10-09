@@ -1,6 +1,6 @@
 import { use, useRef, useState } from 'react';
 
-import { LiaDrawPolygonSolid } from 'react-icons/lia';
+import { TbLassoPolygon } from 'react-icons/tb';
 import { useQuery } from '@tanstack/react-query';
 
 import { getDistricts } from '@/utils/api';
@@ -54,7 +54,7 @@ export default function AdminDistricts () {
       >
         <h2 className='self-center font-bold'>
           {iconMode
-            ? <LiaDrawPolygonSolid className='text-2xl' />
+            ? <TbLassoPolygon className='text-2xl' />
             : 'districts'}
         </h2>
 

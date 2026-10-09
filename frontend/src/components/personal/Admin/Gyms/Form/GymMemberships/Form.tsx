@@ -1,6 +1,6 @@
 import { use, useState } from 'react';
 
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { GiMeshNetwork } from 'react-icons/gi';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { MdOutlineLocationOn } from 'react-icons/md';

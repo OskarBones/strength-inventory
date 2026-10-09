@@ -27,6 +27,7 @@ import {
   ACCESSORIES_AND_TOOLS,
   BARS_AND_PLATES,
   CARDIO,
+  EQUIPMENT_MAXIMUM_WEIGHT_TYPES,
   FREE_WEIGHTS,
   HANDLE_ATTACHMENTS,
   MAX_WEIGHT,
@@ -647,8 +648,11 @@ export default function Form ({
                     });
                   }}
                 >
-                  <option value='load'>load</option>
-                  <option value='weight'>weight</option>
+                  {EQUIPMENT_MAXIMUM_WEIGHT_TYPES.map((maxWeightType) => (
+                    <option key={maxWeightType} value={maxWeightType}>
+                      {maxWeightType}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

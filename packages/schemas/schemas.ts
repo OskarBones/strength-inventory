@@ -8,7 +8,9 @@ z.string() = optional string i.e. empty strings accepted */
 
 // shared utility schemas
 
-export const VERSION = '1.4.1';
+export const VERSION = '1.4.2';
+
+export const STRING_DEFAULT_LEN = 255;
 
 const TimeSchema = z.array(z.iso.time().nullable()).length(2);
 const ExceptionTimeSchema = z.array(z.iso.time().nullable()).length(2);
@@ -36,7 +38,10 @@ export const LongitudeSchema = z.number().gte(-180).lte(180)
 
 // membership
 
-export const MembershipTimeUnitEnum = z.enum(['year', 'month', 'week', 'day', 'hour']);
+export const CURRENCIES = ['DKK', 'EUR', 'ISK', 'NOK', 'SEK']
+
+export const MEMBERSHIP_TIME_UNITS = ['year', 'month', 'week', 'day', 'hour']
+export const MembershipTimeUnitEnum = z.enum(MEMBERSHIP_TIME_UNITS);
 export type MembershipTimeUnit = z.infer<typeof MembershipTimeUnitEnum>;
 
 export const MembershipAvailabilitySchema = z.object({
@@ -52,14 +57,14 @@ export const MembershipBaseSchema = z.object({
   name: z.string().min(1),
   initiationFee: z.number().nullable(),
   membershipFee: z.number(),
-  feeCurrency: z.string().min(1),
-  visits: z.int().nullable(),
-  validity: z.int(),
+  feeCurrency: z.enum(CURRENCIES),
+  visits: z.int().positive().nullable(),
+  validity: z.int().positive(),
   validityUnit: MembershipTimeUnitEnum,
   autoRenewal: z.boolean(),
   availability: MembershipAvailabilitySchema,
-  url: z.url().nullable(),
-  notes: z.string().min(1).max(255).nullable(),
+  url: z.url().max(STRING_DEFAULT_LEN).nullable(),
+  notes: z.string().min(1).max(STRING_DEFAULT_LEN).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 })
@@ -80,7 +85,7 @@ const MembershipChainSchema = z.union([
 
 const MembershipWithCommitmentSchema = z.object({
   commitmentUnit: MembershipTimeUnitEnum,
-  commitment: z.int()
+  commitment: z.int().positive()
 })
 
 const MembershipWithoutCommitmentSchema = z.object({
@@ -97,16 +102,19 @@ const MembershipUnions = z.intersection(MembershipChainSchema, MembershipCommitm
 export const MembershipSchema = z.intersection(MembershipBaseSchema, MembershipUnions)
 export type Membership = z.infer<typeof MembershipSchema>;
 
-export const MembershipPostSchema = z.intersection(MembershipBaseSchema.exactPartial({
-  id: true,
-  initiationFee: true,
-  visits: true,
-  availability: true,
-  url: true,
-  notes: true,
-  createdAt: true,
-  updatedAt: true
-}), MembershipUnions)
+export const MembershipPostSchema = z.intersection(MembershipBaseSchema
+  .omit({
+    createdAt: true,
+    updatedAt: true
+  })
+  .exactPartial({
+    id: true,
+    initiationFee: true,
+    visits: true,
+    availability: true,
+    url: true,
+    notes: true
+  }), MembershipUnions)
 export type MembershipPost = z.infer<typeof MembershipPostSchema>
 
 /* With the contents of .extend, the two union schemas
@@ -148,45 +156,53 @@ export type GymManagerPostAndDelete = z.infer<typeof GymManagerPostAndDeleteSche
 
 // equipment
 
-export const EquipmentCategoryEnum = z.enum(['accessoryOrTool', 'barOrPlate', 'cardio', 'freeWeight', 'handleAttachment', 'strengthMachine', 'system']);
+export const EQUIPMENT_WEIGHT_UNITS = ['kg', 'lbs']
+
+export const EQUIPMENT_MAXIMUM_WEIGHT_TYPES = ['load', 'weight']
+
+/* upon changing EQUIPMENT_CATEGORIES,
+make sure to update customValidator() in models/equipment */
+export const EQUIPMENT_CATEGORIES = ['accessoryOrTool', 'barOrPlate', 'cardio', 'freeWeight', 'handleAttachment', 'strengthMachine', 'system']
+
+export const EquipmentCategoryEnum = z.enum(EQUIPMENT_CATEGORIES);
 export type EquipmentCategory = z.infer<typeof EquipmentCategoryEnum>;
 
 /* NOTE: the word 'plate' shall only be used in BARS_AND_PLATES
 subcategories for loadable plates, because the frontend does
 piece.subcategory.includes('plate') to identify them */
 
-export const SYSTEMS = [
-  'rack or rig',
-  'adjustable crossover cable station',
-  'high/low crossover cable station',
-  'high/low duplex cable station',
-  'adjustable cable station',
-  'high cable station',
-  'low cable station',
-  'smith machine',
-  'split squat stand',
-  'flat bench press',
-  'incline bench press',
-  'decline bench press',
-  'shoulder press bench',
-  'adjustable bench',
-  'fixed bench',
-  'incline biceps curl',
-  'rowing cable station',
-  'pulldown cable station',
-  'seal row',
-  'landmine',
-  'dip station',
-  'hip thrust pad',
-  'back extension',
-  'abs bench',
-  'stall bars',
-  'safety arm',
-  'platform',
+export const ACCESSORIES_AND_TOOLS = [
+  'step platform',
+  'plyo box',
+  'lifting belt',
+  'dip belt',
+  'powerlifting mat',
+  'squat ramp',
+  'wearable strap / wrap / grip',
+  'suspension strap',
+  'hanging strap',
+  'bar grip',
+  'training stick',
+  'exercise mat',
+  'ab wheel',
+  'ab mat',
+  'resistance band/tube',
+  'roller or arch',
+  'inflated ball',
+  'medicine ball',
+  'yoga block',
+  'jump rope',
+  'balance trainer',
+  'push-up grip pair',
+  'hand gripper',
+  'head harness',
+  'sled strap',
+  'boxing gloves',
+  'gymnastics equipment',
   'other'
 ];
-export const SystemCategorySchema = z.enum(SYSTEMS)
-export type SystemCategory = z.infer<typeof SystemCategorySchema>
+export const AccessoryOrToolCategorySchema = z.enum(ACCESSORIES_AND_TOOLS)
+export type AccessoryOrToolCategory = z.infer<typeof AccessoryOrToolCategorySchema>
 
 export const BARS_AND_PLATES = [
   '25 kg barbell',
@@ -222,6 +238,22 @@ export const BARS_AND_PLATES = [
 ];
 export const BarOrPlateCategorySchema = z.enum(BARS_AND_PLATES)
 export type BarOrPlateCategory = z.infer<typeof BarOrPlateCategorySchema>
+
+export const CARDIO = [
+  'stair climbing machine',
+  'spin bike',
+  'upright bike',
+  'recumbent bike',
+  'elliptical',
+  'rower',
+  'treadmill',
+  'skiing machine',
+  'stepper',
+  'punching bag',
+  'other'
+];
+export const CardioCategorySchema = z.enum(CARDIO)
+export type CardioCategory = z.infer<typeof CardioCategorySchema>
 
 export const FREE_WEIGHTS = [
   'dumbbell',
@@ -284,82 +316,58 @@ export const STRENGTH_MACHINES = [
 export const StrengthMachineCategorySchema = z.enum(STRENGTH_MACHINES)
 export type StrengthMachineCategory = z.infer<typeof StrengthMachineCategorySchema>
 
-export const ACCESSORIES_AND_TOOLS = [
-  'step platform',
-  'plyo box',
-  'lifting belt',
-  'dip belt',
-  'powerlifting mat',
-  'squat ramp',
-  'wearable strap / wrap / grip',
-  'suspension strap',
-  'hanging strap',
-  'bar grip',
-  'training stick',
-  'exercise mat',
-  'ab wheel',
-  'ab mat',
-  'resistance band/tube',
-  'roller or arch',
-  'inflated ball',
-  'medicine ball',
-  'yoga block',
-  'jump rope',
-  'balance trainer',
-  'push-up grip pair',
-  'hand gripper',
-  'head harness',
-  'sled strap',
-  'boxing gloves',
-  'gymnastics equipment',
+export const SYSTEMS = [
+  'rack or rig',
+  'adjustable crossover cable station',
+  'high/low crossover cable station',
+  'high/low duplex cable station',
+  'adjustable cable station',
+  'high cable station',
+  'low cable station',
+  'smith machine',
+  'split squat stand',
+  'flat bench press',
+  'incline bench press',
+  'decline bench press',
+  'shoulder press bench',
+  'adjustable bench',
+  'fixed bench',
+  'incline biceps curl',
+  'rowing cable station',
+  'pulldown cable station',
+  'seal row',
+  'landmine',
+  'dip station',
+  'hip thrust pad',
+  'back extension',
+  'abs bench',
+  'stall bars',
+  'safety arm',
+  'platform',
   'other'
 ];
-export const AccessoryOrToolCategorySchema = z.enum(ACCESSORIES_AND_TOOLS)
-export type AccessoryOrToolCategory = z.infer<typeof AccessoryOrToolCategorySchema>
+export const SystemCategorySchema = z.enum(SYSTEMS)
+export type SystemCategory = z.infer<typeof SystemCategorySchema>
 
-export const CARDIO = [
-  'stair climbing machine',
-  'spin bike',
-  'upright bike',
-  'recumbent bike',
-  'elliptical',
-  'rower',
-  'treadmill',
-  'skiing machine',
-  'stepper',
-  'punching bag',
-  'other'
-];
-export const CardioCategorySchema = z.enum(CARDIO)
-export type CardioCategory = z.infer<typeof CardioCategorySchema>
-
-const CategorySchema = z.enum([
-  'accessoryOrTool',
-  'barOrPlate',
-  'cardio',
-  'freeWeight',
-  'handleAttachment',
-  'strengthMachine',
-  'system'
-])
+const CategorySchema = z.enum(EQUIPMENT_CATEGORIES)
 const SubcategorySchema = z.enum(ACCESSORIES_AND_TOOLS.concat(BARS_AND_PLATES, CARDIO, FREE_WEIGHTS, HANDLE_ATTACHMENTS, STRENGTH_MACHINES, SYSTEMS))
 
-export const EquipmentWeightUnitEnum = z.enum(['kg', 'lbs'])
+export const EquipmentWeightUnitEnum = z.enum(EQUIPMENT_WEIGHT_UNITS)
 export type EquipmentWeightUnit = z.infer<typeof EquipmentWeightUnitEnum>;
 
-export const EquipmentMaximumWeightTypeEnum = z.enum(['load', 'weight'])
+export const EquipmentMaximumWeightTypeEnum = z.enum(EQUIPMENT_MAXIMUM_WEIGHT_TYPES)
 export type EquipmentMaximumWeightType = z.infer<typeof EquipmentMaximumWeightTypeEnum>;
 
 export const EquipmentBaseSchema = z.object({
   id: z.uuidv4(),
-  name: z.string().min(1).max(255),
+  name: z.string().min(1).max(STRING_DEFAULT_LEN),
   generic: z.boolean(),
-  manufacturer: z.string().min(1).max(255),
-  code: z.string().min(1).max(255),
+  manufacturer: z.string().min(1).max(STRING_DEFAULT_LEN),
+  code: z.string().min(1).max(STRING_DEFAULT_LEN),
   maximumWeightType: EquipmentMaximumWeightTypeEnum,
   outOfProduction: z.boolean(),
-  url: z.url().nullable(),
-  notes: z.string().min(1).max(255).nullable(),
+  url: z.url().max(STRING_DEFAULT_LEN).nullable(),
+  notes: z.string().min(1).max(STRING_DEFAULT_LEN).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 })
@@ -414,7 +422,8 @@ export const EquipmentCategorySchema = z.discriminatedUnion('category', [
 
 export const WeightSchema = z.number().positive().lte(MAX_WEIGHT)
 
-export const EquipmentWithWeightsSchema = z.object({
+export const EquipmentWithWeightsSchema = z
+.object({
   weightUnit: EquipmentWeightUnitEnum,
   weight: WeightSchema.nullable(),
   startingWeight: WeightSchema.nullable(),
@@ -460,13 +469,16 @@ const EquipmentUnions = z.intersection(EquipmentCategorySchema, EquipmentWeights
 export const EquipmentSchema = z.intersection(EquipmentBaseSchema, EquipmentUnions)
 export type Equipment = z.infer<typeof EquipmentSchema>;
 
-export const EquipmentPostSchema = z.intersection(EquipmentBaseSchema.exactPartial({
-  id: true,
-  url: true,
-  notes: true,
-  createdAt: true,
-  updatedAt: true
-}), EquipmentUnions)
+export const EquipmentPostSchema = z.intersection(EquipmentBaseSchema
+  .omit({
+    createdAt: true,
+    updatedAt: true
+  })
+  .exactPartial({
+    id: true,
+    url: true,
+    notes: true
+  }), EquipmentUnions)
 export type EquipmentPost = z.infer<typeof EquipmentPostSchema>
 
 /* With the contents of .extend, the two union schemas
@@ -554,10 +566,11 @@ export const HoursExceptionsSchema = z.object({
 export type HoursExceptions = z.infer<typeof HoursExceptionsSchema>;
 
 export const STREET_NO_MAX_LEN = 20
+export const GYM_LOCATION_MAX_LEN = 510
 export const GymSchema = z.object({
   id: z.uuidv4(),
-  name: z.string().min(1).max(255),
-  chain: z.string().min(1).max(255).nullable(),
+  name: z.string().min(1).max(STRING_DEFAULT_LEN),
+  chain: z.string().min(1).max(STRING_DEFAULT_LEN).nullable(),
   street: SubLocationNameSchema,
   streetNumber: z.string().min(1).max(STREET_NO_MAX_LEN),
   district: SubLocationNameSchema,
@@ -568,18 +581,23 @@ export const GymSchema = z.object({
   openingHoursEveryone: HoursSchema,
   openingHoursMembers: HoursSchema,
   openingHoursExceptions: HoursExceptionsSchema,
-  url: z.url().nullable(),
-  location: z.url(),
+  url: z.url().max(STRING_DEFAULT_LEN).nullable(),
+  location: z.url().max(GYM_LOCATION_MAX_LEN),
   equipmentVisible: z.boolean(),
   membershipsVisible: z.boolean(),
   openingHoursVisible: z.boolean(),
-  notes: z.string().min(1).max(255).nullable(),
+  notes: z.string().min(1).max(STRING_DEFAULT_LEN).nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date()
 });
 export type Gym = z.infer<typeof GymSchema>;
 
-export const GymPostSchema = GymSchema.exactPartial({
+export const GymPostSchema = GymSchema
+.omit({
+  createdAt: true,
+  updatedAt: true
+})
+.exactPartial({
   id: true,
   chain: true,
   openingHoursEveryone: true,
@@ -589,13 +607,12 @@ export const GymPostSchema = GymSchema.exactPartial({
   membershipsVisible: true,
   openingHoursVisible: true,
   url: true,
-  notes: true,
-  createdAt: true,
-  updatedAt: true
+  notes: true
 })
 export type GymPost = z.infer<typeof GymPostSchema>;
 
-export const GymPutSchema = GymSchema.omit({
+export const GymPutSchema = GymSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
@@ -622,10 +639,11 @@ export const CitySchema = LocationBaseSchema.extend({
 })
 export type City = z.infer<typeof CitySchema>;
 
-export const CityPostSchema = CitySchema.exactPartial({
-  id: true,
+export const CityPostSchema = CitySchema.omit({
   createdAt: true,
   updatedAt: true
+}).exactPartial({
+  id: true
 })
 export type CityPost = z.infer<typeof CityPostSchema>
 
@@ -641,10 +659,11 @@ export const DistrictSchema = LocationBaseSchema.extend({
 })
 export type District = z.infer<typeof DistrictSchema>;
 
-export const DistrictPostSchema = DistrictSchema.exactPartial({
-  id: true,
+export const DistrictPostSchema = DistrictSchema.omit({
   createdAt: true,
   updatedAt: true
+}).exactPartial({
+  id: true
 })
 export type DistrictPost = z.infer<typeof DistrictPostSchema>
 
@@ -663,7 +682,9 @@ export const PasswordSchema = z
   .min(15)  // without MFA, shorter than 15 is considered weak (NIST SP800-63B)
   .max(100);  // upper limit prevents extremely long passwords that would take too long to hash (NIST SP800-63B)
 
-export const UserRoleEnum = z.enum(['SUPERUSER', 'ADMIN', 'MANAGER', 'GYM-GOER']);
+export const USER_ROLES = ['SUPERUSER', 'ADMIN', 'MANAGER', 'GYM-GOER']
+
+export const UserRoleEnum = z.enum(USER_ROLES);
 export type UserRole = z.infer<typeof UserRoleEnum>;
 
 export const USERNAME_MAX_LEN = 30
@@ -671,9 +692,9 @@ export const USERS_NAME_MAX_LEN = 100
 export const UserSchema = z.object({
   id: z.uuidv4(),
   username: z.string().min(1).max(USERNAME_MAX_LEN),
-  email: z.email(),
+  email: z.email().max(STRING_DEFAULT_LEN),
   emailVerified: z.boolean(),
-  passwordHash: z.string().min(1),
+  passwordHash: z.string().min(1).max(STRING_DEFAULT_LEN),
   name: z.string().min(1).max(USERS_NAME_MAX_LEN),
   role: UserRoleEnum,
   createdAt: z.coerce.date(),
@@ -682,13 +703,16 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 
 export const UserPostSchema = UserSchema
-  .omit({ emailVerified: true, passwordHash: true })
+  .omit({
+    emailVerified: true,
+    passwordHash: true,
+    createdAt: true,
+    updatedAt: true
+  })
   .extend({ password: PasswordSchema })
   .exactPartial({
     id: true,
-    role: true,
-    createdAt: true,
-    updatedAt: true
+    role: true
   })
 export type UserPost = z.infer<typeof UserPostSchema>;
 

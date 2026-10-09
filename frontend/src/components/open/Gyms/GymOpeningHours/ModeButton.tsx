@@ -1,7 +1,6 @@
 import { use } from 'react';
 
-import { BiCalendarWeek } from 'react-icons/bi';
-import { BsCalendar4Week } from 'react-icons/bs';
+import { BsCalendar3, BsCalendar4Week } from 'react-icons/bs';
 import { MdKeyboardArrowRight } from 'react-icons/md';
 
 import { IconContext } from '@/utils/contexts';
@@ -9,9 +8,9 @@ import { IconContext } from '@/utils/contexts';
 function ModeButtonIcon ({ title }: { title: string }) {
   if (title === 'next seven days') {
     return (
-      <p className='flex gap-1 ml-2 text-xl'>
-        <BsCalendar4Week aria-hidden='true' />
+      <p className='flex mr-4.5 text-xl'>
         <MdKeyboardArrowRight aria-hidden='true' />
+        <BsCalendar4Week aria-hidden='true' />
         <span className='sr-only'>{title}</span>
       </p>
     );
@@ -20,7 +19,7 @@ function ModeButtonIcon ({ title }: { title: string }) {
   if (title === 'regular') {
     return (
       <p>
-        <BiCalendarWeek aria-hidden='true' className='text-xl' />
+        <BsCalendar3 aria-hidden='true' className='text-xl' />
         <span className='sr-only'>{title}</span>
       </p>
     );
@@ -45,9 +44,11 @@ export default function ModeButton (
   return (
     <button
       aria-pressed={hoursMode === title}
+      disabled={hoursMode === title}
       className='
         group flex justify-center items-center py-1 basis-1/2
-        cursor-pointer hover:inset-ring active:font-semibold
+        enabled:cursor-pointer enabled:hover:inset-ring
+        enabled:active:inset-ring enabled:active:font-semibold
         aria-pressed:bg-secondary-dark dark:aria-pressed:bg-secondary
         aria-pressed:font-semibold'
       onClick={() => {

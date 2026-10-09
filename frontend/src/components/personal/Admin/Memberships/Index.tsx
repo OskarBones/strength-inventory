@@ -1,6 +1,6 @@
 import { use, useRef, useState } from 'react';
 
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 
 import { IconContext } from '@/utils/contexts';
 

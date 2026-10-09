@@ -6,7 +6,7 @@
 import { use } from 'react';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { GiMeshNetwork } from 'react-icons/gi';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { MdOutlinePlaylistAddCheckCircle } from 'react-icons/md';

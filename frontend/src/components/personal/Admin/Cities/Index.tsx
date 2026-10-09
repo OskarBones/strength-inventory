@@ -1,6 +1,6 @@
 import { use, useRef, useState } from 'react';
 
-import { PiCity } from 'react-icons/pi';
+import { GiModernCity } from 'react-icons/gi';
 import { useQuery } from '@tanstack/react-query';
 
 import { getCities } from '@/utils/api';
@@ -54,7 +54,7 @@ export default function AdminCities () {
       >
         <h2 className='self-center font-bold'>
           {iconMode
-            ? <PiCity className='text-2xl' />
+            ? <GiModernCity className='text-2xl' />
             : 'cities'}
         </h2>
 

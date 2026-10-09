@@ -2,10 +2,10 @@ import { use } from 'react';
 
 import { Link, Outlet, useLocation } from '@tanstack/react-router';
 import { CgGym } from 'react-icons/cg';
-import { FaRegAddressCard } from 'react-icons/fa';
-import { LiaDrawPolygonSolid } from 'react-icons/lia';
+import { FaRegAddressCard } from 'react-icons/fa6';
+import { GiModernCity } from 'react-icons/gi';
 import { MdOutlineLocationOn } from 'react-icons/md';
-import { PiCity } from 'react-icons/pi';
+import { TbLassoPolygon } from 'react-icons/tb';
 
 import { IconContext } from '@/utils/contexts';
 
@@ -23,11 +23,11 @@ function Icon ({ pathname }: { pathname: string }) {
   }
 
   if (pathname === 'cities') {
-    return <PiCity className='text-base' />;
+    return <GiModernCity className='text-base' />;
   }
 
   if (pathname === 'districts') {
-    return <LiaDrawPolygonSolid className='text-base' />;
+    return <TbLassoPolygon className='text-base' />;
   }
 
   return '';

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
+import { BsInfoLg } from 'react-icons/bs';
 import { FaPlus } from 'react-icons/fa6';
 import { IoNavigateCircle } from 'react-icons/io5';
 import { TbWorldWww } from 'react-icons/tb';
-import { TiInfoLarge } from 'react-icons/ti';
 
 import GymExtension from './GymExtension';
 import GymExtensionButton from './GymExtensionButton';
@@ -100,7 +100,7 @@ export default function Gym ({ gym }: { gym: GymWithDistance }) {
               }}
             >
               <FaPlus aria-hidden='true' className='text-xs' />
-              <TiInfoLarge aria-hidden='true' />
+              <BsInfoLg aria-hidden='true' />
               <span className='sr-only'>more info</span>
             </button>
           </div>

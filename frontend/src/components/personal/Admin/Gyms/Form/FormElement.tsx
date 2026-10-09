@@ -1,4 +1,4 @@
-import { FaEye, FaRegAddressCard } from 'react-icons/fa';
+import { FaEye, FaRegAddressCard } from 'react-icons/fa6';
 import { TbClock, TbClockFilled } from 'react-icons/tb';
 import { BsPeople } from 'react-icons/bs';
 import { CgGym } from 'react-icons/cg';

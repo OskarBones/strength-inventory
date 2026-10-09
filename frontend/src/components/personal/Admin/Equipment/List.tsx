@@ -1,6 +1,6 @@
 import { type RefObject, useEffect, useRef } from 'react';
 
-import { FaStoreSlash } from 'react-icons/fa';
+import { FaStoreSlash } from 'react-icons/fa6';
 import { LuEqualApproximately } from 'react-icons/lu';
 import { type UseMutationOptions } from '@tanstack/react-query';
 

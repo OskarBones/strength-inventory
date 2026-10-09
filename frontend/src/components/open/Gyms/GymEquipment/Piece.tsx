@@ -1,4 +1,4 @@
-import { FaStoreSlash } from 'react-icons/fa';
+import { FaStoreSlash } from 'react-icons/fa6';
 import { TbWorldWww } from 'react-icons/tb';
 
 import { type GymFrontendGetEquipment }

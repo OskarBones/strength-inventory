@@ -1,7 +1,7 @@
 import { use } from 'react';
 
 import { CgGym } from 'react-icons/cg';
-import { FaRegAddressCard } from 'react-icons/fa';
+import { FaRegAddressCard } from 'react-icons/fa6';
 import { TbClock } from 'react-icons/tb';
 
 import { IconContext } from '@/utils/contexts';
@@ -73,7 +73,7 @@ export default function GymExtensionButton (
         enabled:hover:inset-ring enabled:active:inset-ring
         enabled:active:font-semibold
         aria-pressed:bg-secondary-dark dark:aria-pressed:bg-secondary
-        aria-pressed:font-semibold
+        aria-pressed:inset-ring-primary-text-dark aria-pressed:font-semibold
         disabled:bg-background dark:disabled:bg-background-dark
         disabled:cursor-not-allowed'
       onClick={() => {

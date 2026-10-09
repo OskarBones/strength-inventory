@@ -5,7 +5,7 @@ import {
   IoRemoveCircleOutline
 } from 'react-icons/io5';
 import { TiDelete, TiDeleteOutline } from 'react-icons/ti';
-import { FaStoreSlash } from 'react-icons/fa';
+import { FaStoreSlash } from 'react-icons/fa6';
 import { LuEqualApproximately } from 'react-icons/lu';
 import { type UseMutationResult } from '@tanstack/react-query';
 

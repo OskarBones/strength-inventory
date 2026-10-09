@@ -2,7 +2,7 @@ import { Link, useLocation } from '@tanstack/react-router';
 import { MdDarkMode, MdLightMode, MdOutlineLocationOn } from 'react-icons/md';
 import { TbClock, TbContract } from 'react-icons/tb';
 import { CgGym } from 'react-icons/cg';
-import { FaSearch } from 'react-icons/fa';
+import { IoSearch } from 'react-icons/io5';
 
 interface IconToggleProps {
   iconMode: boolean;
@@ -132,7 +132,7 @@ export default function SidebarLeft ({
     >
       <h2 className='pb-1 pl-2 text-base font-bold cursor-default'>
         {iconMode
-          ? <FaSearch aria-hidden='true' className='text-2xl' />
+          ? <IoSearch aria-hidden='true' className='text-2xl' />
           : null}
 
         <span

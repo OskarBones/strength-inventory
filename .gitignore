@@ -1,7 +1,8 @@
 node_modules
 
 dumpfile
-strength-inventory.code-workspace
-todo.md
 *.sql
 *.gz
+
+todo.md
+strength-inventory.code-workspace

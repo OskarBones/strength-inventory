@@ -1,5 +1,5 @@
-import { CiHeart } from 'react-icons/ci';
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa6';
+import { IoHeartOutline } from 'react-icons/io5';
 
 import { VERSION } from '@strength-inventory/schemas';
 
@@ -11,7 +11,9 @@ export default function Footer () {
         text-primary-text dark:text-primary-text-dark text-sm'
     >
       <p className='flex gap-1'>
-        made with <CiHeart aria-label='love' className='text-xl' /> in Helsinki
+        made with
+        <IoHeartOutline aria-label='love' className='text-xl' />
+        in Helsinki
       </p>
 
       <div className='absolute flex items-center right-2 md:right-25 gap-2'>

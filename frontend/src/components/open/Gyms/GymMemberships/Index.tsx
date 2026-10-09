@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { FaCaretLeft, FaCaretRight } from 'react-icons/fa';
+import { FaCaretLeft, FaCaretRight } from 'react-icons/fa6';
 
 import Membership from './Membership';
 
