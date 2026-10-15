@@ -6,6 +6,8 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
+import { VERSION } from '@strength-inventory/schemas';
+
 // https://vite.dev/config/
 export default defineConfig({
   resolve: {
@@ -20,10 +22,10 @@ export default defineConfig({
       autoCodeSplitting: true
     }), react(), tailwindcss(), sentryVitePlugin({
       org: 'strength-inventory',
-      project: 'strory-frontend'
-    }), sentryVitePlugin({
-      org: 'strength-inventory',
-      project: 'strory-frontend'
+      project: 'strory-frontend',
+      release: {
+        name: VERSION
+      }
     })
   ],
 
