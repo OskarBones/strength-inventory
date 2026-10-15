@@ -8,6 +8,7 @@
   "main": "index.ts",
   "scripts": {
     "tsc": "tsc && npm run sentry:sourcemaps",
+    "tsc:scripts": "tsc",
     "seed:admin": "tsx scripts/create-admin-on-startup.ts",
     "cleanup:sessions": "tsx scripts/delete-expired-sessions.ts",
     "dev": "npm run seed:admin && cross-env NODE_ENV=development tsx --import ./instrument.ts --watch src/index.ts",
