@@ -21,6 +21,9 @@ export default defineConfig({
     }), react(), tailwindcss(), sentryVitePlugin({
       org: 'strength-inventory',
       project: 'strory-frontend'
+    }), sentryVitePlugin({
+      org: 'strength-inventory',
+      project: 'strory-frontend'
     })
   ],
 

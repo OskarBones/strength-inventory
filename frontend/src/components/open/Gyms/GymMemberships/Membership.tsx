@@ -103,6 +103,7 @@ export default function Membership (
             >
               <a
                 href={notNullUrl}
+                rel='noopener noreferrer'
                 target='_blank'
                 className='flex flex-1 items-center gap-1'
               >

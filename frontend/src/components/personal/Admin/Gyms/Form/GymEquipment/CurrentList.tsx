@@ -72,6 +72,7 @@ function Category ({
             ? (
               <a
                 href={piece.url}
+                rel='noopener noreferrer'
                 target='_blank'
                 className='underline'
               >

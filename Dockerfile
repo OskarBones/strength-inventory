@@ -14,6 +14,8 @@ COPY frontend ./frontend/
 COPY backend ./backend/
 
 WORKDIR /usr/src/app/frontend
+ARG FRONTEND_SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${FRONTEND_SENTRY_AUTH_TOKEN}
 RUN npm run build:deploy
 
 WORKDIR /usr/src/app/backend

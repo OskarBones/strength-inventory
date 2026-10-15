@@ -1,35 +1,38 @@
+import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
 import stylistic from '@stylistic/eslint-plugin';
 import tseslint from 'typescript-eslint';
-import { defineConfig } from 'eslint/config';
 
 export default defineConfig(
   {
     ignores: ['build', 'src/migrations/pre-release']
   },
   {
-    files: ['**/*.ts'],
+    files: ['**/*.ts', 'eslint.config.mjs'],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.strictTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
+      tseslint.configs.stylisticTypeChecked
     ],
     plugins: { '@stylistic': stylistic },
     languageOptions: {
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['src/tests/*']
+          allowDefaultProject:
+            ['src/tests/*', 'vitest.config.ts', 'eslint.config.mjs']
         },
         tsconfigRootDir: import.meta.dirname
       }
     },
     rules: {
-      'sort-imports': ['error', { 'ignoreCase': true, 'allowSeparatedGroups': true }],
-      '@stylistic/array-bracket-newline': ['error', { 'multiline': true, 'minItems': 4 }],
+      'sort-imports':
+        ['error', { ignoreCase: true, allowSeparatedGroups: true }],
+      '@stylistic/array-bracket-newline':
+        ['error', { multiline: true, minItems: 4 }],
       '@stylistic/array-bracket-spacing': ['error'],
       '@stylistic/array-element-newline': ['error', 'consistent'],
       '@stylistic/arrow-parens': ['error'],
-      '@stylistic/arrow-spacing': ['error', { 'before': true, 'after': true }],
+      '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
       '@stylistic/block-spacing': ['error'],
       '@stylistic/brace-style': ['error'],
       '@stylistic/comma-dangle': ['error'],
@@ -46,7 +49,7 @@ export default defineConfig(
       '@stylistic/key-spacing': ['error'],
       '@stylistic/keyword-spacing': ['error'],
       '@stylistic/lines-between-class-members': ['error'],
-      '@stylistic/max-len': ['error', { 'tabWidth': 2 }],
+      '@stylistic/max-len': ['error', { tabWidth: 2 }],
       '@stylistic/max-statements-per-line': ['error'],
       '@stylistic/multiline-ternary': ['error'],
       '@stylistic/new-parens': ['error'],
@@ -57,13 +60,13 @@ export default defineConfig(
       '@stylistic/no-floating-decimal': ['error'],
       '@stylistic/no-mixed-operators': ['error'],
       '@stylistic/no-mixed-spaces-and-tabs': ['error'],
-      '@stylistic/no-multi-spaces': ['error', { 'ignoreEOLComments': true }],
+      '@stylistic/no-multi-spaces': ['error', { ignoreEOLComments: true }],
       '@stylistic/no-multiple-empty-lines': ['error'],
-      '@stylistic/no-tabs': ['error', { 'allowIndentationTabs': true }],
+      '@stylistic/no-tabs': ['error', { allowIndentationTabs: true }],
       '@stylistic/no-trailing-spaces': ['error'],
       '@stylistic/no-whitespace-before-property': ['error'],
       '@stylistic/nonblock-statement-body-position': ['error'],
-      '@stylistic/object-curly-newline': ['error', { 'consistent': true }],
+      '@stylistic/object-curly-newline': ['error', { consistent: true }],
       '@stylistic/object-curly-spacing': ['error', 'always'],
       '@stylistic/operator-linebreak': ['error', 'before'],
       '@stylistic/padded-blocks': ['error', 'never'],

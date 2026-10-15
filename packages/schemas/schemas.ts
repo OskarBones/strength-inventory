@@ -2,18 +2,23 @@ import 'zod/compile';
 import { z } from 'zod';
 
 /* NOTE ABOUT STRINGS
-z.string().min(1) = required string
-z.string() = optional string i.e. empty strings accepted */
+z.string().min(1) = emptry strings not accepted
+z.string() = empty strings accepted */
 
 
-// shared utility schemas
+// shared utils
 
-export const VERSION = '1.4.2';
+export const VERSION = '1.4.3';
 
 export const STRING_DEFAULT_LEN = 255;
 
-const TimeSchema = z.array(z.iso.time().nullable()).length(2);
-const ExceptionTimeSchema = z.array(z.iso.time().nullable()).length(2);
+const TimeSchema = z.tuple([
+  z.iso.time().nullable(),
+  z.iso.time().nullable()
+]).refine(([openTime, closeTime]) => {
+  if (!openTime || !closeTime) return true;
+  return openTime < closeTime;
+}, { error: 'opening time must be earlier than closing time' })
 
 export const HoursSchema = z.object({
   MO: TimeSchema,
@@ -57,7 +62,7 @@ export const MembershipBaseSchema = z.object({
   name: z.string().min(1),
   initiationFee: z.number().nullable(),
   membershipFee: z.number(),
-  feeCurrency: z.enum(CURRENCIES),
+  feeCurrency: z.enum(CURRENCIES),  // z.currencyCode() could be used in the future
   visits: z.int().positive().nullable(),
   validity: z.int().positive(),
   validityUnit: MembershipTimeUnitEnum,
@@ -554,7 +559,7 @@ export const OpeningHoursExceptionSchema = z.object({
   Zod only enforces date to be any date to avoid having
   separate schemas for GET and POST/PUT requests only for exceptions. */
   date: z.coerce.date(),
-  hours: ExceptionTimeSchema,
+  hours: TimeSchema,
   reason: z.string().min(1),
   concerns: z.enum(['everyone', 'non-members', 'members'])
 })

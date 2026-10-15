@@ -130,7 +130,12 @@ export default function Form ({
         <span className='font-bold'>{piece.subcategory}:</span>
         {piece.url
           ? (
-            <a href={piece.url} target='_blank' className='underline'>
+            <a
+              href={piece.url}
+              rel='noopener noreferrer'
+              target='_blank'
+              className='underline'
+            >
               {piece.name}
             </a>
           )

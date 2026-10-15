@@ -75,6 +75,7 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
                   : null}
                 <a
                   href={notNullUrl}
+                  rel='noopener noreferrer'
                   target='_blank'
                   className='
                     flex items-center gap-1 font-bold

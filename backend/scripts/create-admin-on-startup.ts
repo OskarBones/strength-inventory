@@ -9,6 +9,8 @@ import { User } from '../src/models/index.ts';
 const seedAdmin = async () => {
   try {
     await connectToDatabase();
+    console.log('Seeding script connected to the database.');
+
     const admin = await User.findOne({ where: { username: 'TheAdmin' } });
 
     if (!admin) {
@@ -29,10 +31,12 @@ const seedAdmin = async () => {
     }
 
     console.log('Admin user available in the database.');
+
     await sequelize.close();
     console.log('Seeding script disconnected from the database.');
   } catch (err) {
     console.error('Seeding admin failed:', err);
+    process.exit(1);
   }
 };
 

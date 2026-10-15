@@ -21,7 +21,7 @@ export default function Gym ({ gym }: { gym: GymWithDistance }) {
   }
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col shadow-md'>
       {/* Adapt the placement of the extension buttons to the screen size */}
       <div className='flex flex-col md:flex-row'>
         <div
@@ -42,6 +42,7 @@ export default function Gym ({ gym }: { gym: GymWithDistance }) {
                   ? (
                     <a
                       href={gym.url}
+                      rel='noopener noreferrer'
                       target='_blank'
                       className='
                         flex items-center gap-1
@@ -55,6 +56,7 @@ export default function Gym ({ gym }: { gym: GymWithDistance }) {
               </h3>
               <a
                 href={gym.location}
+                rel='noopener noreferrer'
                 target='_blank'
                 className='
                   flex items-center gap-1 text-sm

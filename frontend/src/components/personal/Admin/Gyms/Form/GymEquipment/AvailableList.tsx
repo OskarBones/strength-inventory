@@ -55,6 +55,7 @@ export default function AvailableList (
               ? (
                 <a
                   href={piece.url}
+                  rel='noopener noreferrer'
                   target='_blank'
                   className='w-5'
                 >

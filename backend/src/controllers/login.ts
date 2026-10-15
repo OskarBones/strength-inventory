@@ -130,9 +130,7 @@ loginRouter.post('/refresh', async (
 ) => {
   const refreshToken = req.cookies.refreshToken;
   if (!refreshToken) {
-    const error = Error('Refresh token missing from request.');
-    error.name = 'AuthenticationError';
-    throw error;
+    throw new HttpError('Refresh token missing from request.', 401);
   }
 
   const decodedToken = jwt.verify(

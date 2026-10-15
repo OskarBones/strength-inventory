@@ -1,5 +1,6 @@
 {
   "name": "@strength-inventory/schemas",
+  "version": "1.4.3",
   "type": "module",
   "main": "schemas.ts",
   "dependencies": {
