@@ -25,7 +25,7 @@ Prioritized database: **PostgreSQL** (Postgres-specific implementations are avoi
 - [HTML-Attribute-Ordering-Standard](https://github.com/lakhbawa/HTML-Attribute-Ordering-Standard/tree/main)
 - [Concentric ordering](https://github.com/brandon-rhodes/Concentric-CSS/blob/master/style3.css) of tailwindcss classes
 - Screen widths down to 360px accommodated
-- Versioning is inspired by [Semantic Versioning](https://semver.org/) with patches turning into minor releases if there is something new added, and major releases representing significant milestones
+- Patches turn into minor releases if something new is added for the end-user, and major releases represent significant milestones
 - The English language, metric units and international/EU links take precedence until internationalization is implemented
 
 ## Towards v2.0
@@ -33,6 +33,6 @@ strength inventory was born as a university course project with v1.0 being the s
 
 The solution to this problem is giving gyms **tiers of information**. All the currently added gyms represent the highest tier with each and every piece of equipment added. Below this tier, there will be a few lower tiers which require only certain types of equipment to be counted. This approach provides two benefits: New gyms will be faster to add and the process of collecting data is given clear guidelines with the tiers serving as steps.
 
-In addition to working towards these tiers, v1.x updates will continue to strengthen the foundations of strength inventory by optimizing existing code and adding essential features. The goal is for v2.0 to be a useful product that empowers people in their fitness journeys by means of information.
+In addition to working towards these tiers, v1.x updates will continue to strengthen the foundations of strength inventory by optimizing existing code and adding essential features. The goal is for v2.0 to be a useful product with potential to empower people in their fitness journeys by means of information.
 
 -Oskar

@@ -190,12 +190,13 @@ export default function Form (
   /* Opening hours exceptions move with
   the above state variables and regular opening hours,
   but they have their own state for convenience.
-  formatSubmit function attaches exceptions to
+  submit function attaches exceptions to
   the other variables before API calls. */
   const [exceptions, setExceptions] = useState<OpeningHoursException[]>([]);
   const [originalExceptions, setOriginalExceptions]
     = useState<OpeningHoursException[]>([]);
-  /* editForm denotes the subform opened on top of this form. */
+
+  // editForm denotes the subform opened on top of this form eg. GymEquipment
   const [editForm, setEditForm] = useState('');
   const [firstRender, setFirstRender] = useState(true);
   const [originalName, setOriginalName] = useState('');

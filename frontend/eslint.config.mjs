@@ -13,7 +13,7 @@ export default defineConfig(
     ignores: ['dist', 'src/routeTree.gen.ts']
   },
   {
-    files: ['**/*.{ts,tsx}', 'eslint.config.mjs'],
+    files: ['src/**/*.{ts,tsx}'],
     extends: [
       eslintJs.configs.recommended,
       tseslint.configs.recommended,

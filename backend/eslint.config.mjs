@@ -8,7 +8,7 @@ export default defineConfig(
     ignores: ['build', 'src/migrations/pre-release']
   },
   {
-    files: ['**/*.ts', 'eslint.config.mjs'],
+    files: ['**/*.ts'],
     extends: [
       eslint.configs.recommended,
       tseslint.configs.strictTypeChecked,
@@ -19,7 +19,7 @@ export default defineConfig(
       parserOptions: {
         projectService: {
           allowDefaultProject:
-            ['src/tests/*', 'vitest.config.ts', 'eslint.config.mjs']
+            ['src/tests/*', 'eslint.config.mjs']
         },
         tsconfigRootDir: import.meta.dirname
       }

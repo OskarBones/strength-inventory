@@ -34,7 +34,17 @@ const umzug = new Umzug({
 const connectToDatabase = async () => {
   try {
     await sequelize.authenticate();
-    await runMigrations();
+
+    /* DANGER ZONE!
+    That .sync({ force: true }) drops existing tables,
+    so make sure it only triggers for testing. */
+    if (NODE_ENV !== 'test') {
+      await runMigrations();
+    } else {
+      await sequelize.sync({ force: true });
+      console.log('All models were synchronized successfully.');
+    }
+
     console.log('Connected to the database.');
   } catch (err: unknown) {
     let errorMessage = 'Failed to connect to the database.';

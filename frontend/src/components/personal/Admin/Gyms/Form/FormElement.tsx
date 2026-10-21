@@ -305,7 +305,7 @@ export default function FormElement (
               ? <BsPeople className='text-base' />
               : 'everyone'}
           </h5>
-          <div className='flex flex-row gap-2.5'>
+          <div className='flex flex-col md:flex-row gap-1 md:gap-2.5'>
             <div className='flex flex-col gap-1'>
               <OpeningHoursDayInput
                 group='everyone'
@@ -361,7 +361,7 @@ export default function FormElement (
               ? <FaRegAddressCard className='text-base' />
               : 'members'}
           </h5>
-          <div className='flex flex-row gap-2.5'>
+          <div className='flex flex-col md:flex-row gap-1 md:gap-2.5'>
             <div className='flex flex-col gap-1'>
               <OpeningHoursDayInput
                 group='members'

@@ -8,7 +8,7 @@ z.string() = empty strings accepted */
 
 // shared utils
 
-export const VERSION = '1.4.3';
+export const VERSION = '1.4.4';
 
 export const STRING_DEFAULT_LEN = 255;
 
