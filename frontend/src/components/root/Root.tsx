@@ -96,8 +96,8 @@ export default function Root () {
   }
 
   const [notification, dispatch] = useReducer(notificationReducer, {
-    type: 'success',
-    message: 'Notifications dispatched'
+    type: '',
+    message: ''
   });
 
   return (
