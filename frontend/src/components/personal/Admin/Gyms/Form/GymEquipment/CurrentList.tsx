@@ -59,7 +59,7 @@ function Category ({
       >
         <div
           className='
-            flex flex-1 items-center space-x-1
+            flex flex-1 items-center gap-1
             overflow-hidden text-clip whitespace-nowrap'
         >
           {piece.generic

@@ -5,17 +5,15 @@ import {
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { getCities, getDistrict, postDistrict, putDistrict } from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
-
-import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import { type DistrictFrontendPostAndPut, DistrictFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -28,21 +26,17 @@ interface FormProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
   selectedDistrictId: string;
   setSelectedDistrictId: React.Dispatch<React.SetStateAction<string>>;
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string;
-  }>>;
 }
 
 export default function Form ({
   formMode,
   setFormMode,
   selectedDistrictId,
-  setSelectedDistrictId,
-  setParentNotification
+  setSelectedDistrictId
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +71,7 @@ export default function Form ({
       setSelectedDistrictId(newDistrictFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'district created'
         });
       }, 150);
@@ -107,7 +101,7 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'changes saved'
         });
       }, 150);
@@ -139,11 +133,6 @@ export default function Form ({
 
   const [firstRender, setFirstRender] = useState(true);
 
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, dispatchAction, isPending] = useActionState(submit, {
     success: true,
@@ -169,7 +158,7 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       } else {  // formMode === 'edit'
         try {
@@ -181,11 +170,11 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       }
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -269,7 +258,7 @@ export default function Form ({
                 name='cityId'
                 value={district.cityId}
                 required
-                className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+                className='form-input enabled:cursor-pointer'
                 onChange={(event) => {
                   setDistrict({ ...district, cityId: event.target.value });
                   nameInputRef.current?.focus();
@@ -294,7 +283,7 @@ export default function Form ({
                 value={district.name}
                 required
                 maxLength={LOCATION_MAX_LEN}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setDistrict({ ...district, name: event.target.value });
                 }}
@@ -310,7 +299,7 @@ export default function Form ({
                 value={district.referencePoint}
                 required
                 maxLength={REF_POINT_MAX_LEN}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setDistrict({
                     ...district, referencePoint: event.target.value
@@ -332,7 +321,7 @@ export default function Form ({
                   min={-90}
                   max={90}
                   step={0.00001}
-                  className={`${FORM_INPUT_CLASSES} w-20`}
+                  className='form-input w-20'
                   onChange={(event) => {
                     setDistrict({ ...district, latitude: event.target.value });
                   }}
@@ -351,7 +340,7 @@ export default function Form ({
                   min={-180}
                   max={180}
                   step={0.00001}
-                  className={`${FORM_INPUT_CLASSES} w-22`}
+                  className='form-input w-22'
                   onChange={(event) => {
                     setDistrict({ ...district, longitude: event.target.value });
                   }}
@@ -375,12 +364,6 @@ export default function Form ({
           }
         />
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }

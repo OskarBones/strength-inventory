@@ -29,14 +29,10 @@ interface GymEquipmentProps {
   gymId: string
   gymName: string
   setEditForm: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function GymEquipment (
-  { gymId, gymName, setEditForm, setParentNotification }: GymEquipmentProps
+  { gymId, gymName, setEditForm }: GymEquipmentProps
 ) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
@@ -212,7 +208,6 @@ export default function GymEquipment (
                 setEquipmentCountMutation={setEquipmentCountMutation}
                 removeEquipmentMutation={removeEquipmentMutation}
                 setEquipmentToAdd={setEquipmentToAdd}
-                setParentNotification={setParentNotification}
               />
             )
           : (
@@ -247,7 +242,6 @@ export default function GymEquipment (
         <EditFormReturnButton
           model='equipment'
           setEditForm={setEditForm}
-          setParentNotification={setParentNotification}
         />
       </div>
     </div>

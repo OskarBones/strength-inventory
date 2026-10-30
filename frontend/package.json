@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "1.4.4",
+  "version": "1.5.0",
   "license": "GPL-3.0-or-later",
   "author": "Oskar Bones",
   "type": "module",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@sentry/cli": "^3.8.0",
     "@sentry/react": "^11.0.0",
-    "@sentry/vite-plugin": "^5.4.1",
+    "@sentry/vite-plugin": "^11.10.0",
     "@strength-inventory/schemas": "*",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.20",
@@ -39,7 +39,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@types/json-server": "^0.14.8",
-    "@types/node": "^24.10.1",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.0",

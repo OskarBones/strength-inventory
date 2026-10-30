@@ -1,14 +1,13 @@
 import { z } from 'zod';
 
+import { type NotificationProps } from '@strength-inventory/schemas/frontend';
+
 interface handleSubmitErrorProps {
   err: unknown,
-  setNotification: React.Dispatch<React.SetStateAction<{
-    type: string
-    message: string
-  }>>
+  dispatch: React.Dispatch<NotificationProps>
 }
 
-export default function handleSubmitError ({ err, setNotification }:
+export default function handleSubmitError ({ err, dispatch }:
 handleSubmitErrorProps) {
   let errorMessage: string;
   if (err instanceof z.ZodError) {
@@ -20,7 +19,7 @@ handleSubmitErrorProps) {
   } else {
     errorMessage = 'Unknown error!';
   }
-  setNotification({ type: 'error', message: errorMessage });
+  dispatch({ type: 'error', message: errorMessage });
   return {
     success: false,
     error: errorMessage

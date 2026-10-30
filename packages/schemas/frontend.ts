@@ -20,6 +20,11 @@ import {
   WeightSchema
 } from './schemas'
 
+export interface NotificationProps {
+  type: string,
+  message: string
+}
+
 const UrlFrontendSchema = z.preprocess(
   (val) => (val === '' ? null : val),
   z.url().nullable()

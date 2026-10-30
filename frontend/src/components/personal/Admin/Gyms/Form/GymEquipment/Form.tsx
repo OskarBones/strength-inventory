@@ -4,7 +4,7 @@ the form finds editedPiece and subsequent conditionals checking it will
 trigger. These conditionals essentially differentiate between editing
 and adding a piece. */
 
-import { useActionState, useState } from 'react';
+import { use, useActionState, useState } from 'react';
 
 import {
   IoAddCircle,
@@ -15,8 +15,7 @@ import {
 import { type UseMutationResult } from '@tanstack/react-query';
 
 import handleSubmitError from '@/utils/handleSubmitError';
-
-import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
+import { NotificationDispatchContext } from '@/utils/contexts';
 
 import type { GymFrontendGetEquipment }
   from '@strength-inventory/schemas/frontend';
@@ -54,10 +53,6 @@ interface FormProps {
     equipmentId: string;
   }>
   setEquipmentToAdd: React.Dispatch<React.SetStateAction<Equipment | null>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function Form ({
@@ -67,19 +62,14 @@ export default function Form ({
   addEquipmentMutation,
   setEquipmentCountMutation,
   removeEquipmentMutation,
-  setEquipmentToAdd,
-  setParentNotification
+  setEquipmentToAdd
 }: FormProps) {
+  const dispatch = use(NotificationDispatchContext);
+
   const editedPiece = currentEquipment.find((current) =>
     current.id === piece.id);
 
-  const [number, setNumber] = useState(() => {
-    if (editedPiece) {
-      return editedPiece.gymequipment.count;
-    } else {
-      return 1;
-    }
-  });
+  const [number, setNumber] = useState(editedPiece?.gymequipment.count ?? 1);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, dispatchAction, isPending] = useActionState(submit, {
@@ -101,7 +91,7 @@ export default function Form ({
       }
       setEquipmentToAdd(null);
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification: setParentNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -114,7 +104,7 @@ export default function Form ({
         setEquipmentToAdd(null);
       },
       (err: unknown) => {
-        handleSubmitError({ err, setNotification: setParentNotification });
+        handleSubmitError({ err, dispatch });
       }
     );
   }
@@ -245,9 +235,9 @@ export default function Form ({
       <button
         type='button'
         disabled={isPending}
-        className={`
-          ${FORM_RETURN_BUTTON_CLASSES}
-          disabled:border-dotted py-px w-12 disabled:cursor-progress`}
+        className='
+          form-return-button
+          disabled:border-dotted py-px w-12 disabled:cursor-progress'
         onClick={() => {
           setEquipmentToAdd(null);
         }}

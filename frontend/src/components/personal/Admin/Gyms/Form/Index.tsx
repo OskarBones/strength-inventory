@@ -17,7 +17,8 @@ import { CgGym } from 'react-icons/cg';
 import { FaRegAddressCard } from 'react-icons/fa6';
 import { LuSave } from 'react-icons/lu';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { getCities, getDistricts, getGym, postGym, putGym } from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
@@ -26,7 +27,6 @@ import FormElement from './FormElement';
 import GymEquipment from './GymEquipment/Index';
 import GymMemberships from './GymMemberships/Index';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 import OpeningHoursExceptions from './OpeningHoursExceptions/Index';
 import ReturnButton from '../../ReturnButton';
 
@@ -40,7 +40,6 @@ import {
 } from '@strength-inventory/schemas/frontend';
 
 import {
-  type District,
   type Hours,
   type OpeningHoursException
 } from '@strength-inventory/schemas';
@@ -50,10 +49,6 @@ interface FormProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
   selectedGymId: string;
   setSelectedGymId: React.Dispatch<React.SetStateAction<string>>;
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function Form (
@@ -61,8 +56,7 @@ export default function Form (
     formMode,
     setFormMode,
     selectedGymId,
-    setSelectedGymId,
-    setParentNotification
+    setSelectedGymId
   }: FormProps
 ) {
   function formatHours (req: GymFormHours) {
@@ -97,6 +91,7 @@ export default function Form (
 
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const queryClient = useQueryClient();
 
@@ -125,7 +120,7 @@ export default function Form (
       setOriginalName(newGymFromServer.name);
       setFormMode('edit');
       setTimeout(() => {
-        setNotification({
+        dispatch({
           type: 'success', message: 'gym created'
         });
       }, 150);
@@ -145,7 +140,7 @@ export default function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'changes saved'
         });
       }, 150);
@@ -207,11 +202,6 @@ export default function Form (
     return date;
   });
 
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, dispatchAction, isPending] = useActionState(submit, {
     success: false,
@@ -245,7 +235,7 @@ export default function Form (
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       } else {  // formMode === 'edit'
         try {
@@ -257,11 +247,11 @@ export default function Form (
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       }
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -363,10 +353,7 @@ export default function Form (
 
   // set districts for the district <select>
   const selectedCity = citiesQuery.data.find((city) => city.name === gym.city);
-  let filteredDistricts: District[] = [];
-  if (selectedCity) {
-    filteredDistricts = selectedCity.districts;
-  }
+  const filteredDistricts = selectedCity?.districts ?? [];
 
   if (editForm === 'equipment') {
     return (
@@ -374,7 +361,6 @@ export default function Form (
         gymId={selectedGymId}
         gymName={gym.name}
         setEditForm={setEditForm}
-        setParentNotification={setNotification}
       />
     );
   }
@@ -387,7 +373,6 @@ export default function Form (
         gymCountry={gym.country}
         gymChain={gym.chain}
         setEditForm={setEditForm}
-        setParentNotification={setNotification}
       />
     );
   }
@@ -426,7 +411,6 @@ export default function Form (
         <OpeningHoursExceptions
           exceptions={exceptions}
           setExceptions={setExceptions}
-          setParentNotification={setNotification}
         />
 
         {/* Actual submit button outside the <form>
@@ -523,7 +507,7 @@ export default function Form (
                     : 'edit memberships'}
                 </button>
                 <button
-                  disabled /* upcoming post-1.0 feature */
+                  disabled /* upcoming feature */
                   className='
                     border rounded-sm bg-tertiary dark:bg-tertiary-dark py-1
                     text-red-dark dark:text-red
@@ -545,12 +529,6 @@ export default function Form (
             : null}
         </div>
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }

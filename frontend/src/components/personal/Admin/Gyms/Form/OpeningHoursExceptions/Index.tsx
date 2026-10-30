@@ -7,22 +7,16 @@ import { IconContext } from '@/utils/contexts';
 import Exception from './Exception';
 import Form from './Form';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
-
 import { type OpeningHoursException } from '@strength-inventory/schemas';
 
 interface OpeningHoursExceptionsProps {
   exceptions: OpeningHoursException[]
   setExceptions:
   React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string;
-    message: string;
-  }>>
 }
 
 export default function OpeningHoursExceptions ({
-  exceptions, setExceptions, setParentNotification
+  exceptions, setExceptions
 }: OpeningHoursExceptionsProps) {
   const iconMode = use(IconContext);
 
@@ -40,7 +34,7 @@ export default function OpeningHoursExceptions ({
       <div className='flex justify-around gap-1'>
         <button
           disabled={addException}
-          className={`${PLUS_EDIT_MINUS_BUTTON_CLASSES} text-xs md:text-xs`}
+          className='list-button text-xs md:text-xs'
           onClick={() => {
             setAddException(true);
           }}
@@ -51,7 +45,7 @@ export default function OpeningHoursExceptions ({
         </button>
         <button
           disabled={!selectedExceptionId || editedExceptionId !== ''}
-          className={`${PLUS_EDIT_MINUS_BUTTON_CLASSES} text-xs md:text-xs`}
+          className='list-button text-xs md:text-xs'
           onClick={() => {
             setEditedExceptionId(selectedExceptionId);
             setSelectedExceptionId('');
@@ -63,7 +57,7 @@ export default function OpeningHoursExceptions ({
         </button>
         <button
           disabled={!selectedExceptionId}
-          className={`${PLUS_EDIT_MINUS_BUTTON_CLASSES} text-xs md:text-xs`}
+          className='list-button text-xs md:text-xs'
           onClick={() => {
             const newExceptions = exceptions.filter((obj) => {
               if (obj.id !== selectedExceptionId) {
@@ -88,7 +82,6 @@ export default function OpeningHoursExceptions ({
             exceptions={exceptions}
             setExceptions={setExceptions}
             setAddException={setAddException}
-            setParentNotification={setParentNotification}
           />
         )
         : ''}
@@ -117,7 +110,6 @@ export default function OpeningHoursExceptions ({
                   exceptions={exceptions}
                   setExceptions={setExceptions}
                   setAddException={setAddException}
-                  setParentNotification={setParentNotification}
                 />
                 <hr />
               </li>

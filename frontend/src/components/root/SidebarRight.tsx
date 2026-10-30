@@ -15,66 +15,67 @@ interface RoleProps {
 }
 
 function Role ({ role, iconMode }: RoleProps) {
-  if (role === 'GYM-GOER') {
-    return (
-      <div className='flex justify-end pr-2'>
-        {iconMode
-          && <TbUser aria-hidden='true' className='text-base' />}
+  switch (role) {
+    case 'GYM-GOER':
+      return (
+        <div className='flex justify-end pr-2'>
+          {iconMode
+            && <TbUser aria-hidden='true' className='text-base' />}
 
-        <p
-          className={`cursor-default ${iconMode
-            ? 'sr-only'
-            : ''}`}
-        >
-          Gym-Goer
-        </p>
-      </div>
-    );
-  } else if (role === 'MANAGER') {
-    return (
-      <div className='flex justify-end pr-2'>
-        {iconMode
-          && <TbUserStar aria-hidden='true' className='text-base' />}
+          <p
+            className={`cursor-default ${iconMode
+              ? 'sr-only'
+              : ''}`}
+          >
+            Gym-Goer
+          </p>
+        </div>
+      );
+    case 'MANAGER':
+      return (
+        <div className='flex justify-end pr-2'>
+          {iconMode
+            && <TbUserStar aria-hidden='true' className='text-base' />}
 
-        <p
-          className={`cursor-default ${iconMode
-            ? 'sr-only'
-            : ''}`}
-        >
-          Manager
-        </p>
-      </div>
-    );
-  } else if (role === 'ADMIN') {
-    return (
-      <div className='flex justify-end pr-2'>
-        {iconMode
-          && <TbUserShield aria-hidden='true' className='text-base' />}
+          <p
+            className={`cursor-default ${iconMode
+              ? 'sr-only'
+              : ''}`}
+          >
+            Manager
+          </p>
+        </div>
+      );
+    case 'ADMIN':
+      return (
+        <div className='flex justify-end pr-2'>
+          {iconMode
+            && <TbUserShield aria-hidden='true' className='text-base' />}
 
-        <p
-          className={`cursor-default ${iconMode
-            ? 'sr-only'
-            : ''}`}
-        >
-          Admin
-        </p>
-      </div>
-    );
-  } else {
-    return (
-      <div className='flex justify-end pr-2'>
-        {iconMode
-          && <TbUserCode aria-hidden='true' className='text-base' />}
+          <p
+            className={`cursor-default ${iconMode
+              ? 'sr-only'
+              : ''}`}
+          >
+            Admin
+          </p>
+        </div>
+      );
+    default:  // 'SUPERUSER'
+      return (
+        <div className='flex justify-end pr-2'>
+          {iconMode
+            && <TbUserCode aria-hidden='true' className='text-base' />}
 
-        <p
-          className={`cursor-default ${iconMode
-            ? 'sr-only'
-            : ''}`}
-        >
-          Superuser
-        </p>
-      </div>
-    );
+          <p
+            className={`cursor-default ${iconMode
+              ? 'sr-only'
+              : ''}`}
+          >
+            Superuser
+          </p>
+        </div>
+      );
   }
 }
 

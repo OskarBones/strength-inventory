@@ -1,34 +1,35 @@
 /* general-purpose component to be imported by any component
 that needs to display 5-second notifications */
 
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
+
+import { NotificationDispatchContext } from '@/utils/contexts';
 
 interface NotificationProps {
   type: string
   message: string
-  setNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
-export default function Notification ({ type, message, setNotification }:
+export default function Notification ({ type, message }:
 NotificationProps) {
+  const dispatch = use(NotificationDispatchContext);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setNotification({ type: '', message: '' });
+      dispatch({ type: '', message: '' });
     }, 5000);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [message, setNotification]);
+  }, [message, dispatch]);
 
   return (
     <button
       tabIndex={-1} // make untabbable
       className={`
-        absolute inset-x-4 bottom-4 border rounded-3xl p-3 h-15 transition
+        absolute inset-x-4 bottom-10 md:mx-25
+        border rounded-3xl p-3 h-15 transition
         ${type === 'success'
       ? 'bg-green dark:bg-green-dark'
       : ''}
@@ -39,10 +40,10 @@ NotificationProps) {
       ? 'bg-red dark:bg-red-dark'
       : ''}
         ${!message
-      ? 'translate-y-23'
+      ? 'translate-y-29'
       : ''}`}
       onClick={() => {
-        setNotification({ type: '', message: '' });
+        dispatch({ type: '', message: '' });
       }}
     >
       {message}

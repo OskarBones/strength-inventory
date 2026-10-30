@@ -28,10 +28,7 @@ export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {
     gymequipment
   } = equipment;
 
-  let notNullUrl: string | undefined;
-  if (url) {
-    notNullUrl = url;
-  }
+  const notNullUrl = url ?? undefined;
 
   let weights;
   if (availableWeights.length > 0) {

@@ -5,8 +5,6 @@ import { CgGym } from 'react-icons/cg';
 
 import OpeningHoursDayInput from './OpeningHoursDayInput';
 
-import { FORM_INPUT_CLASSES } from '@/constants/theme';
-
 import type { CityFrontendGet, GymFrontendGet }
   from '@strength-inventory/schemas/frontend';
 
@@ -91,7 +89,7 @@ export default function FormElement (
             value={gym.name}
             required
             autoFocus={formMode === 'create'}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, name: event.target.value });
             }}
@@ -105,7 +103,7 @@ export default function FormElement (
             name='chain'
             type='text'
             value={gym.chain}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, chain: event.target.value });
             }}
@@ -119,7 +117,7 @@ export default function FormElement (
             name='city'
             value={gym.city}
             required
-            className={`${FORM_INPUT_CLASSES} cursor-pointer`}
+            className='form-input cursor-pointer'
             onChange={(event) => {
               const selectedCity = cities
                 .find((city) => city.name === event.target.value);
@@ -153,7 +151,7 @@ export default function FormElement (
             value={gym.district}
             disabled={gym.city === ''}
             required
-            className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+            className='form-input enabled:cursor-pointer'
             onChange={(event) => {
               setGym({ ...gym, district: event.target.value });
             }}
@@ -180,7 +178,7 @@ export default function FormElement (
             value={gym.street}
             required
             maxLength={LOCATION_MAX_LEN}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, street: event.target.value });
             }}
@@ -196,7 +194,7 @@ export default function FormElement (
             value={gym.streetNumber}
             required
             maxLength={STREET_NO_MAX_LEN}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, streetNumber: event.target.value });
             }}
@@ -216,7 +214,7 @@ export default function FormElement (
               min={-90}
               max={90}
               step={0.00001}
-              className={`${FORM_INPUT_CLASSES} w-20`}
+              className='form-input w-20'
               onChange={(event) => {
                 setGym({ ...gym, latitude: event.target.value });
               }}
@@ -235,7 +233,7 @@ export default function FormElement (
               min={-180}
               max={180}
               step={0.00001}
-              className={`${FORM_INPUT_CLASSES} w-22`}
+              className='form-input w-22'
               onChange={(event) => {
                 setGym({ ...gym, longitude: event.target.value });
               }}
@@ -250,7 +248,7 @@ export default function FormElement (
             name='url'
             type='url'
             value={gym.url}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, url: event.target.value });
             }}
@@ -265,7 +263,7 @@ export default function FormElement (
             type='url'
             value={gym.location}
             required
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, location: event.target.value });
             }}
@@ -278,7 +276,7 @@ export default function FormElement (
             id='notes'
             name='notes'
             value={gym.notes}
-            className={FORM_INPUT_CLASSES}
+            className='form-input'
             onChange={(event) => {
               setGym({ ...gym, notes: event.target.value });
             }}

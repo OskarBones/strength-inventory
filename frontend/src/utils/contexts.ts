@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 
 import { type AuthState } from '@strength-inventory/schemas';
+import { type NotificationProps } from '@strength-inventory/schemas/frontend';
 
 export const AuthContext = createContext<AuthState>({
   isAuthenticated: false,
@@ -17,3 +18,10 @@ export const AuthContext = createContext<AuthState>({
 });
 
 export const IconContext = createContext(false);
+
+export const NotificationContext = createContext<
+  NotificationProps | null
+>(null);
+export const NotificationDispatchContext = createContext<
+  React.Dispatch<NotificationProps>
+>(() => {});

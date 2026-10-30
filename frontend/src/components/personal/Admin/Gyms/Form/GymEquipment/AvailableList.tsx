@@ -66,7 +66,7 @@ export default function AvailableList (
 
             <button
               className='
-                flex flex-1 items-center space-x-1 whitespace-nowrap
+                flex flex-1 items-center gap-1 whitespace-nowrap
                 enabled:cursor-pointer'
               onClick={() => {
                 setEquipmentToAdd(piece);

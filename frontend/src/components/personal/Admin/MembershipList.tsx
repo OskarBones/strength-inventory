@@ -11,7 +11,8 @@ import { GiMeshNetwork } from 'react-icons/gi';
 import { IoAddCircleOutline } from 'react-icons/io5';
 import { MdOutlinePlaylistAddCheckCircle } from 'react-icons/md';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { postGymMembership } from '@/utils/api';
 
 import type { Membership } from '@strength-inventory/schemas';
@@ -20,10 +21,6 @@ interface MembershipListProps {
   memberships: Membership[]
   filterType: string
   setFormMode: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
   highlightChainMemberships: boolean
   setSelectedMembershipId: React.Dispatch<React.SetStateAction<string>>
   disabledMembershipIds: string[] | undefined
@@ -34,7 +31,6 @@ export default function MembershipList ({
   memberships,
   filterType,
   setFormMode,
-  setParentNotification,
   highlightChainMemberships,
   setSelectedMembershipId,
   /* disabledMembershipIds is only defined when this component
@@ -48,6 +44,7 @@ export default function MembershipList ({
 }: MembershipListProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const queryClient = useQueryClient();
 
@@ -66,7 +63,7 @@ export default function MembershipList ({
       );
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'membership added'
         });
       }, 150);

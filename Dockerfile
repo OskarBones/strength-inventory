@@ -1,4 +1,4 @@
-FROM node:24.13.0-alpine AS builder
+FROM node:26.13.0-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -23,7 +23,7 @@ ARG BACKEND_SENTRY_AUTH_TOKEN
 ENV SENTRY_AUTH_TOKEN=${BACKEND_SENTRY_AUTH_TOKEN}
 RUN npm run tsc
 
-FROM node:24.13.0-alpine AS runner
+FROM node:26.13.0-alpine AS runner
 
 ENV NODE_ENV=production
 

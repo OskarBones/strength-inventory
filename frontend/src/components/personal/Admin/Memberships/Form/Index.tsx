@@ -9,7 +9,8 @@ import { FaRegAddressCard } from 'react-icons/fa6';
 import { IoRemoveCircleOutline } from 'react-icons/io5';
 import { z } from 'zod';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import {
   deleteGymMembership,
   deleteMembership,
@@ -23,11 +24,8 @@ import handleSubmitError from '@/utils/handleSubmitError';
 import AvailabilityButton from './AvailabilityButton';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
-
-import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import { CURRENCIES, MEMBERSHIP_TIME_UNITS } from '@strength-inventory/schemas';
 import { type MembershipFrontendPostAndPut, MembershipFrontendPostAndPutSchema }
@@ -42,10 +40,6 @@ interface FormProps {
   usedInGymMemberships: boolean;
   addToGym: boolean;
   gymId: string;
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string;
-  }>>;
 }
 
 /* This type is explicitly defined for AvailabilityButtons.
@@ -82,12 +76,12 @@ export function Form (
     defaultChain,
     usedInGymMemberships,
     addToGym,
-    gymId,
-    setParentNotification
+    gymId
   }: FormProps
 ) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const queryClient = useQueryClient();
 
@@ -156,7 +150,7 @@ export function Form (
       if (!addToGym) {
         setFormMode('hidden');
         setTimeout(() => {
-          setParentNotification({
+          dispatch({
             type: 'success', message: 'membership created'
           });
         }, 150);
@@ -179,7 +173,7 @@ export function Form (
       );
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'membership created'
         });
       }, 150);
@@ -210,7 +204,7 @@ export function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'changes saved'
         });
       }, 150);
@@ -231,7 +225,7 @@ export function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'membership deleted'
         });
       }, 150);
@@ -253,7 +247,7 @@ export function Form (
       );
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'membership removed'
         });
       }, 150);
@@ -261,11 +255,6 @@ export function Form (
   });
 
   const [firstRender, setFirstRender] = useState(true);
-
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, submitAction, isPending] = useActionState(submit, {
@@ -315,7 +304,7 @@ export function Form (
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       } else {  // formMode === 'edit'
         try {
@@ -327,11 +316,11 @@ export function Form (
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       }
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -431,13 +420,13 @@ export function Form (
     if (!readOnly) {
       deleteMutation.mutateAsync(selectedMembershipId)
         .catch((err: unknown) => {
-          handleSubmitError({ err, setNotification });
+          handleSubmitError({ err, dispatch });
         });
     } else {
       removeMutation
         .mutateAsync({ gymId: gymId, membershipId: selectedMembershipId })
         .catch((err: unknown) => {
-          handleSubmitError({ err, setNotification });
+          handleSubmitError({ err, dispatch });
         });
     }
   }
@@ -518,7 +507,7 @@ export function Form (
                 disabled={readOnly}
                 required
                 autoFocus={formMode === 'create'}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setMembership({ ...membership, name: event.target.value });
                 }}
@@ -537,7 +526,7 @@ export function Form (
                   required
                   min={0.01}
                   step={0.01}
-                  className={`${FORM_INPUT_CLASSES} w-25`}
+                  className='form-input w-25'
                   onChange={(event) => {
                     setMembership(
                       { ...membership, membershipFee: event.target.value }
@@ -556,7 +545,7 @@ export function Form (
                   disabled={readOnly}
                   min={0.01}
                   step={0.01}
-                  className={`${FORM_INPUT_CLASSES} w-25`}
+                  className='form-input w-25'
                   onChange={(event) => {
                     setMembership(
                       { ...membership, initiationFee: event.target.value }
@@ -573,7 +562,7 @@ export function Form (
                   value={membership.feeCurrency}
                   disabled={readOnly}
                   required
-                  className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+                  className='form-input enabled:cursor-pointer'
                   onChange={(event) => {
                     setMembership(
                       { ...membership, feeCurrency: event.target.value }
@@ -597,7 +586,7 @@ export function Form (
                   type='number'
                   value={membership.visits}
                   placeholder='unlimited'
-                  className={`${FORM_INPUT_CLASSES} w-20`}
+                  className='form-input w-20'
                   onChange={(event) => {
                     setMembership(
                       { ...membership, visits: event.target.value }
@@ -618,7 +607,7 @@ export function Form (
                     required
                     min={1}
                     step={1}
-                    className={`${FORM_INPUT_CLASSES} w-15`}
+                    className='form-input w-15'
                     onChange={(event) => {
                       setMembership(
                         { ...membership, validity: event.target.value }
@@ -632,10 +621,7 @@ export function Form (
                   value={membership.validityUnit}
                   disabled={readOnly}
                   required
-                  className={
-                    `${FORM_INPUT_CLASSES}
-                    self-end enabled:cursor-pointer`
-                  }
+                  className='form-input self-end enabled:cursor-pointer'
                   onChange={(event) => {
                     setMembership(
                       { ...membership, validityUnit: event.target.value }
@@ -665,7 +651,7 @@ export function Form (
                     required={membership.commitmentUnit !== ''}
                     min={1}
                     step={1}
-                    className={`${FORM_INPUT_CLASSES} w-15`}
+                    className='form-input w-15'
                     onChange={(event) => {
                       setMembership(
                         { ...membership, commitment: event.target.value }
@@ -678,9 +664,7 @@ export function Form (
                     value={membership.commitmentUnit}
                     disabled={readOnly}
                     required={membership.commitment !== ''}
-                    className={
-                      `${FORM_INPUT_CLASSES} self-end enabled:cursor-pointer`
-                    }
+                    className='form-input self-end enabled:cursor-pointer'
                     onChange={(event) => {
                       setMembership(
                         { ...membership, commitmentUnit: event.target.value }
@@ -756,7 +740,7 @@ export function Form (
                 type='text'
                 value={membership.url}
                 disabled={readOnly}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setMembership({ ...membership, url: event.target.value });
                 }}
@@ -770,7 +754,7 @@ export function Form (
                 name='notes'
                 value={membership.notes}
                 disabled={readOnly}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setMembership({ ...membership, notes: event.target.value });
                 }}
@@ -833,12 +817,6 @@ export function Form (
           />
         </div>
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }

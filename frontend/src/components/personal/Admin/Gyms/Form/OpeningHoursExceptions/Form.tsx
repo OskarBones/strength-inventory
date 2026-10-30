@@ -2,11 +2,12 @@
 If 'exception' is defined, the form is used for editing an exception.
 If not, the form is used for creating an exception. */
 
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import handleSubmitError from '@/utils/handleSubmitError';
+import { NotificationDispatchContext } from '@/utils/contexts';
 
 import {
   type OpeningHoursException, OpeningHoursExceptionSchema
@@ -19,10 +20,6 @@ interface FormProps {
   setExceptions:
   React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
   setAddException: React.Dispatch<React.SetStateAction<boolean>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string
-    message: string
-  }>>
 }
 
 export default function Form ({
@@ -30,9 +27,10 @@ export default function Form ({
   setEditedExceptionId,
   exceptions,
   setExceptions,
-  setAddException,
-  setParentNotification
+  setAddException
 }: FormProps) {
+  const dispatch = use(NotificationDispatchContext);
+
   const [date, setDate] = useState(exception
     ? exception.date.toISOString().split('T')[0]
     : '');
@@ -96,7 +94,7 @@ export default function Form ({
         && ((exception.concerns === (submittedException.concerns || 'everyone'))
           || submittedException.concerns === 'everyone'));
       if (overlap) {
-        setParentNotification({
+        dispatch({
           type: 'error',
           message: 'there already is an overlapping exception for the date'
         });
@@ -131,7 +129,7 @@ export default function Form ({
         setAddException(false);
       }
     } catch (err: unknown) {
-      handleSubmitError({ err, setNotification: setParentNotification });
+      handleSubmitError({ err, dispatch });
     }
   }
 

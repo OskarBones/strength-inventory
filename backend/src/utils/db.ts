@@ -11,7 +11,7 @@ if (NODE_ENV === 'production') {
   sequelizeConfig = {
     dialect: 'postgres',
     dialectOptions: {
-      ssl: { require: true, rejectUnauthorized: true }
+      ssl: { rejectUnauthorized: true }
     }
   };
 }

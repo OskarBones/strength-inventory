@@ -4,31 +4,26 @@ import { use } from 'react';
 
 import { IoReturnDownBack } from 'react-icons/io5';
 
-import { IconContext } from '@/utils/contexts';
-
-import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
+import { IconContext, NotificationDispatchContext } from '@/utils/contexts';
 
 interface EditFormReturnButtonProps {
   model: string
   setEditForm: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function EditFormReturnButton (
-  { model, setEditForm, setParentNotification }: EditFormReturnButtonProps
+  { model, setEditForm }: EditFormReturnButtonProps
 ) {
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   return (
     <button
-      className={FORM_RETURN_BUTTON_CLASSES}
+      className='form-return-button'
       onClick={() => {
         setEditForm('');
         setTimeout(() => {
-          setParentNotification({
+          dispatch({
             type: 'info', message: `${model} have been saved`
           });
         }, 150);

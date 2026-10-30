@@ -4,12 +4,11 @@ import {
   TbLogin2, TbPassword, TbUser, TbUserPlus, TbUserQuestion
 } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import handleSubmitError from '@/utils/handleSubmitError';
 
 import { Route } from '@/routes/(auth)/login';
-
-import Notification from '../Notification';
 
 import { LoginRequestSchema } from '@strength-inventory/schemas';
 
@@ -18,6 +17,7 @@ export default function Login () {
   const { redirect } = Route.useSearch();
   const navigate = Route.useNavigate();
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   let redirectDest: string;
   if (redirect !== '/login') {
@@ -28,11 +28,6 @@ export default function Login () {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, dispatchAction, isPending] = useActionState(login, {
@@ -57,7 +52,7 @@ export default function Login () {
         });
       return { success: true, error: null };
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -165,12 +160,6 @@ export default function Login () {
           </button>
         </div>
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }

@@ -23,5 +23,28 @@
   }
 }
 
+@layer components {
+  .list-button {
+    @apply flex flex-1 justify-center border border-solid rounded-sm
+    disabled:border-primary dark:disabled:border-primary-dark
+    bg-primary dark:bg-primary-dark p-1 text-sm md:text-base
+    enabled:cursor-pointer enabled:hover:inset-ring active:inset-ring
+    disabled:text-secondary dark:disabled:text-secondary-dark
+    active:font-bold
+  }
+  .form-input {
+    @apply border bg-tertiary dark:bg-tertiary-dark pl-1
+    disabled:bg-secondary dark:disabled:bg-secondary-dark
+    invalid:border-red dark:invalid:border-red-dark
+  }
+  .form-return-button {
+    @apply flex justify-center self-center border rounded-sm
+    bg-tertiary dark:bg-tertiary-dark
+    py-1 w-9/10 text-xs enabled:cursor-pointer
+    enabled:hover:bg-background dark:enabled:hover:bg-background-dark
+    enabled:active:font-bold
+  }
+}
+
 /* Toggle dark mode based on 'dark' class */
 @custom-variant dark (&:where(.dark, .dark *))

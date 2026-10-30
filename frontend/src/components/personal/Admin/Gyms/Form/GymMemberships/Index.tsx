@@ -11,7 +11,6 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form';
 import List from './List';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 
 interface GymMembershipsProps {
   gymId: string
@@ -19,14 +18,10 @@ interface GymMembershipsProps {
   gymCountry: string
   gymChain: string
   setEditForm: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function GymMemberships (
-  { gymId, gymName, gymCountry, gymChain, setEditForm, setParentNotification }:
+  { gymId, gymName, gymCountry, gymChain, setEditForm }:
   GymMembershipsProps
 ) {
   const scrollTopRef = useRef(0);
@@ -40,11 +35,6 @@ export default function GymMemberships (
 
   const [formMode, setFormMode] = useState('hidden');
   const [selectedMembershipId, setSelectedMembershipId] = useState('');
-
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
 
   if (isPending) {
     return <Loading />;
@@ -80,12 +70,6 @@ export default function GymMemberships (
                 setFormMode={setFormMode}
                 setSelectedMembershipId={setSelectedMembershipId}
                 setEditForm={setEditForm}
-                setParentNotification={setParentNotification}
-              />
-              <Notification
-                type={notification.type}
-                message={notification.message}
-                setNotification={setNotification}
               />
             </div>
           )
@@ -99,7 +83,6 @@ export default function GymMemberships (
               setFormMode={setFormMode}
               selectedMembershipId={selectedMembershipId}
               setSelectedMembershipId={setSelectedMembershipId}
-              setParentNotification={setNotification}
             />
           )}
       </div>

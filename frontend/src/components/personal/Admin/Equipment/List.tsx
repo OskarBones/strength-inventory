@@ -93,7 +93,7 @@ export default function List ({
                   <button
                     aria-pressed={piece.id === selectedPieceId}
                     className='
-                      flex items-center space-x-1
+                      flex items-center gap-1
                       px-1 min-w-full whitespace-nowrap
                       aria-pressed:bg-gray-300 dark:aria-pressed:bg-gray-600'
                     onClick={() => {

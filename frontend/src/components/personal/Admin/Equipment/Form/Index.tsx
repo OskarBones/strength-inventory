@@ -6,7 +6,8 @@ import {
 import { TbEdit, TbPlus } from 'react-icons/tb';
 import { z } from 'zod';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { getPiece, postEquipment, putEquipment }
   from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
@@ -14,11 +15,8 @@ import handleSubmitError from '@/utils/handleSubmitError';
 import AvailableWeights from './AvailableWeights';
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
-
-import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import { type EquipmentFrontendPostAndPut, EquipmentFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -40,21 +38,17 @@ interface FormProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   selectedPieceId: string
   setSelectedPieceId: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function Form ({
   formMode,
   setFormMode,
   selectedPieceId,
-  setSelectedPieceId,
-  setParentNotification
+  setSelectedPieceId
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const manufacturerInputRef = useRef<HTMLInputElement>(null);
   const weightInputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +74,7 @@ export default function Form ({
       setSelectedPieceId(newPieceFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'piece created'
         });
       }, 150);
@@ -104,7 +98,7 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'changes saved'
         });
       }, 150);
@@ -161,24 +155,29 @@ export default function Form ({
     notes: ''
   });
 
-  let subcategoryOptions: string[];
+  let subcategoryOptions: string[] = [];
 
-  if (piece.category === 'system') {
-    subcategoryOptions = SYSTEMS;
-  } else if (piece.category === 'barOrPlate') {
-    subcategoryOptions = BARS_AND_PLATES;
-  } else if (piece.category === 'handleAttachment') {
-    subcategoryOptions = HANDLE_ATTACHMENTS;
-  } else if (piece.category === 'freeWeight') {
-    subcategoryOptions = FREE_WEIGHTS;
-  } else if (piece.category === 'strengthMachine') {
-    subcategoryOptions = STRENGTH_MACHINES;
-  } else if (piece.category === 'accessoryOrTool') {
-    subcategoryOptions = ACCESSORIES_AND_TOOLS;
-  } else if (piece.category === 'cardio') {
-    subcategoryOptions = CARDIO;
-  } else {
-    subcategoryOptions = [];
+  switch (piece.category) {
+    case 'system':
+      subcategoryOptions = SYSTEMS;
+      break;
+    case 'barOrPlate':
+      subcategoryOptions = BARS_AND_PLATES;
+      break;
+    case 'handleAttachment':
+      subcategoryOptions = HANDLE_ATTACHMENTS;
+      break;
+    case 'freeWeight':
+      subcategoryOptions = FREE_WEIGHTS;
+      break;
+    case 'strengthMachine':
+      subcategoryOptions = STRENGTH_MACHINES;
+      break;
+    case 'accessoryOrTool':
+      subcategoryOptions = ACCESSORIES_AND_TOOLS;
+      break;
+    case 'cardio':
+      subcategoryOptions = CARDIO;
   }
 
   /* Available weights are visually part of the form,
@@ -188,11 +187,6 @@ export default function Form ({
   const [firstRender, setFirstRender] = useState(true);
   const [unknownManufacturer, setUnknownManufacturer] = useState(false);
   const [unknownCode, setUnknownCode] = useState(false);
-
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, submitAction, isPending] = useActionState(submit, {
@@ -234,7 +228,7 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       } else {  // formMode === 'edit'
         try {
@@ -246,11 +240,11 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       }
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -367,7 +361,7 @@ export default function Form ({
                 value={piece.name}
                 required
                 autoFocus={formMode === 'create'}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setPiece({ ...piece, name: event.target.value });
                 }}
@@ -415,7 +409,7 @@ export default function Form ({
                 name='category'
                 value={piece.category}
                 required
-                className={`${FORM_INPUT_CLASSES} cursor-pointer`}
+                className='form-input cursor-pointer'
                 onChange={(event) => {
                   setPiece({ ...piece, category: event.target.value });
                 }}
@@ -439,7 +433,7 @@ export default function Form ({
                 value={piece.subcategory}
                 disabled={piece.category === ''}
                 required
-                className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+                className='form-input enabled:cursor-pointer'
                 onChange={(event) => {
                   setPiece({ ...piece, subcategory: event.target.value });
                   if (!unknownManufacturer) {
@@ -465,9 +459,9 @@ export default function Form ({
                   value={piece.manufacturer}
                   readOnly={piece.manufacturer === 'unknown'}
                   required
-                  className={`
-                    ${FORM_INPUT_CLASSES}
-                    read-only:bg-secondary dark:read-only:bg-secondary-dark`}
+                  className='
+                    form-input
+                    read-only:bg-secondary dark:read-only:bg-secondary-dark'
                   onChange={(event) => {
                     setPiece({ ...piece, manufacturer: event.target.value });
                   }}
@@ -514,9 +508,9 @@ export default function Form ({
                   value={piece.code}
                   readOnly={piece.code === 'unknown'}
                   required
-                  className={`
-                    ${FORM_INPUT_CLASSES}
-                    read-only:bg-secondary dark:read-only:bg-secondary-dark`}
+                  className='
+                    form-input
+                    read-only:bg-secondary dark:read-only:bg-secondary-dark'
                   onChange={(event) => {
                     setPiece({ ...piece, code: event.target.value });
                   }}
@@ -559,7 +553,7 @@ export default function Form ({
                 id='weightUnit'
                 name='weightUnit'
                 value={piece.weightUnit}
-                className={`${FORM_INPUT_CLASSES} cursor-pointer`}
+                className='form-input cursor-pointer'
                 onChange={(event) => {
                   setPiece({ ...piece, weightUnit: event.target.value });
                   weightInputRef.current?.focus();
@@ -582,7 +576,7 @@ export default function Form ({
                 min={0.01}
                 max={MAX_WEIGHT}
                 step={0.01}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setPiece({ ...piece, weight: event.target.value });
                 }}
@@ -608,7 +602,7 @@ export default function Form ({
                   ? piece.maximumWeight
                   : MAX_WEIGHT}
                 step={0.01}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setPiece({ ...piece, startingWeight: event.target.value });
                 }}
@@ -628,7 +622,7 @@ export default function Form ({
                     : 0.01}
                   max={MAX_WEIGHT}
                   step={0.01}
-                  className={FORM_INPUT_CLASSES}
+                  className='form-input'
                   onChange={(event) => {
                     setPiece({ ...piece, maximumWeight: event.target.value });
                   }}
@@ -641,7 +635,7 @@ export default function Form ({
                   id='maximumWeightType'
                   name='maximumWeightType'
                   value={piece.maximumWeightType}
-                  className={`${FORM_INPUT_CLASSES} cursor-pointer`}
+                  className='form-input cursor-pointer'
                   onChange={(event) => {
                     setPiece({
                       ...piece, maximumWeightType: event.target.value
@@ -664,7 +658,7 @@ export default function Form ({
                 name='url'
                 type='url'
                 value={piece.url}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setPiece({ ...piece, url: event.target.value });
                 }}
@@ -677,7 +671,7 @@ export default function Form ({
                 id='notes'
                 name='notes'
                 value={piece.notes}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setPiece({ ...piece, notes: event.target.value });
                 }}
@@ -700,12 +694,6 @@ export default function Form ({
           }
         />
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }

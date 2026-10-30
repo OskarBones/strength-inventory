@@ -11,7 +11,6 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Form from './Form';
 import List from './List';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 
 export default function AdminCities () {
   const iconMode = use(IconContext);
@@ -21,11 +20,6 @@ export default function AdminCities () {
   const [search, setSearch] = useState('');
   const [selectedCityId, setSelectedCityId] = useState('');
   const [formMode, setFormMode] = useState('hidden');
-
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ['cities'],
@@ -45,48 +39,37 @@ export default function AdminCities () {
     : -1));
 
   return (
-    // give Notification a place to hide
-    <div className='relative flex flex-1 overflow-y-hidden'>
-      <div
-        className='
-          flex flex-1 flex-col gap-1 border rounded-sm max-w-full
-          bg-secondary dark:bg-secondary-dark p-3'
-      >
-        <h2 className='self-center font-bold'>
-          {iconMode
-            ? <GiModernCity className='text-2xl' />
-            : 'cities'}
-        </h2>
+    <div
+      className='
+        flex flex-1 flex-col gap-1 border rounded-sm max-w-full
+        bg-secondary dark:bg-secondary-dark p-3 overflow-y-hidden'
+    >
+      <h2 className='self-center font-bold'>
+        {iconMode
+          ? <GiModernCity className='text-2xl' />
+          : 'cities'}
+      </h2>
 
-        {formMode === 'hidden'
-          ? (
-            <List
-              scrollTopRef={scrollTopRef}
-              search={search}
-              setSearch={setSearch}
-              cities={data}
-              selectedCityId={selectedCityId}
-              setSelectedCityId={setSelectedCityId}
-              setFormMode={setFormMode}
-              setParentNotification={setNotification}
-            />
-          )
-          : (
-            <Form
-              formMode={formMode}
-              setFormMode={setFormMode}
-              selectedCityId={selectedCityId}
-              setSelectedCityId={setSelectedCityId}
-              setParentNotification={setNotification}
-            />
-          )}
-      </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
+      {formMode === 'hidden'
+        ? (
+          <List
+            scrollTopRef={scrollTopRef}
+            search={search}
+            setSearch={setSearch}
+            cities={data}
+            selectedCityId={selectedCityId}
+            setSelectedCityId={setSelectedCityId}
+            setFormMode={setFormMode}
+          />
+        )
+        : (
+          <Form
+            formMode={formMode}
+            setFormMode={setFormMode}
+            selectedCityId={selectedCityId}
+            setSelectedCityId={setSelectedCityId}
+          />
+        )}
     </div>
   );
 }

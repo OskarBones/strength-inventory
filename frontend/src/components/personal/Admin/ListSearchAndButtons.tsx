@@ -13,8 +13,6 @@ import { FaRegClone } from 'react-icons/fa6';
 
 import { IconContext } from '@/utils/contexts';
 
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
-
 interface ListSearchAndButtonsProps {
   searchPlaceholder: string
   search: string
@@ -54,7 +52,7 @@ export default function ListSearchAndButtons ({
       />
       <div className='flex gap-1 justify-around'>
         <button
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setSelectedItemId('');
             setFormMode('create');
@@ -66,7 +64,7 @@ export default function ListSearchAndButtons ({
         </button>
         <button
           disabled={!selectedItemId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setFormMode('create');
           }}
@@ -77,7 +75,7 @@ export default function ListSearchAndButtons ({
         </button>
         <button
           disabled={!selectedItemId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setFormMode('edit');
           }}
@@ -88,7 +86,7 @@ export default function ListSearchAndButtons ({
         </button>
         <button
           disabled={!selectedItemId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             deleteMutation.mutate(selectedItemId);
           }}

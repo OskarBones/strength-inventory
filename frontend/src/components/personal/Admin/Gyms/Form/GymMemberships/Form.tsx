@@ -15,8 +15,6 @@ import { Form as MembershipForm } from '../../../Memberships/Form/Index';
 import MembershipList from '../../../MembershipList';
 import ReturnButton from '../../../ReturnButton';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
-
 interface FormProps {
   gymId: string
   gymCountry: string
@@ -26,10 +24,6 @@ interface FormProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   selectedMembershipId: string
   setSelectedMembershipId: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function Form ({
@@ -40,8 +34,7 @@ export default function Form ({
   formMode,
   setFormMode,
   selectedMembershipId,
-  setSelectedMembershipId,
-  setParentNotification
+  setSelectedMembershipId
 }: FormProps) {
   const iconMode = use(IconContext);
 
@@ -79,7 +72,7 @@ export default function Form ({
           </h4>
 
           <button
-            className={`${FORM_RETURN_BUTTON_CLASSES} w-full`}
+            className='form-return-button w-full'
             onClick={() => {
               setCreateMode('noChain');
             }}
@@ -96,11 +89,11 @@ export default function Form ({
           <div className='flex flex-col gap-0.5'>
             <button
               disabled={chainMemberships.length === 0}
-              className={`
-                ${FORM_RETURN_BUTTON_CLASSES} w-full
+              className='
+                form-return-button w-full
                 disabled:border-dashed
                 disabled:bg-secondary dark:disabled:bg-secondary-dark
-                disabled:cursor-not-allowed`}
+                disabled:cursor-not-allowed'
               onClick={() => {
                 setCreateMode('chain');
               }}
@@ -140,7 +133,6 @@ export default function Form ({
           usedInGymMemberships={true}
           addToGym={true}
           gymId={gymId}
-          setParentNotification={setParentNotification}
         />
       );
     } else {  // createMode === 'chain'
@@ -161,7 +153,6 @@ export default function Form ({
               memberships={chainMemberships}
               filterType='chain'
               setFormMode={setFormMode}
-              setParentNotification={setParentNotification}
               highlightChainMemberships={false}
               setSelectedMembershipId={setSelectedMembershipId}
               disabledMembershipIds={currentMembershipIds}
@@ -189,7 +180,6 @@ export default function Form ({
       usedInGymMemberships={true}
       addToGym={false}
       gymId={gymId}
-      setParentNotification={setParentNotification}
     />
   );
 }

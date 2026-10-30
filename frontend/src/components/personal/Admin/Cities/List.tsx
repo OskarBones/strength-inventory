@@ -4,10 +4,9 @@ import { TbEdit, TbPlus, TbTrashX } from 'react-icons/tb';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FaRegClone } from 'react-icons/fa6';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { deleteCity } from '@/utils/api';
-
-import { PLUS_EDIT_MINUS_BUTTON_CLASSES } from '@/constants/theme';
 
 import { type CityFrontendGet } from '@strength-inventory/schemas/frontend';
 
@@ -19,10 +18,6 @@ interface ListProps {
   selectedCityId: string
   setSelectedCityId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string;
-  }>>;
 }
 
 export default function List ({
@@ -32,8 +27,7 @@ export default function List ({
   cities,
   selectedCityId,
   setSelectedCityId,
-  setFormMode,
-  setParentNotification
+  setFormMode
 }: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -46,6 +40,7 @@ export default function List ({
 
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const queryClient = useQueryClient();
 
@@ -55,7 +50,7 @@ export default function List ({
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['cities'] });
       setSelectedCityId('');
-      setParentNotification({ type: 'success', message: 'city deleted' });
+      dispatch({ type: 'success', message: 'city deleted' });
     }
   });
 
@@ -93,7 +88,7 @@ export default function List ({
       />
       <div className='flex gap-1 justify-around'>
         <button
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setSelectedCityId('');
             setFormMode('create');
@@ -105,7 +100,7 @@ export default function List ({
         </button>
         <button
           disabled={!selectedCityId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setFormMode('create');
           }}
@@ -116,7 +111,7 @@ export default function List ({
         </button>
         <button
           disabled={!selectedCityId}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             setFormMode('edit');
           }}
@@ -128,7 +123,7 @@ export default function List ({
         <button
           disabled={!selectedCityId
             || !selectedCityDistricts || selectedCityDistricts.length > 0}
-          className={PLUS_EDIT_MINUS_BUTTON_CLASSES}
+          className='list-button'
           onClick={() => {
             deleteMutation.mutate(selectedCityId);
           }}

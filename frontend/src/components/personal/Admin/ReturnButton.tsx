@@ -8,8 +8,6 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { IconContext } from '@/utils/contexts';
 
-import { FORM_RETURN_BUTTON_CLASSES } from '@/constants/theme';
-
 interface ReturnButtonProps {
   queriesToInvalidate: string[][]
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
@@ -26,7 +24,7 @@ export default function ReturnButton (
   return (
     <button
       type='button'
-      className={FORM_RETURN_BUTTON_CLASSES}
+      className='form-return-button'
       onClick={() => {
         queriesToInvalidate.map((query) =>
           void queryClient.invalidateQueries(

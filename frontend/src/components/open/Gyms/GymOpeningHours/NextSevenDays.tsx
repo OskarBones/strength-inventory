@@ -2,6 +2,8 @@ import { useState } from 'react';
 
 import Day from './Day';
 
+import { WEEKDAYS } from '@/constants/values';
+
 import type { GymFrontendGet } from '@strength-inventory/schemas/frontend';
 
 interface NextSevenDaysProps {
@@ -34,38 +36,8 @@ export default function NextSevenDays ({
     }
   });
 
-  const currentDay = present.getDay();
-  type day = 'MO' | 'TU' | 'WE' | 'TH' | 'FR' | 'SA' | 'SU';
-  let days: day[];
-  if (currentDay === 1) {
-    days = [
-      'MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'
-    ];
-  } else if (currentDay === 2) {
-    days = [
-      'TU', 'WE', 'TH', 'FR', 'SA', 'SU', 'MO'
-    ];
-  } else if (currentDay === 3) {
-    days = [
-      'WE', 'TH', 'FR', 'SA', 'SU', 'MO', 'TU'
-    ];
-  } else if (currentDay === 4) {
-    days = [
-      'TH', 'FR', 'SA', 'SU', 'MO', 'TU', 'WE'
-    ];
-  } else if (currentDay === 5) {
-    days = [
-      'FR', 'SA', 'SU', 'MO', 'TU', 'WE', 'TH'
-    ];
-  } else if (currentDay === 6) {
-    days = [
-      'SA', 'SU', 'MO', 'TU', 'WE', 'TH', 'FR'
-    ];
-  } else {
-    days = [
-      'SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'
-    ];
-  }
+  const dayIndex = present.getDay() - 1;
+  const days = [...WEEKDAYS.slice(dayIndex), ...WEEKDAYS.slice(0, dayIndex)];
 
   const openingHours = {
     MO: '',

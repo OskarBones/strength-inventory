@@ -1,4 +1,4 @@
-FROM node:24.13.0-alpine AS builder
+FROM node:26.13.0-alpine AS builder
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY backend ./backend/
 WORKDIR /usr/src/app/backend
 RUN npm run tsc:scripts
 
-FROM node:24.13.0-alpine AS runner
+FROM node:26.13.0-alpine AS runner
 
 ENV NODE_ENV=production
 

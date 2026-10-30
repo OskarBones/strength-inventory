@@ -24,7 +24,7 @@ gymEquipmentRouter.get('/', async (_req, res) => {
 });
 
 // POST for admins to create a new junction
-// Frontend instead routes in gyms.ts to add equipment to gyms.
+// Frontend instead uses routes in gyms.ts to add equipment to gyms.
 gymEquipmentRouter.post(
   '/:id',
   targetGymExtractor,

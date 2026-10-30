@@ -4,7 +4,7 @@ import { mutationOptions, useQueryClient } from '@tanstack/react-query';
 
 import ListSearchAndButtons from '../ListSearchAndButtons';
 
-import { AuthContext } from '@/utils/contexts';
+import { AuthContext, NotificationDispatchContext } from '@/utils/contexts';
 import { deleteDistrict } from '@/utils/api';
 
 import { type DistrictFrontendGet } from '@strength-inventory/schemas/frontend';
@@ -17,10 +17,6 @@ interface ListProps {
   selectedDistrictId: string
   setSelectedDistrictId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string;
-  }>>;
 }
 
 export default function List ({
@@ -30,8 +26,7 @@ export default function List ({
   districts,
   selectedDistrictId,
   setSelectedDistrictId,
-  setFormMode,
-  setParentNotification
+  setFormMode
 }: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +38,7 @@ export default function List ({
   });
 
   const auth = use(AuthContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const queryClient = useQueryClient();
 
@@ -52,7 +48,7 @@ export default function List ({
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['districts'] });
       setSelectedDistrictId('');
-      setParentNotification({ type: 'success', message: 'district deleted' });
+      dispatch({ type: 'success', message: 'district deleted' });
     }
   });
 

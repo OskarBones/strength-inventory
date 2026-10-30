@@ -16,10 +16,6 @@ interface ListProps {
   setCountry: React.Dispatch<React.SetStateAction<string>>
   chain: string
   setChain: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function List ({
@@ -29,8 +25,7 @@ export default function List ({
   country,
   setCountry,
   chain,
-  setChain,
-  setParentNotification
+  setChain
 }: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -123,7 +118,6 @@ export default function List ({
                 memberships={filteredMemberships}
                 filterType='chain'
                 setFormMode={setFormMode}
-                setParentNotification={setParentNotification}
                 highlightChainMemberships={false}
                 setSelectedMembershipId={setSelectedMembershipId}
                 disabledMembershipIds={undefined}

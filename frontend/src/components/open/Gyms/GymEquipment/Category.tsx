@@ -57,7 +57,7 @@ ModelListProps) {
                   </span>
                 )
               : <span className='font-light min-w-8'>:</span>}
-            <div className='flex items-center space-x-1'>
+            <div className='flex items-center gap-1'>
               {piece.generic
                 ? (
                   <span>
@@ -122,21 +122,29 @@ export default function Category ({
     }
   });
 
-  let subcategories: string[];
-  if (name === 'systems') {
-    subcategories = SYSTEMS;
-  } else if (name === 'bars and plate types') {
-    subcategories = BARS_AND_PLATES;
-  } else if (name === 'free weights') {
-    subcategories = FREE_WEIGHTS;
-  } else if (name === 'handle attachments') {
-    subcategories = HANDLE_ATTACHMENTS;
-  } else if (name === 'strength machines') {
-    subcategories = STRENGTH_MACHINES;
-  } else if (name === 'accessories and tools') {
-    subcategories = ACCESSORIES_AND_TOOLS;
-  } else {
-    subcategories = CARDIO;
+  let subcategories: string[] = [];
+
+  switch (name) {
+    case 'systems':
+      subcategories = SYSTEMS;
+      break;
+    case 'bars and plate types':
+      subcategories = BARS_AND_PLATES;
+      break;
+    case 'free weights':
+      subcategories = FREE_WEIGHTS;
+      break;
+    case 'handle attachments':
+      subcategories = HANDLE_ATTACHMENTS;
+      break;
+    case 'strength machines':
+      subcategories = STRENGTH_MACHINES;
+      break;
+    case 'accessories and tools':
+      subcategories = ACCESSORIES_AND_TOOLS;
+      break;
+    case 'cardio':
+      subcategories = CARDIO;
   }
 
   const subcategoryList = subcategories.map((subcategory) => {

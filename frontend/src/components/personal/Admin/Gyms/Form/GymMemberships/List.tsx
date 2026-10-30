@@ -11,10 +11,6 @@ interface ListProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   setSelectedMembershipId: React.Dispatch<React.SetStateAction<string>>
   setEditForm: React.Dispatch<React.SetStateAction<string>>
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string
-  }>>
 }
 
 export default function List ({
@@ -22,8 +18,7 @@ export default function List ({
   memberships,
   setFormMode,
   setSelectedMembershipId,
-  setEditForm,
-  setParentNotification
+  setEditForm
 }: ListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -51,13 +46,11 @@ export default function List ({
           setSelectedMembershipId={setSelectedMembershipId}
           disabledMembershipIds={undefined}
           gymId=''
-          setParentNotification={setParentNotification}
         />
       </div>
       <EditFormReturnButton
         model='memberships'
         setEditForm={setEditForm}
-        setParentNotification={setParentNotification}
       />
     </div>
   );

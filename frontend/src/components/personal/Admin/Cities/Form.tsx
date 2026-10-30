@@ -5,18 +5,16 @@ import {
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 
-import { AuthContext, IconContext } from '@/utils/contexts';
+import { AuthContext, IconContext, NotificationDispatchContext }
+  from '@/utils/contexts';
 import { getCity, postCity, putCity }
   from '@/utils/api';
 import handleSubmitError from '@/utils/handleSubmitError';
 
 import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
-import Notification from '@/components/Notification';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
-
-import { FORM_INPUT_CLASSES } from '@/constants/theme';
 
 import { type CityFrontendPostAndPut, CityFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -29,21 +27,17 @@ interface FormProps {
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
   selectedCityId: string;
   setSelectedCityId: React.Dispatch<React.SetStateAction<string>>;
-  setParentNotification: React.Dispatch<React.SetStateAction<{
-    type: string,
-    message: string;
-  }>>;
 }
 
 export default function Form ({
   formMode,
   setFormMode,
   selectedCityId,
-  setSelectedCityId,
-  setParentNotification
+  setSelectedCityId
 }: FormProps) {
   const auth = use(AuthContext);
   const iconMode = use(IconContext);
+  const dispatch = use(NotificationDispatchContext);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -69,7 +63,7 @@ export default function Form ({
       setSelectedCityId(newCityFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'city created'
         });
       }, 150);
@@ -93,7 +87,7 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        setParentNotification({
+        dispatch({
           type: 'success', message: 'changes saved'
         });
       }, 150);
@@ -125,11 +119,6 @@ export default function Form ({
 
   const [firstRender, setFirstRender] = useState(true);
 
-  const [notification, setNotification] = useState({
-    type: '',
-    message: ''
-  });
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, dispatchAction, isPending] = useActionState(submit, {
     success: true,
@@ -155,7 +144,7 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       } else {  // formMode === 'edit'
         try {
@@ -167,11 +156,11 @@ export default function Form ({
             error: null
           };
         } catch (err: unknown) {
-          return handleSubmitError({ err, setNotification });
+          return handleSubmitError({ err, dispatch });
         }
       }
     } catch (err: unknown) {
-      return handleSubmitError({ err, setNotification });
+      return handleSubmitError({ err, dispatch });
     }
   }
 
@@ -251,7 +240,7 @@ export default function Form ({
                 name='country'
                 value={city.country}
                 required
-                className={`${FORM_INPUT_CLASSES} enabled:cursor-pointer`}
+                className='form-input enabled:cursor-pointer'
                 onChange={(event) => {
                   setCity({ ...city, country: event.target.value });
                   nameInputRef.current?.focus();
@@ -276,7 +265,7 @@ export default function Form ({
                 value={city.name}
                 required
                 maxLength={LOCATION_MAX_LEN}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setCity({ ...city, name: event.target.value });
                 }}
@@ -292,7 +281,7 @@ export default function Form ({
                 value={city.referencePoint}
                 required
                 maxLength={REF_POINT_MAX_LEN}
-                className={FORM_INPUT_CLASSES}
+                className='form-input'
                 onChange={(event) => {
                   setCity({ ...city, referencePoint: event.target.value });
                 }}
@@ -312,7 +301,7 @@ export default function Form ({
                   min={-90}
                   max={90}
                   step={0.00001}
-                  className={`${FORM_INPUT_CLASSES} w-20`}
+                  className='form-input w-20'
                   onChange={(event) => {
                     setCity({ ...city, latitude: event.target.value });
                   }}
@@ -331,7 +320,7 @@ export default function Form ({
                   min={-180}
                   max={180}
                   step={0.00001}
-                  className={`${FORM_INPUT_CLASSES} w-22`}
+                  className='form-input w-22'
                   onChange={(event) => {
                     setCity({ ...city, longitude: event.target.value });
                   }}
@@ -355,12 +344,6 @@ export default function Form ({
           }
         />
       </div>
-
-      <Notification
-        type={notification.type}
-        message={notification.message}
-        setNotification={setNotification}
-      />
     </div>
   );
 }
