@@ -1,9 +1,7 @@
+.env
 build
 dev
-dist
-node_modules
-
-.env
 docker-compose.yml
-# Sentry Config File
-.sentryclirc
+dist
+init-db
+node_modules

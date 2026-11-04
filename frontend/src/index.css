@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: LT Asus;
+  font-display: optional;
+  size-adjust: 110%;
+  ascent-override: 95%;
+  src: url('./assets/fonts/LTAsus.woff2') format('woff2')
+}
+
 @theme {
   --color-primary: var(--color-orange-300);
   --color-primary-dark: var(--color-olive-950);
@@ -14,7 +22,8 @@
   --color-green: var(--color-green-500);
   --color-green-dark: var(--color-green-800);
   --color-red: var(--color-red-400);
-  --color-red-dark: var(--color-red-800)
+  --color-red-dark: var(--color-red-800);
+  --font-display: 'LT Asus', sans-serif;
 }
 
 @layer base {

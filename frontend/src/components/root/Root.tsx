@@ -106,7 +106,7 @@ export default function Root () {
         <NotificationDispatchContext value={dispatch}>
           {/* using svh (Small Viewport Height) ensures that
           content does not get hidden behind browser UI */}
-          <div className='flex flex-col h-svh'>
+          <div className='flex flex-col h-svh font-display'>
             <Header />
             <Navbar
               sidebarLeftVisible={sidebarLeftVisible}

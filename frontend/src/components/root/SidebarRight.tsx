@@ -118,7 +118,7 @@ export default function SidebarRight (
       id='sidebar-right'
       className={`
         absolute right-0 md:translate-x-0 flex flex-col items-stretch
-        border-t border-l
+        border-t md:border-t-0 border-l
         bg-secondary dark:bg-secondary-dark pt-3 pb-12 w-24 h-full
         text-primary-text dark:text-primary-text-dark text-sm
         ${sidebarRightVisible

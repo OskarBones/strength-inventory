@@ -123,7 +123,7 @@ export default function SidebarLeft ({
     <nav
       id='sidebar-left'
       className={`
-        absolute left-0 flex flex-col gap-1 border-t border-r
+        absolute left-0 flex flex-col gap-1 border-t md:border-t-0 border-r
         bg-secondary dark:bg-secondary-dark pt-3 pb-12 w-24 h-full
         text-primary-text dark:text-primary-text-dark text-sm
         ${sidebarLeftVisible

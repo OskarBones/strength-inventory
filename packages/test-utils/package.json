@@ -1,0 +1,7 @@
+{
+  "name": "@strength-inventory/test-utils",
+  "version": "1.6.0",
+  "author": "Oskar Bones",
+  "type": "module",
+  "main": "utils.ts"
+}
