@@ -4,12 +4,14 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 COPY packages/schemas/package*.json ./packages/schemas/
+COPY packages/test-utils/package*.json ./packages/test-utils/
 COPY frontend/package*.json ./frontend/
 COPY backend/package*.json ./backend/
 
 RUN npm ci
 
 COPY packages/schemas ./packages/schemas/
+COPY packages/test-utils ./packages/test-utils/
 COPY frontend ./frontend/
 COPY backend ./backend/
 
