@@ -19,6 +19,7 @@ import { Route as AuthenticatedAdminDistrictsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminEquipmentRouteImport } from './routes/_authenticated/admin.equipment'
 import { Route as AuthenticatedAdminGymsRouteImport } from './routes/_authenticated/admin.gyms'
 import { Route as AuthenticatedAdminMembershipsRouteImport } from './routes/_authenticated/admin.memberships'
+import { Route as NoAuthopenAboutRouteImport } from './routes/_noAuth/(open)/about'
 import { Route as NoAuthopenGymsRouteImport } from './routes/_noAuth/(open)/gyms'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -73,6 +74,11 @@ const AuthenticatedAdminMembershipsRoute =
     path: '/memberships',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const NoAuthopenAboutRoute = NoAuthopenAboutRouteImport.update({
+  id: '/(open)/about',
+  path: '/about',
+  getParentRoute: () => NoAuthRoute,
+} as any)
 const NoAuthopenGymsRoute = NoAuthopenGymsRouteImport.update({
   id: '/(open)/gyms',
   path: '/gyms',
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin/equipment': typeof AuthenticatedAdminEquipmentRoute
   '/admin/gyms': typeof AuthenticatedAdminGymsRoute
   '/admin/memberships': typeof AuthenticatedAdminMembershipsRoute
+  '/about': typeof NoAuthopenAboutRoute
   '/gyms': typeof NoAuthopenGymsRoute
 }
 export interface FileRoutesByTo {
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/admin/equipment': typeof AuthenticatedAdminEquipmentRoute
   '/admin/gyms': typeof AuthenticatedAdminGymsRoute
   '/admin/memberships': typeof AuthenticatedAdminMembershipsRoute
+  '/about': typeof NoAuthopenAboutRoute
   '/gyms': typeof NoAuthopenGymsRoute
 }
 export interface FileRoutesById {
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/equipment': typeof AuthenticatedAdminEquipmentRoute
   '/_authenticated/admin/gyms': typeof AuthenticatedAdminGymsRoute
   '/_authenticated/admin/memberships': typeof AuthenticatedAdminMembershipsRoute
+  '/_noAuth/(open)/about': typeof NoAuthopenAboutRoute
   '/_noAuth/(open)/gyms': typeof NoAuthopenGymsRoute
 }
 export interface FileRouteTypes {
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/admin/equipment'
     | '/admin/gyms'
     | '/admin/memberships'
+    | '/about'
     | '/gyms'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/admin/equipment'
     | '/admin/gyms'
     | '/admin/memberships'
+    | '/about'
     | '/gyms'
   id:
     | '__root__'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/equipment'
     | '/_authenticated/admin/gyms'
     | '/_authenticated/admin/memberships'
+    | '/_noAuth/(open)/about'
     | '/_noAuth/(open)/gyms'
   fileRoutesById: FileRoutesById
 }
@@ -231,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMembershipsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_noAuth/(open)/about': {
+      id: '/_noAuth/(open)/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof NoAuthopenAboutRouteImport
+      parentRoute: typeof NoAuthRoute
+    }
     '/_noAuth/(open)/gyms': {
       id: '/_noAuth/(open)/gyms'
       path: '/gyms'
@@ -274,11 +293,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 interface NoAuthRouteChildren {
   NoAuthIndexRoute: typeof NoAuthIndexRoute
+  NoAuthopenAboutRoute: typeof NoAuthopenAboutRoute
   NoAuthopenGymsRoute: typeof NoAuthopenGymsRoute
 }
 
 const NoAuthRouteChildren: NoAuthRouteChildren = {
   NoAuthIndexRoute: NoAuthIndexRoute,
+  NoAuthopenAboutRoute: NoAuthopenAboutRoute,
   NoAuthopenGymsRoute: NoAuthopenGymsRoute,
 }
 

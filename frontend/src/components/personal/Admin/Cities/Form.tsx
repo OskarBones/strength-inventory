@@ -135,7 +135,6 @@ export default function Form ({
 
     try {
       const validatedCity = CityFrontendPostAndPutSchema.parse(req);
-
       if (formMode === 'create') {
         try {
           await postMutation.mutateAsync(validatedCity);

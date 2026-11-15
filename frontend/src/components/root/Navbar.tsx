@@ -14,7 +14,7 @@ import {
   TbLayoutSidebarRightExpandFilled,
   TbLogin2
 } from 'react-icons/tb';
-import { CgGym } from 'react-icons/cg';
+import { BsInfoCircle } from 'react-icons/bs';
 
 interface PageTitleProps {
   pathname: string
@@ -28,14 +28,6 @@ function PageTitle ({ pathname, iconMode }: PageTitleProps) {
         {iconMode
           ? <MdOutlineLocationOn className='text-2xl' />
           : 'gyms'}
-      </p>
-    );
-  } else if (pathname === '/equipment') {
-    return (
-      <p>
-        {iconMode
-          ? <CgGym className='text-2xl' />
-          : 'equipment'}
       </p>
     );
   } else if (pathname === '/login') {
@@ -52,6 +44,14 @@ function PageTitle ({ pathname, iconMode }: PageTitleProps) {
         {iconMode
           ? <MdOutlineAdminPanelSettings className='text-2xl' />
           : 'admin'}
+      </p>
+    );
+  } else if (pathname.startsWith('/about')) {
+    return (
+      <p>
+        {iconMode
+          ? <BsInfoCircle className='text-2xl' />
+          : 'about'}
       </p>
     );
   }

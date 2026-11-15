@@ -181,39 +181,40 @@ Equipment.init({
       There is a reminder about this above EQIUPMENT_CATEGORIES definition. */
       const subcategoryError = 'invalid subcategory';
       const category = instance.category;
+      const subcategory = instance.subcategory;
       switch (category) {
         case 'accessoryOrTool':
-          if (!(instance.subcategory in ACCESSORIES_AND_TOOLS)) {
+          if (!(ACCESSORIES_AND_TOOLS.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'barOrPlate':
-          if (!(instance.subcategory in BARS_AND_PLATES)) {
+          if (!(BARS_AND_PLATES.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'cardio':
-          if (!(instance.subcategory in CARDIO)) {
+          if (!(CARDIO.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'freeWeight':
-          if (!(instance.subcategory in FREE_WEIGHTS)) {
+          if (!(FREE_WEIGHTS.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'handleAttachment':
-          if (!(instance.subcategory in HANDLE_ATTACHMENTS)) {
+          if (!(HANDLE_ATTACHMENTS.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'strengthMachine':
-          if (!(instance.subcategory in STRENGTH_MACHINES)) {
+          if (!(STRENGTH_MACHINES.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;
         case 'system':
-          if (!(instance.subcategory in SYSTEMS)) {
+          if (!(SYSTEMS.includes(subcategory))) {
             throw new HttpError(subcategoryError, 400);
           }
           break;

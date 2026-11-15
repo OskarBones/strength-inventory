@@ -1,15 +1,32 @@
+import { Link } from '@tanstack/react-router';
+
+import { BsInfoCircle } from 'react-icons/bs';
 import { FaGithub } from 'react-icons/fa6';
 import { IoHeartOutline } from 'react-icons/io5';
 
 import { VERSION } from '@strength-inventory/schemas';
 
-export default function Footer () {
+export default function Footer ({ iconMode }: { iconMode: boolean }) {
   return (
     <div
       className='
         relative flex justify-center bg-primary dark:bg-primary-dark p-1
         text-primary-text dark:text-primary-text-dark text-sm'
     >
+      <Link to='/about' className='absolute top-1.5 left-2 md:left-25 text-xs'>
+        {iconMode
+          ? <BsInfoCircle aria-hidden='true' className='text-base' />
+          : null}
+
+        <span
+          className={iconMode
+            ? 'sr-only'
+            : ''}
+        >
+          about
+        </span>
+      </Link>
+
       <p className='flex gap-1'>
         made with
         <IoHeartOutline aria-label='love' className='text-xl' />

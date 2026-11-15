@@ -18,7 +18,7 @@ import SidebarRight from './SidebarRight';
 import { type NotificationProps } from '@strength-inventory/schemas/frontend';
 
 export default function Root () {
-  const { isLoading } = useRouterState();
+  const { isLoading, location } = useRouterState();
 
   const [iconMode, setIconMode] = useState(() => {
     const savedVisuals = localStorage.getItem('visuals');
@@ -123,11 +123,11 @@ export default function Root () {
                   bg-background dark:bg-background-dark
                   overflow-y-auto text-primary-text dark:text-primary-text-dark'
               >
-                {isLoading
+                {isLoading && location.pathname !== '/admin/**'
                   ? <Loading />
                   : <Outlet />}
               </div>
-              <Footer />
+              <Footer iconMode={iconMode} />
 
               <SidebarLeft
                 sidebarLeftVisible={sidebarLeftVisible}
