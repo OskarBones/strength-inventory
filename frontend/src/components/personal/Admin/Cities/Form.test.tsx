@@ -16,7 +16,7 @@ beforeEach(() => {
 vi.mock('@/utils/api', async () => {
   const originalApiModule = await vi.importActual('@/utils/api');
 
-  return { ...originalApiModule, postCity: vi.fn() };
+  return { ...originalApiModule, postCity: vi.fn(), putCity: vi.fn() };
 });
 
 test('displays form for creating a new city', () => {
@@ -60,8 +60,6 @@ test('sends a POST request with valid inputs in create mode', async () => {
     />
   );
 
-  expect(screen.getByRole('heading')).toHaveTextContent('create new city');
-
   const countryInput = screen.getByLabelText('country*');
   await user.selectOptions(countryInput, exampleCity.country);
   const nameInput = screen.getByLabelText('name*');
@@ -83,11 +81,53 @@ test('sends a POST request with valid inputs in create mode', async () => {
     expect.objectContaining(
       {
         city: {
-          country: exampleCity.country,
           name: exampleCity.name,
           referencePoint: exampleCity.referencePoint,
           latitude: exampleCity.latitude,
-          longitude: exampleCity.longitude
+          longitude: exampleCity.longitude,
+          country: exampleCity.country
+        }
+      }
+    )
+  );
+});
+
+test('sends a PUT request with valid inputs in edit mode', async () => {
+  const user = userEvent.setup();
+
+  render(
+    <Form
+      formMode='edit'
+      setFormMode={vi.fn()}
+      selectedCityId={exampleCity.id}
+      setSelectedCityId={vi.fn()}
+    />
+  );
+
+  await screen.findByRole('heading');
+
+  const referencePointInput = screen.getByLabelText('reference point*');
+  await user.clear(referencePointInput);
+  await user.type(referencePointInput, 'Senaatintori');
+  const latitudeInput = screen.getByLabelText('latitude*');
+  await user.clear(latitudeInput);
+  await user.type(latitudeInput, '60.16950');
+  const longitudeInput = screen.getByLabelText('longitude*');
+  await user.clear(longitudeInput);
+  await user.type(longitudeInput, '24.95216');
+  const submitButton = screen.getByText('save');
+  await user.click(submitButton);
+
+  expect(api.putCity).toHaveBeenCalledWith(
+    expect.objectContaining(
+      {
+        id: exampleCity.id,
+        city: {
+          name: exampleCity.name,
+          referencePoint: 'Senaatintori',
+          latitude: 60.16950,
+          longitude: 24.95216,
+          country: exampleCity.country
         }
       }
     )

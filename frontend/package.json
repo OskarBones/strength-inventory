@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "private": true,
-  "version": "1.7.0",
+  "version": "1.7.1",
   "license": "GPL-3.0-or-later",
   "author": "Oskar Bones",
   "type": "module",
@@ -40,7 +40,7 @@
     "@tanstack/eslint-plugin-query": "^5.96.0",
     "@tanstack/router-plugin": "^1.167.35",
     "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/jest-dom": "^8.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.8",
     "@types/jest": "^30.0.0",

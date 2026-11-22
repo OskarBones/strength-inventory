@@ -72,7 +72,7 @@ export default function Form ({
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedCity }:
-    { id: string, updatedCity: CityFrontendPostAndPut; }) =>
+      { id: string, updatedCity: CityFrontendPostAndPut; }) =>
       putCity({
         id: id, city: updatedCity, refresh: auth.refresh, logout: auth.logout
       }),
