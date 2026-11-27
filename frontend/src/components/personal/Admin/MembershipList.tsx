@@ -50,7 +50,7 @@ export default function MembershipList ({
 
   const addToGymMutation = useMutation({
     mutationFn: ({ gymId, membershipId }:
-    { gymId: string, membershipId: string }) =>
+      { gymId: string, membershipId: string }) =>
       postGymMembership({
         gymId: gymId,
         membershipId: membershipId,
@@ -63,9 +63,7 @@ export default function MembershipList ({
       );
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'membership added'
-        });
+        dispatch({ type: 'success', message: 'membership added' });
       }, 150);
     }
   });

@@ -1,7 +1,9 @@
 import { use, useEffect, useRef, useState } from 'react';
 
 import {
-  useMutation, useQuery, useQueryClient
+  useMutation,
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query';
 import { CgGym } from 'react-icons/cg';
 import { MdClear } from 'react-icons/md';
@@ -54,7 +56,7 @@ export default function GymEquipment (
 
   const addEquipmentMutation = useMutation({
     mutationFn: ({ gymId, equipmentId, count }:
-    { gymId: string, equipmentId: string, count: number }) =>
+      { gymId: string, equipmentId: string, count: number }) =>
       postGymEquipment({
         gymId: gymId,
         equipmentId: equipmentId,
@@ -71,7 +73,7 @@ export default function GymEquipment (
 
   const setEquipmentCountMutation = useMutation({
     mutationFn: ({ relationshipId, count }:
-    { relationshipId: string, count: number }) =>
+      { relationshipId: string, count: number }) =>
       setGymEquipmentCount({
         relationshipId: relationshipId,
         count: count,
@@ -99,7 +101,7 @@ export default function GymEquipment (
 
   const removeEquipmentMutation = useMutation({
     mutationFn: ({ gymId, equipmentId }:
-    { gymId: string, equipmentId: string }) =>
+      { gymId: string, equipmentId: string }) =>
       deleteGymEquipment({
         gymId: gymId,
         equipmentId: equipmentId,

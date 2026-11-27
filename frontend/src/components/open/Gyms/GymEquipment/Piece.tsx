@@ -7,7 +7,7 @@ import { type GymFrontendGetEquipment }
 interface PieceProps {
   equipment: GymFrontendGetEquipment
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
+    React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 export default function Piece ({ equipment, setClickedEquipment }: PieceProps) {

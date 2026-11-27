@@ -8,7 +8,8 @@ export const Route = createFileRoute('/_noAuth')({
   beforeLoad: async ({ context }) => {
     if (context.auth.isAuthenticated) {
       await syncToken({
-        refresh: context.auth.refresh, logout: context.auth.logout
+        refresh: context.auth.refresh,
+        logout: context.auth.logout
       });
     }
   },

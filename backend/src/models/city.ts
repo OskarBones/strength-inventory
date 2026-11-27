@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/lines-between-class-members */
 import {
   type CreationOptional,
   DataTypes,
@@ -18,25 +19,17 @@ import { COUNTRY_MAX_LEN, LOCATION_MAX_LEN, REF_POINT_MAX_LEN }
 
 class City extends Model<InferAttributes<City>, InferCreationAttributes<City>> {
   declare id: CreationOptional<string>;
-
+  declare visible: CreationOptional<boolean>;
   declare name: string;
-
   declare referencePoint: string;
-
   declare latitude: number;
-
   declare longitude: number;
-
   declare country: string;
-
   declare createdAt: CreationOptional<Date>;
-
   declare updatedAt: CreationOptional<Date>;
 
   declare getDistricts: HasManyGetAssociationsMixin<District>;
-
   declare addDistrict: HasManyAddAssociationMixin<District, string>;
-
   declare removeDistrict: HasManyRemoveAssociationMixin<District, string>;
 }
 
@@ -48,6 +41,11 @@ City.init({
     validate: {
       isUUID: 4
     }
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   name: {
     type: DataTypes.STRING,

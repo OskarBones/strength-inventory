@@ -13,7 +13,11 @@ interface DayProps {
 }
 
 export default function Day ({
-  day, hours, highlighted, exception, setExceptionReason
+  day,
+  hours,
+  highlighted,
+  exception,
+  setExceptionReason
 }: DayProps) {
   const iconMode = use(IconContext);
 

@@ -10,7 +10,8 @@ import {
 import { sequelize } from '../utils/db.ts';
 
 class Session extends Model<
-  InferAttributes<Session>, InferCreationAttributes<Session>
+  InferAttributes<Session>,
+  InferCreationAttributes<Session>
 > {
   declare id: CreationOptional<string>;
   declare userId: string;

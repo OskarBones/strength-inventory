@@ -10,7 +10,7 @@ interface AvailabilityButtonProps {
 
 export default function AvailabilityButton (
   { availabilityType, selected, disabled, membership, setMembership }:
-  AvailabilityButtonProps
+    AvailabilityButtonProps
 ) {
   return (
     <button

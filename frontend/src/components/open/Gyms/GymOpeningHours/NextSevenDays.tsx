@@ -13,7 +13,9 @@ interface NextSevenDaysProps {
 }
 
 export default function NextSevenDays ({
-  gym, membersOnly, setExceptionReason
+  gym,
+  membersOnly,
+  setExceptionReason
 }: NextSevenDaysProps) {
   const [present] = useState(() => new Date());
   const nextSeven: Date[] = [];

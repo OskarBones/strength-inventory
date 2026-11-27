@@ -55,10 +55,17 @@ export const CityFrontendBaseSchema = CitySchema.extend({
   longitude: LongitudeFrontendSchema
 })
 
-export const CityFrontendPostAndPutSchema = CityFrontendBaseSchema.omit({
+export const CityFrontendPostAndPutSchema = CityFrontendBaseSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
+})
+.extend({
+  visible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  )
 })
 export type CityFrontendPostAndPut = z.infer<typeof CityFrontendPostAndPutSchema>;
 
@@ -72,10 +79,17 @@ export const CityFrontendGetSchema = CityFrontendBaseSchema.extend({
 })
 export type CityFrontendGet = z.infer<typeof CityFrontendGetSchema>;
 
-export const DistrictFrontendPostAndPutSchema = DistrictFrontendBaseSchema.omit({
+export const DistrictFrontendPostAndPutSchema = DistrictFrontendBaseSchema
+.omit({
   id: true,
   createdAt: true,
   updatedAt: true
+})
+.extend({
+  visible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  )
 })
 export type DistrictFrontendPostAndPut = z.infer<typeof DistrictFrontendPostAndPutSchema>
 
@@ -211,6 +225,10 @@ export const EquipmentFrontendPostAndPutSchema = z.intersection(EquipmentFronten
   updatedAt: true
 })
 .extend({
+  visible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  ),
   generic: z.preprocess(
     (val) => (val ? true : false),
     z.boolean()
@@ -282,10 +300,26 @@ const MembershipFrontendUnions = z.intersection(MembershipChainFrontendSchema, M
 
 const MembershipFrontendBaseSchema = MembershipBaseSchema.extend({
   initiationFee: z.preprocess((val) => {
-  return(Number(val))
+    if (val) {
+      if (typeof val === 'string') {
+        if (val) {
+          return Number.parseFloat(val)
+        } else {
+          return null
+        }
+      }
+    } else {
+      return null
+    }
 }, z.number().nullable()),
   membershipFee: z.preprocess((val) => {
-    return(Number(val))
+    if (typeof val === 'string') {
+      if (val) {
+        return Number.parseFloat(val)
+      } else {
+        return null
+      }
+    }
   }, z.number()),
   url: UrlFrontendSchema,
   notes: NullableStringFrontendSchema
@@ -301,6 +335,10 @@ export const MembershipFrontendPostAndPutSchema = z.intersection(MembershipFront
   updatedAt: true
 })
 .extend({
+  visible: z.preprocess(
+    (val) => (val ? true : false),
+    z.boolean()
+  ),
   visits: z.preprocess((val) => {
     if (typeof val === 'string') {
       if (val) {
@@ -326,7 +364,7 @@ export const GymFrontendGetEquipmentSchema = z.intersection(
 export type GymFrontendGetEquipment = z.infer<typeof GymFrontendGetEquipmentSchema>;
 
 export const GymFrontendGetMembershipsSchema = z.intersection(
-  MembershipBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
+  MembershipFrontendBaseSchema.extend({ gymmemberships: GymMembershipSchema }),
   MembershipFrontendUnions)
 export type GymFrontendGetMemberships = z.infer<typeof GymFrontendGetMembershipsSchema>;
 

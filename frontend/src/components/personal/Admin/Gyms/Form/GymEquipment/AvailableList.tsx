@@ -19,7 +19,10 @@ interface AvailableListProps {
 
 export default function AvailableList (
   {
-    scrollTopRef, currentEquipment, filteredEquipment, setEquipmentToAdd
+    scrollTopRef,
+    currentEquipment,
+    filteredEquipment,
+    setEquipmentToAdd
   }: AvailableListProps
 ) {
   const listRef = useRef<HTMLDivElement>(null);

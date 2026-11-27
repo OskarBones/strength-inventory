@@ -24,7 +24,8 @@ export default function EditFormReturnButton (
         setEditForm('');
         setTimeout(() => {
           dispatch({
-            type: 'info', message: `${model} have been saved`
+            type: 'info',
+            message: `${model} have been saved`
           });
         }, 150);
       }}

@@ -1,3 +1,4 @@
+/* eslint-disable @stylistic/lines-between-class-members */
 import {
   type CreationOptional,
   DataTypes,
@@ -12,21 +13,17 @@ import { LOCATION_MAX_LEN, REF_POINT_MAX_LEN }
   from '@strength-inventory/schemas';
 
 class District extends Model<
-  InferAttributes<District>, InferCreationAttributes<District>> {
+  InferAttributes<District>,
+  InferCreationAttributes<District>
+> {
   declare id: CreationOptional<string>;
-
+  declare visible: CreationOptional<boolean>;
   declare cityId: string;
-
   declare name: string;
-
   declare referencePoint: string;
-
   declare latitude: number;
-
   declare longitude: number;
-
   declare createdAt: CreationOptional<Date>;
-
   declare updatedAt: CreationOptional<Date>;
 }
 
@@ -38,6 +35,11 @@ District.init({
     validate: {
       isUUID: 4
     }
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   cityId: {
     type: DataTypes.UUID,

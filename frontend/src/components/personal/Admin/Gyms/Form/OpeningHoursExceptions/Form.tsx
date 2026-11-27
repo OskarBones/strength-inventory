@@ -10,7 +10,8 @@ import handleSubmitError from '@/utils/handleSubmitError';
 import { NotificationDispatchContext } from '@/utils/contexts';
 
 import {
-  type OpeningHoursException, OpeningHoursExceptionSchema
+  type OpeningHoursException,
+  OpeningHoursExceptionSchema
 } from '@strength-inventory/schemas';
 
 interface FormProps {
@@ -18,7 +19,7 @@ interface FormProps {
   setEditedExceptionId: React.Dispatch<React.SetStateAction<string>>
   exceptions: OpeningHoursException[]
   setExceptions:
-  React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
+    React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
   setAddException: React.Dispatch<React.SetStateAction<boolean>>
 }
 

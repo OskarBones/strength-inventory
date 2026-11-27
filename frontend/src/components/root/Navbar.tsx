@@ -1,7 +1,8 @@
 import { useLocation } from '@tanstack/react-router';
 
 import {
-  MdOutlineAdminPanelSettings, MdOutlineLocationOn
+  MdOutlineAdminPanelSettings,
+  MdOutlineLocationOn
 } from 'react-icons/md';
 import {
   TbLayoutSidebarLeftCollapse,

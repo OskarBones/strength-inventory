@@ -415,7 +415,10 @@ export async function targetGymExtractor (
         model: User,
         as: 'managers',
         attributes: [
-          'id', 'username', 'email', 'name'
+          'id',
+          'username',
+          'email',
+          'name'
         ]
       },
       {

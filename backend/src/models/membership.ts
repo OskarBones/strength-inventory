@@ -24,9 +24,11 @@ import { sequelize } from '../utils/db.js';
 import { Gym } from './index.ts';
 
 class Membership extends Model<
-  InferAttributes<Membership>, InferCreationAttributes<Membership>
+  InferAttributes<Membership>,
+  InferCreationAttributes<Membership>
 > {
   declare id: CreationOptional<string>;
+  declare visible: CreationOptional<boolean>;
   declare chain: string | null;
   declare country: string | null;
   declare name: string;
@@ -56,6 +58,11 @@ Membership.init({
     validate: {
       isUUID: 4
     }
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   chain: {
     type: DataTypes.STRING,
@@ -171,8 +178,7 @@ Membership.init({
       const instance = this as unknown as Membership;
 
       if ((instance.chain && !instance.country)
-        || (instance.country && !instance.chain)
-      ) {
+        || (instance.country && !instance.chain)) {
         throw new HttpError(
           'chain and country must both be given or left empty',
           400

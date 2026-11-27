@@ -20,11 +20,11 @@ interface ModelListProps {
   subcategory: string | undefined
   equipment: GymFrontendGetEquipment[]
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
+    React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 function ModelList ({ subcategory, equipment, setClickedEquipment }:
-ModelListProps) {
+  ModelListProps) {
   const filteredEquipment = subcategory
     ? equipment.filter((piece) => piece.subcategory === subcategory)
     : equipment;
@@ -91,7 +91,7 @@ interface CategoryProps {
   selectedSubcategory: string
   setSelectedSubcategory: React.Dispatch<React.SetStateAction<string>>
   setClickedEquipment:
-  React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
+    React.Dispatch<React.SetStateAction<GymFrontendGetEquipment | null>>
 }
 
 export default function Category ({

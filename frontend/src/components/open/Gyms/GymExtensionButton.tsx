@@ -45,7 +45,7 @@ interface GymExtensionButtonProps {
 
 export default function GymExtensionButton (
   { activeExtension, disabled, handleToggle, gymId, title }:
-  GymExtensionButtonProps
+    GymExtensionButtonProps
 ) {
   const iconMode = use(IconContext);
 

@@ -37,10 +37,6 @@ export default defineConfig(
     rules: {
       'sort-imports':
         ['error', { ignoreCase: true, allowSeparatedGroups: true }],
-      '@stylistic/array-bracket-newline':
-        ['error', { multiline: true, minItems: 4 }],
-      '@stylistic/array-bracket-spacing': ['error'],
-      '@stylistic/array-element-newline': ['error', 'consistent'],
       '@stylistic/arrow-parens': ['error'],
       '@stylistic/arrow-spacing': ['error', { before: true, after: true }],
       '@stylistic/block-spacing': ['error'],
@@ -50,9 +46,7 @@ export default defineConfig(
       '@stylistic/comma-style': ['error'],
       '@stylistic/computed-property-spacing': ['error'],
       '@stylistic/eol-last': ['error'],
-      '@stylistic/function-call-argument-newline': ['error', 'consistent'],
       '@stylistic/function-call-spacing': ['error'],
-      '@stylistic/function-paren-newline': ['error', 'multiline-arguments'],
       '@stylistic/generator-star-spacing': ['error'],
       '@stylistic/indent': ['error', 2],
       '@stylistic/indent-binary-ops': ['error', 2],
@@ -89,6 +83,7 @@ export default defineConfig(
       '@stylistic/key-spacing': ['error'],
       '@stylistic/keyword-spacing': ['error'],
       '@stylistic/lines-between-class-members': ['error'],
+      '@stylistic/list-style': ['error'],
       '@stylistic/max-len': ['error', { tabWidth: 2 }],
       '@stylistic/max-statements-per-line': ['error'],
       '@stylistic/multiline-ternary': ['error'],
@@ -106,8 +101,6 @@ export default defineConfig(
       '@stylistic/no-trailing-spaces': ['error'],
       '@stylistic/no-whitespace-before-property': ['error'],
       '@stylistic/nonblock-statement-body-position': ['error'],
-      '@stylistic/object-curly-newline': ['error', { consistent: true }],
-      '@stylistic/object-curly-spacing': ['error', 'always'],
       '@stylistic/operator-linebreak': ['error', 'before'],
       '@stylistic/padded-blocks': ['error', 'never'],
       '@stylistic/quote-props': ['error', 'as-needed'],

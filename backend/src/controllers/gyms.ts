@@ -29,7 +29,10 @@ gymsRouter.get('/', async (_req, res) => {
         model: User,
         as: 'managers',
         attributes: [
-          'id', 'username', 'email', 'name'
+          'id',
+          'username',
+          'email',
+          'name'
         ]
       },
       {
@@ -96,7 +99,7 @@ gymsRouter.post(
   targetGymExtractor,
   async (
     req:
-    Request<{ id: string }, unknown, { equipmentId: string, count: number }>,
+      Request<{ id: string }, unknown, { equipmentId: string, count: number }>,
     res
   ) => {
     if (!req.targetGym) {

@@ -1,5 +1,6 @@
 export const exampleCity = {
   id: '43517bf3-ba3b-4406-a61e-b632b3782bb9',
+  visible: true,
   name: 'Helsinki',
   referencePoint: 'Central Railway Station',
   latitude: 60.17087,

@@ -10,7 +10,10 @@ interface AvailableWeightsProps {
 }
 
 export default function AvailableWeights ({
-  availableWeights, setAvailableWeights, startingWeight, maximumWeight
+  availableWeights,
+  setAvailableWeights,
+  startingWeight,
+  maximumWeight
 }: AvailableWeightsProps) {
   const [newWeight, setNewWeight] = useState('');
   const [isInvalidStep, setIsInvalidStep] = useState(false);
@@ -95,7 +98,7 @@ export default function AvailableWeights ({
             min={0}
             max={MAX_WEIGHT}
             step={0.01}
-            className='bg-secondary dark:bg-secondary-dark w-20'
+            className='bg-secondary dark:bg-secondary-dark w-20 h-5'
             onChange={(event) => {
               setNewWeight(event.target.value);
               const isMismatch

@@ -28,6 +28,7 @@ import { Equipment, Membership, User } from './index.ts';
 
 class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare id: CreationOptional<string>;
+  declare visible: CreationOptional<boolean>;
   declare name: string;
   declare chain: string | null;
   declare street: string;
@@ -53,11 +54,11 @@ class Gym extends Model<InferAttributes<Gym>, InferCreationAttributes<Gym>> {
   declare getMemberships: BelongsToManyGetAssociationsMixin<Membership>;
   declare addMembership: BelongsToManyAddAssociationMixin<Membership, string>;
   declare removeMembership:
-  BelongsToManyRemoveAssociationMixin<Membership, string>;
+    BelongsToManyRemoveAssociationMixin<Membership, string>;
   declare getEquipment: BelongsToManyGetAssociationsMixin<Equipment>;
   declare addEquipment: BelongsToManyAddAssociationMixin<Equipment, string>;
   declare removeEquipment:
-  BelongsToManyRemoveAssociationMixin<Equipment, string>;
+    BelongsToManyRemoveAssociationMixin<Equipment, string>;
 }
 
 Gym.init({
@@ -68,6 +69,11 @@ Gym.init({
     validate: {
       isUUID: 4
     }
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   name: {
     type: DataTypes.STRING,

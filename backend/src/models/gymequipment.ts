@@ -10,7 +10,8 @@ import {
 import { sequelize } from '../utils/db.js';
 
 class GymEquipment extends Model<
-  InferAttributes<GymEquipment>, InferCreationAttributes<GymEquipment>
+  InferAttributes<GymEquipment>,
+  InferCreationAttributes<GymEquipment>
 > {
   declare id: CreationOptional<string>;
   declare gymId: string;

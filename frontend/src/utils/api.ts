@@ -154,7 +154,8 @@ export const postGymEquipment = async (
 
     const data: unknown = await res.json();
     const validatedData = z.object({
-      gymId: z.uuidv4(), equipmentId: z.uuidv4()
+      gymId: z.uuidv4(),
+      equipmentId: z.uuidv4()
     }).parse(data);
     return validatedData;
   } else {
@@ -189,7 +190,8 @@ export const postGymMembership = async (
 
     const data: unknown = await res.json();
     const validatedData = z.object({
-      gymId: z.uuidv4(), membershipId: z.uuidv4()
+      gymId: z.uuidv4(),
+      membershipId: z.uuidv4()
     }).parse(data);
     return validatedData;
   } else {
@@ -313,7 +315,8 @@ export const deleteGymEquipment = async (
 
     const data: unknown = await res.json();
     const validatedData = z.object({
-      gymId: z.uuidv4(), equipmentId: z.uuidv4()
+      gymId: z.uuidv4(),
+      equipmentId: z.uuidv4()
     }).parse(data);
     return validatedData;
   } else {
@@ -343,7 +346,8 @@ export const deleteGymMembership = async (
 
     const data: unknown = await res.json();
     const validatedData = z.object({
-      gymId: z.uuidv4(), membershipId: z.uuidv4()
+      gymId: z.uuidv4(),
+      membershipId: z.uuidv4()
     }).parse(data);
     return validatedData;
   } else {
@@ -707,7 +711,9 @@ interface postDistrictProps extends TokenValidationProps {
 }
 
 export const postDistrict = async ({
-  district, refresh, logout
+  district,
+  refresh,
+  logout
 }: postDistrictProps) => {
   /* only admins have permission */
   const token = await syncToken({ refresh, logout });
@@ -767,7 +773,9 @@ export const putDistrict
   };
 
 export const deleteDistrict = async ({
-  id, refresh, logout
+  id,
+  refresh,
+  logout
 }: deleteItemProps) => {
   /* only admins have permission */
   const token = await syncToken({ refresh, logout });

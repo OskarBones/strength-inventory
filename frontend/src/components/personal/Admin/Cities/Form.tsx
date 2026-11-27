@@ -1,7 +1,10 @@
 import { use, useActionState, useRef, useState } from 'react';
 
 import {
-  skipToken, useMutation, useQuery, useQueryClient
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 
@@ -15,6 +18,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
+import VisibleButton from '../VisibleButton';
 
 import { type CityFrontendPostAndPut, CityFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -53,7 +57,9 @@ export default function Form ({
   const postMutation = useMutation({
     mutationFn: (newCity: CityFrontendPostAndPut) =>
       postCity({
-        city: newCity, refresh: auth.refresh, logout: auth.logout
+        city: newCity,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async (newCityFromServer) => {
       // await required so that the list's delete button is active afterwards
@@ -63,9 +69,7 @@ export default function Form ({
       setSelectedCityId(newCityFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'city created'
-        });
+        dispatch({ type: 'success', message: 'city created' });
       }, 150);
     }
   });
@@ -74,7 +78,10 @@ export default function Form ({
     mutationFn: ({ id, updatedCity }:
       { id: string, updatedCity: CityFrontendPostAndPut; }) =>
       putCity({
-        id: id, city: updatedCity, refresh: auth.refresh, logout: auth.logout
+        id: id,
+        city: updatedCity,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -87,22 +94,22 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'changes saved'
-        });
+        dispatch({ type: 'success', message: 'changes saved' });
       }, 150);
     }
   });
 
   interface CityProps {
+    visible: boolean
     country: string
-    name: string,
-    referencePoint: string,
-    latitude: string,
-    longitude: string,
+    name: string
+    referencePoint: string
+    latitude: string
+    longitude: string
   }
 
   const [city, setCity] = useState<CityProps>({
+    visible: false,
     country: '',
     name: '',
     referencePoint: '',
@@ -110,6 +117,7 @@ export default function Form ({
     longitude: ''
   });
   const [originalCity, setOriginalCity] = useState<CityProps>({
+    visible: false,
     country: '',
     name: '',
     referencePoint: '',
@@ -134,7 +142,10 @@ export default function Form ({
     const req = Object.fromEntries(formData.entries());
 
     try {
-      const validatedCity = CityFrontendPostAndPutSchema.parse(req);
+      const validatedCity = CityFrontendPostAndPutSchema.parse({
+        ...req,
+        visible: city.visible
+      });
       if (formMode === 'create') {
         try {
           await postMutation.mutateAsync(validatedCity);
@@ -148,7 +159,8 @@ export default function Form ({
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedCityId, updatedCity: validatedCity
+            id: selectedCityId,
+            updatedCity: validatedCity
           });
           return {
             success: true,
@@ -175,6 +187,7 @@ export default function Form ({
   selectedCityId is only defined in edit mode. */
   if (selectedCityId && cityQuery.isSuccess && firstRender) {
     const {
+      visible,
       country,
       name,
       referencePoint,
@@ -183,6 +196,7 @@ export default function Form ({
     } = cityQuery.data;
 
     setCity({
+      visible: visible,
       country: country,
       name: name,
       referencePoint: referencePoint,
@@ -194,6 +208,7 @@ export default function Form ({
         : ''
     });
     setOriginalCity({
+      visible: visible,
       country: country,
       name: name,
       referencePoint: referencePoint,
@@ -209,7 +224,7 @@ export default function Form ({
   }
 
   return (
-    <div className='flex flex-col min-h-0 overflow-y-scroll'>
+    <div className='flex flex-col gap-3 min-h-0 overflow-y-scroll'>
       <h3 className='flex self-center text-base'>
         {/* formMode is either 'create' or 'edit' */}
         {formMode === 'create'
@@ -232,6 +247,13 @@ export default function Form ({
           className='flex flex-col gap-3'
         >
           <div className='flex flex-col gap-1'>
+            <VisibleButton
+              visible={city.visible}
+              onClick={() => {
+                setCity({ ...city, visible: !city.visible });
+              }}
+            />
+
             <div className='flex flex-col'>
               <label htmlFor='country'>country*</label>
               <select

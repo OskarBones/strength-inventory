@@ -12,11 +12,12 @@ import { type OpeningHoursException } from '@strength-inventory/schemas';
 interface OpeningHoursExceptionsProps {
   exceptions: OpeningHoursException[]
   setExceptions:
-  React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
+    React.Dispatch<React.SetStateAction<OpeningHoursException[]>>
 }
 
 export default function OpeningHoursExceptions ({
-  exceptions, setExceptions
+  exceptions,
+  setExceptions
 }: OpeningHoursExceptionsProps) {
   const iconMode = use(IconContext);
 

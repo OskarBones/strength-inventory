@@ -115,7 +115,13 @@ loginRouter.post(
     });
 
     return res.status(200).send({
-      token: accessToken, id, username, email, emailVerified, name, role
+      token: accessToken,
+      id,
+      username,
+      email,
+      emailVerified,
+      name,
+      role
     });
   }
 );

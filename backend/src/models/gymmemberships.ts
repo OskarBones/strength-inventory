@@ -10,7 +10,8 @@ import {
 import { sequelize } from '../utils/db.ts';
 
 class GymMemberships extends Model<
-  InferAttributes<GymMemberships>, InferCreationAttributes<GymMemberships>
+  InferAttributes<GymMemberships>,
+  InferCreationAttributes<GymMemberships>
 > {
   declare id: CreationOptional<string>;
   declare gymId: string;

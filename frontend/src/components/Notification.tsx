@@ -11,7 +11,7 @@ interface NotificationProps {
 }
 
 export default function Notification ({ type, message }:
-NotificationProps) {
+  NotificationProps) {
   const dispatch = use(NotificationDispatchContext);
 
   useEffect(() => {

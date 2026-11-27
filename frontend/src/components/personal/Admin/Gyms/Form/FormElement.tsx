@@ -4,6 +4,7 @@ import { BsPeople } from 'react-icons/bs';
 import { CgGym } from 'react-icons/cg';
 
 import OpeningHoursDayInput from './OpeningHoursDayInput';
+import VisibleButton from '../../VisibleButton';
 
 import type { CityFrontendGet, GymFrontendGet }
   from '@strength-inventory/schemas/frontend';
@@ -17,6 +18,7 @@ import {
 interface FormElementProps {
   dispatchAction: (payload: FormData) => void
   gym: {
+    visible: boolean;
     name: string;
     chain: string;
     street: string;
@@ -35,6 +37,7 @@ interface FormElementProps {
   },
   formMode: string,
   setGym: React.Dispatch<React.SetStateAction<{
+    visible: boolean;
     name: string;
     chain: string;
     street: string;
@@ -80,6 +83,13 @@ export default function FormElement (
       className='flex flex-col gap-3'
     >
       <div className='flex flex-col gap-1'>
+        <VisibleButton
+          visible={gym.visible}
+          onClick={() => {
+            setGym({ ...gym, visible: !gym.visible });
+          }}
+        />
+
         <div className='flex flex-col'>
           <label htmlFor='name'>name*</label>
           <input
@@ -131,7 +141,10 @@ export default function FormElement (
                 });
               } else {
                 setGym({
-                  ...gym, city: '', country: '', district: ''
+                  ...gym,
+                  city: '',
+                  country: '',
+                  district: ''
                 });
               }
             }}
@@ -214,7 +227,7 @@ export default function FormElement (
               min={-90}
               max={90}
               step={0.00001}
-              className='form-input w-20'
+              className='form-input w-22'
               onChange={(event) => {
                 setGym({ ...gym, latitude: event.target.value });
               }}
@@ -459,7 +472,8 @@ export default function FormElement (
             hidden={formMode === 'create'}
             onChange={() => {
               setGym({
-                ...gym, membershipsVisible: !gym.membershipsVisible
+                ...gym,
+                membershipsVisible: !gym.membershipsVisible
               });
             }}
           />
@@ -478,7 +492,8 @@ export default function FormElement (
             checked={gym.openingHoursVisible}
             onChange={() => {
               setGym({
-                ...gym, openingHoursVisible: !gym.openingHoursVisible
+                ...gym,
+                openingHoursVisible: !gym.openingHoursVisible
               });
             }}
           />

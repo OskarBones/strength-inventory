@@ -8,7 +8,7 @@ interface handleSubmitErrorProps {
 }
 
 export default function handleSubmitError ({ err, dispatch }:
-handleSubmitErrorProps) {
+  handleSubmitErrorProps) {
   let errorMessage: string;
   if (err instanceof z.ZodError) {
     const messages = err.issues.map((issue) => issue.message);

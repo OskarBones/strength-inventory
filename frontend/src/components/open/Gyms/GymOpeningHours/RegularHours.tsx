@@ -9,7 +9,9 @@ interface RegularHoursProps {
 }
 
 export default function RegularHours ({
-  gym, membersOnly, setExceptionReason
+  gym,
+  membersOnly,
+  setExceptionReason
 }: RegularHoursProps) {
   let openingHours;
   if (membersOnly) {

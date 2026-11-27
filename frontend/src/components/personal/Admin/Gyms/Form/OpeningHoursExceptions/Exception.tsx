@@ -8,7 +8,10 @@ interface ExceptionProps {
 }
 
 export default function Exception ({
-  exception, selectedExceptionId, setSelectedExceptionId, setEditedExceptionId
+  exception,
+  selectedExceptionId,
+  setSelectedExceptionId,
+  setEditedExceptionId
 }: ExceptionProps) {
   const { id, date, hours, reason, concerns } = exception;
 

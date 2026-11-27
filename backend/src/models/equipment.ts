@@ -33,9 +33,11 @@ import { sequelize } from '../utils/db.js';
 import { Gym } from './index.ts';
 
 class Equipment extends Model<
-  InferAttributes<Equipment>, InferCreationAttributes<Equipment>
+  InferAttributes<Equipment>,
+  InferCreationAttributes<Equipment>
 > {
   declare id: CreationOptional<string>;
+  declare visible: CreationOptional<boolean>;
   declare name: string;
   declare generic: boolean;
   declare category: EquipmentCategory;
@@ -65,6 +67,11 @@ Equipment.init({
     validate: {
       isUUID: 4
     }
+  },
+  visible: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
   },
   name: {
     type: DataTypes.STRING,
@@ -227,8 +234,7 @@ Equipment.init({
         || instance.startingWeight
         || instance.availableWeights.length > 0
         || instance.maximumWeight
-      )
-      ) {
+      )) {
         throw new HttpError(
           'weight unit must be selected if other weight data is used',
           400

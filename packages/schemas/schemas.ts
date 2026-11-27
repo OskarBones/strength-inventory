@@ -59,6 +59,7 @@ export type MembershipAvailability = z.infer<typeof MembershipAvailabilitySchema
 
 export const MembershipBaseSchema = z.object({
   id: z.uuidv4(),
+  visible: z.boolean(),
   name: z.string().min(1),
   initiationFee: z.number().nullable(),
   membershipFee: z.number(),
@@ -114,6 +115,7 @@ export const MembershipPostSchema = z.intersection(MembershipBaseSchema
   })
   .exactPartial({
     id: true,
+    visible: true,
     initiationFee: true,
     visits: true,
     availability: true,
@@ -365,6 +367,7 @@ export type EquipmentMaximumWeightType = z.infer<typeof EquipmentMaximumWeightTy
 
 export const EquipmentBaseSchema = z.object({
   id: z.uuidv4(),
+  visible: z.boolean(),
   name: z.string().min(1).max(STRING_DEFAULT_LEN),
   generic: z.boolean(),
   manufacturer: z.string().min(1).max(STRING_DEFAULT_LEN),
@@ -481,6 +484,7 @@ export const EquipmentPostSchema = z.intersection(EquipmentBaseSchema
   })
   .exactPartial({
     id: true,
+    visible: true,
     url: true,
     notes: true
   }), EquipmentUnions)
@@ -574,6 +578,7 @@ export const STREET_NO_MAX_LEN = 20
 export const GYM_LOCATION_MAX_LEN = 510
 export const GymSchema = z.object({
   id: z.uuidv4(),
+  visible: z.boolean(),
   name: z.string().min(1).max(STRING_DEFAULT_LEN),
   chain: z.string().min(1).max(STRING_DEFAULT_LEN).nullable(),
   street: SubLocationNameSchema,
@@ -604,6 +609,7 @@ export const GymPostSchema = GymSchema
 })
 .exactPartial({
   id: true,
+  visible: true,
   chain: true,
   openingHoursEveryone: true,
   openingHoursMembers: true,
@@ -631,6 +637,7 @@ export const REF_POINT_MAX_LEN = 23;
 
 const LocationBaseSchema = z.object({
   id: z.uuidv4(),
+  visible: z.boolean(),
   name: SubLocationNameSchema,
   referencePoint: z.string().min(1).max(REF_POINT_MAX_LEN),
   latitude: LatitudeSchema,
@@ -648,7 +655,8 @@ export const CityPostSchema = CitySchema.omit({
   createdAt: true,
   updatedAt: true
 }).exactPartial({
-  id: true
+  id: true,
+  visible: true
 })
 export type CityPost = z.infer<typeof CityPostSchema>
 
@@ -668,7 +676,8 @@ export const DistrictPostSchema = DistrictSchema.omit({
   createdAt: true,
   updatedAt: true
 }).exactPartial({
-  id: true
+  id: true,
+  visible: true
 })
 export type DistrictPost = z.infer<typeof DistrictPostSchema>
 

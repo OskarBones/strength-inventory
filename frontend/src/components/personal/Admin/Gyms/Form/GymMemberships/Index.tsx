@@ -22,7 +22,7 @@ interface GymMembershipsProps {
 
 export default function GymMemberships (
   { gymId, gymName, gymCountry, gymChain, setEditForm }:
-  GymMembershipsProps
+    GymMembershipsProps
 ) {
   const scrollTopRef = useRef(0);
 

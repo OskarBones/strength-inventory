@@ -1,7 +1,10 @@
 import { use, useActionState, useRef, useState } from 'react';
 
 import {
-  skipToken, useMutation, useQuery, useQueryClient
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 import { z } from 'zod';
@@ -17,6 +20,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
+import VisibleButton from '../../VisibleButton';
 
 import { type EquipmentFrontendPostAndPut, EquipmentFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -65,7 +69,9 @@ export default function Form ({
   const postMutation = useMutation({
     mutationFn: (newPiece: EquipmentFrontendPostAndPut) =>
       postEquipment({
-        piece: newPiece, refresh: auth.refresh, logout: auth.logout
+        piece: newPiece,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async (newPieceFromServer) => {
       await queryClient.invalidateQueries({
@@ -74,18 +80,19 @@ export default function Form ({
       setSelectedPieceId(newPieceFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'piece created'
-        });
+        dispatch({ type: 'success', message: 'piece created' });
       }, 150);
     }
   });
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedPiece }:
-    { id: string, updatedPiece: EquipmentFrontendPostAndPut }) =>
+      { id: string, updatedPiece: EquipmentFrontendPostAndPut }) =>
       putEquipment({
-        id: id, piece: updatedPiece, refresh: auth.refresh, logout: auth.logout
+        id: id,
+        piece: updatedPiece,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -98,14 +105,13 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'changes saved'
-        });
+        dispatch({ type: 'success', message: 'changes saved' });
       }, 150);
     }
   });
 
   interface PieceProps {
+    visible: boolean,
     name: string,
     generic: boolean,
     category: string,
@@ -123,6 +129,7 @@ export default function Form ({
   }
 
   const [piece, setPiece] = useState<PieceProps>({
+    visible: false,
     name: '',
     generic: false,
     category: '',
@@ -139,6 +146,7 @@ export default function Form ({
     notes: ''
   });
   const [originalPiece, setOriginalPiece] = useState<PieceProps>({
+    visible: false,
     name: '',
     generic: false,
     category: '',
@@ -213,12 +221,13 @@ export default function Form ({
         .nullable());
 
       const preprocessedWeightUnit = preprocessWeightUnit.parse(req.weightUnit);
-      const piece = {
+
+      const validatedPiece = EquipmentFrontendPostAndPutSchema.parse({
         ...req,
+        visible: piece.visible,
         weightUnit: preprocessedWeightUnit,
         availableWeights: availableWeights
-      };
-      const validatedPiece = EquipmentFrontendPostAndPutSchema.parse(piece);
+      });
 
       if (formMode === 'create') {
         try {
@@ -233,7 +242,8 @@ export default function Form ({
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedPieceId, updatedPiece: validatedPiece
+            id: selectedPieceId,
+            updatedPiece: validatedPiece
           });
           return {
             success: true,
@@ -260,6 +270,7 @@ export default function Form ({
   selectedPieceId is only defined in edit mode. */
   if (selectedPieceId && pieceQuery.isSuccess && firstRender) {
     const {
+      visible,
       name,
       generic,
       category,
@@ -278,6 +289,7 @@ export default function Form ({
     } = pieceQuery.data;
 
     setPiece({
+      visible: visible,
       name: name,
       generic: generic,
       category: category,
@@ -300,6 +312,7 @@ export default function Form ({
       notes: notes ?? ''
     });
     setOriginalPiece({
+      visible: visible,
       name: name,
       generic: generic,
       category: category,
@@ -329,7 +342,7 @@ export default function Form ({
   }
 
   return (
-    <div className='flex flex-col min-h-0 overflow-y-scroll'>
+    <div className='flex flex-col gap-3 min-h-0 overflow-y-scroll'>
       <h3 className='flex self-center text-base'>
         {/* formMode is either 'create' or 'edit' */}
         {formMode === 'create'
@@ -352,6 +365,13 @@ export default function Form ({
           className='flex flex-col gap-3'
         >
           <div className='flex flex-col gap-1'>
+            <VisibleButton
+              visible={piece.visible}
+              onClick={() => {
+                setPiece({ ...piece, visible: !piece.visible });
+              }}
+            />
+
             <div className='flex flex-1 flex-col'>
               <label htmlFor='name'>name*</label>
               <input
@@ -379,7 +399,8 @@ export default function Form ({
                   checked={piece.generic}
                   onChange={() => {
                     setPiece({
-                      ...piece, generic: !piece.generic
+                      ...piece,
+                      generic: !piece.generic
                     });
                   }}
                 />
@@ -395,7 +416,8 @@ export default function Form ({
                   checked={piece.outOfProduction}
                   onChange={() => {
                     setPiece({
-                      ...piece, outOfProduction: !piece.outOfProduction
+                      ...piece,
+                      outOfProduction: !piece.outOfProduction
                     });
                   }}
                 />
@@ -479,17 +501,14 @@ export default function Form ({
                   onChange={() => {
                     setUnknownManufacturer(!unknownManufacturer);
                     if (!unknownManufacturer) {
-                      setPiece({
-                        ...piece, manufacturer: 'unknown'
-                      });
+                      setPiece({ ...piece, manufacturer: 'unknown' });
                     } else {
                       if (originalPiece.manufacturer === 'unknown') {
-                        setPiece({
-                          ...piece, manufacturer: ''
-                        });
+                        setPiece({ ...piece, manufacturer: '' });
                       } else {
                         setPiece({
-                          ...piece, manufacturer: originalPiece.manufacturer
+                          ...piece,
+                          manufacturer: originalPiece.manufacturer
                         });
                       }
                     }
@@ -528,18 +547,12 @@ export default function Form ({
                   onChange={() => {
                     setUnknownCode(!unknownCode);
                     if (!unknownCode) {
-                      setPiece({
-                        ...piece, code: 'unknown'
-                      });
+                      setPiece({ ...piece, code: 'unknown' });
                     } else {
                       if (originalPiece.code === 'unknown') {
-                        setPiece({
-                          ...piece, code: ''
-                        });
+                        setPiece({ ...piece, code: '' });
                       } else {
-                        setPiece({
-                          ...piece, code: originalPiece.code
-                        });
+                        setPiece({ ...piece, code: originalPiece.code });
                       }
                     }
                   }}
@@ -638,7 +651,8 @@ export default function Form ({
                   className='form-input cursor-pointer'
                   onChange={(event) => {
                     setPiece({
-                      ...piece, maximumWeightType: event.target.value
+                      ...piece,
+                      maximumWeightType: event.target.value
                     });
                   }}
                 >

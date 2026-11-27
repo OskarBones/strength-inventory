@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "private": true,
-  "version": "1.7.1",
+  "version": "1.7.2",
   "license": "GPL-3.0-or-later",
   "author": "Oskar Bones",
   "type": "module",
@@ -18,7 +18,7 @@
     "migration:down_dev": "tsx src/utils/rollback.js",
     "migration:down_test": "NODE_ENV=test tsx src/utils/rollback.js",
     "migration:down": "npm run migration:down_dev && npm run migration:down_test",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --release=1.7.1 --org strength-inventory --project strory-backend ./build && sentry-cli sourcemaps upload --release=1.7.1 --org strength-inventory --project strory-backend ./build"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --release=1.7.2 --org strength-inventory --project strory-backend ./build && sentry-cli sourcemaps upload --release=1.7.2 --org strength-inventory --project strory-backend ./build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

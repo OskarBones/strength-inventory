@@ -121,7 +121,8 @@ export default function Form (
       setFormMode('edit');
       setTimeout(() => {
         dispatch({
-          type: 'success', message: 'gym created'
+          type: 'success',
+          message: 'gym created'
         });
       }, 150);
     }
@@ -129,9 +130,12 @@ export default function Form (
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedGym }:
-    { id: string, updatedGym: GymFrontendPostAndPut; }) =>
+      { id: string, updatedGym: GymFrontendPostAndPut; }) =>
       putGym({
-        id: id, gym: updatedGym, refresh: auth.refresh, logout: auth.logout
+        id: id,
+        gym: updatedGym,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async () => {
       await Promise.all([
@@ -140,14 +144,13 @@ export default function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'changes saved'
-        });
+        dispatch({ type: 'success', message: 'changes saved' });
       }, 150);
     }
   });
 
   const [gym, setGym] = useState({
+    visible: false,
     name: '',
     chain: '',
     street: '',
@@ -165,6 +168,7 @@ export default function Form (
     notes: ''
   });
   const [originalGym, setOriginalGym] = useState({
+    visible: false,
     name: '',
     chain: '',
     street: '',
@@ -222,6 +226,7 @@ export default function Form (
         = formatHours(hours);
       const validatedReq = GymFrontendPostAndPutSchema.parse({
         ...req,
+        visible: gym.visible,
         country: gym.country,
         openingHoursEveryone: openingHoursEveryone,
         openingHoursMembers: openingHoursMembers,
@@ -240,7 +245,8 @@ export default function Form (
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedGymId, updatedGym: validatedReq
+            id: selectedGymId,
+            updatedGym: validatedReq
           });
           return {
             success: true,
@@ -277,6 +283,7 @@ export default function Form (
   selectedGymId is only defined in edit mode. */
   if (selectedGymId && gymQuery.isSuccess && firstRender) {
     const {
+      visible,
       name,
       chain,
       street,
@@ -296,6 +303,7 @@ export default function Form (
     } = gymQuery.data;
 
     setGym({
+      visible: visible,
       name: name,
       chain: chain ?? '',
       street: street,
@@ -317,6 +325,7 @@ export default function Form (
       notes: notes ?? ''
     });
     setOriginalGym({
+      visible: visible,
       name: name,
       chain: chain ?? '',
       street: street,
@@ -378,7 +387,7 @@ export default function Form (
   }
 
   return (
-    <div className='flex flex-col min-h-0'>
+    <div className='flex flex-col gap-3 min-h-0'>
       <h3 className='flex self-center text-base'>
         {/* formMode is either 'create' or 'edit' */}
         {formMode === 'create'

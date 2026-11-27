@@ -14,7 +14,8 @@ export const Route = createFileRoute('/_authenticated')({
       });
     } else {
       await syncToken({
-        refresh: context.auth.refresh, logout: context.auth.logout
+        refresh: context.auth.refresh,
+        logout: context.auth.logout
       });
     }
   },

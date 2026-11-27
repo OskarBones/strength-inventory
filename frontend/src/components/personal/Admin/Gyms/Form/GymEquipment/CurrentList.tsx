@@ -47,7 +47,11 @@ interface CategoryProps {
 }
 
 function Category ({
-  name, gymId, equipment, setEquipmentCountMutation, removeEquipmentMutation
+  name,
+  gymId,
+  equipment,
+  setEquipmentCountMutation,
+  removeEquipmentMutation
 }: CategoryProps) {
   const equipmentList = equipment.map((piece) => (
     <div key={piece.id}>
@@ -135,7 +139,8 @@ function Category ({
             className='group relative flex cursor-pointer'
             onClick={() => {
               removeEquipmentMutation.mutate({
-                gymId, equipmentId: piece.id
+                gymId,
+                equipmentId: piece.id
               });
             }}
           >
@@ -196,7 +201,10 @@ interface CurrentListProps {
 }
 
 export default function CurrentList ({
-  gymId, gymEquipment, setEquipmentCountMutation, removeEquipmentMutation
+  gymId,
+  gymEquipment,
+  setEquipmentCountMutation,
+  removeEquipmentMutation
 }: CurrentListProps) {
   const systems = gymEquipment.filter((piece) => piece.category === 'system');
   systems.sort((a, b) => {

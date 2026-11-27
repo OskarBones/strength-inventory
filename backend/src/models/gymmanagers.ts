@@ -14,7 +14,8 @@ import { sequelize } from '../utils/db.js';
 import User from './user.ts';
 
 class GymManagers extends Model<
-  InferAttributes<GymManagers>, InferCreationAttributes<GymManagers>
+  InferAttributes<GymManagers>,
+  InferCreationAttributes<GymManagers>
 > {
   declare id: CreationOptional<string>;
   declare userId: string;

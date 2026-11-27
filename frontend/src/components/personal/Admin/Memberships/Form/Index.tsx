@@ -26,6 +26,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import ReturnButton from '../../ReturnButton';
 import SubmitButton from '../../SubmitButton';
+import VisibleButton from '../../VisibleButton';
 
 import { CURRENCIES, MEMBERSHIP_TIME_UNITS } from '@strength-inventory/schemas';
 import { type MembershipFrontendPostAndPut, MembershipFrontendPostAndPutSchema }
@@ -45,6 +46,7 @@ interface FormProps {
 /* This type is explicitly defined for AvailabilityButtons.
 The membership state in MembershipForm would be fine without. */
 export interface FormMembership {
+  visible: boolean,
   name: string,
   chain: string,
   country: string,
@@ -86,6 +88,7 @@ export function Form (
   const queryClient = useQueryClient();
 
   const [membership, setMembership] = useState<FormMembership>({
+    visible: false,
     name: '',
     chain: defaultChain,
     country: defaultCountry,
@@ -108,6 +111,7 @@ export function Form (
     notes: ''
   });
   const [originalMembership, setOriginalMembership] = useState<FormMembership>({
+    visible: false,
     name: '',
     chain: defaultChain,
     country: defaultCountry,
@@ -140,7 +144,9 @@ export function Form (
   const postMutation = useMutation({
     mutationFn: (newMembership: MembershipFrontendPostAndPut) =>
       postMembership({
-        membership: newMembership, refresh: auth.refresh, logout: auth.logout
+        membership: newMembership,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries(
@@ -150,9 +156,7 @@ export function Form (
       if (!addToGym) {
         setFormMode('hidden');
         setTimeout(() => {
-          dispatch({
-            type: 'success', message: 'membership created'
-          });
+          dispatch({ type: 'success', message: 'membership created' });
         }, 150);
       }
     }
@@ -160,7 +164,7 @@ export function Form (
 
   const addToGymMutation = useMutation({
     mutationFn: ({ gymId, membershipId }:
-    { gymId: string, membershipId: string; }) =>
+      { gymId: string, membershipId: string; }) =>
       postGymMembership({
         gymId: gymId,
         membershipId: membershipId,
@@ -173,16 +177,14 @@ export function Form (
       );
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'membership created'
-        });
+        dispatch({ type: 'success', message: 'membership created' });
       }, 150);
     }
   });
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedMembership }:
-    { id: string, updatedMembership: MembershipFrontendPostAndPut; }) =>
+      { id: string, updatedMembership: MembershipFrontendPostAndPut; }) =>
       putMembership({
         id: id,
         membership: updatedMembership,
@@ -204,9 +206,7 @@ export function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'changes saved'
-        });
+        dispatch({ type: 'success', message: 'changes saved' });
       }, 150);
     }
   });
@@ -225,16 +225,14 @@ export function Form (
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'membership deleted'
-        });
+        dispatch({ type: 'success', message: 'membership deleted' });
       }, 150);
     }
   });
 
   const removeMutation = useMutation({
     mutationFn: ({ gymId, membershipId }:
-    { gymId: string, membershipId: string; }) =>
+      { gymId: string, membershipId: string; }) =>
       deleteGymMembership({
         gymId: gymId,
         membershipId: membershipId,
@@ -247,9 +245,7 @@ export function Form (
       );
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'membership removed'
-        });
+        dispatch({ type: 'success', message: 'membership removed' });
       }, 150);
     }
   });
@@ -281,16 +277,17 @@ export function Form (
         .nullable());
       const preprocessedCommitmentUnit
         = preprocessCommitmentUnit.parse(req.commitmentUnit);
-      const unvalidatedMembership = {
-        ...req,
-        commitmentUnit: preprocessedCommitmentUnit,
-        autoRenewal: membership.autoRenewal,
-        country: membership.country,
-        chain: membership.chain,
-        availability: membership.availability
-      };
+
       const validatedMembership
-        = MembershipFrontendPostAndPutSchema.parse(unvalidatedMembership);
+        = MembershipFrontendPostAndPutSchema.parse({
+          ...req,
+          visible: membership.visible,
+          commitmentUnit: preprocessedCommitmentUnit,
+          autoRenewal: membership.autoRenewal,
+          country: membership.country,
+          chain: membership.chain,
+          availability: membership.availability
+        });
 
       if (formMode === 'create') {
         try {
@@ -309,7 +306,8 @@ export function Form (
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedMembershipId, updatedMembership: validatedMembership
+            id: selectedMembershipId,
+            updatedMembership: validatedMembership
           });
           return {
             success: true,
@@ -336,6 +334,7 @@ export function Form (
   selectedMembershipId is only defined in edit mode. */
   if (selectedMembershipId && membershipQuery.isSuccess && firstRender) {
     const {
+      visible,
       name,
       chain,
       country,
@@ -354,6 +353,7 @@ export function Form (
     } = membershipQuery.data;
 
     setMembership({
+      visible: visible,
       name: name,
       chain: chain ?? '',
       country: country ?? '',
@@ -381,6 +381,7 @@ export function Form (
       notes: notes ?? ''
     });
     setOriginalMembership({
+      visible: visible,
       name: name,
       chain: chain ?? '',
       country: country ?? '',
@@ -476,6 +477,14 @@ export function Form (
             )
             : null}
         </div>
+
+        <VisibleButton
+          visible={membership.visible}
+          onClick={() => {
+            setMembership({ ...membership, visible: !membership.visible });
+          }}
+          disabled={readOnly}
+        />
 
         <div className='flex flex-col gap-3'>
           {membership.country && membership.chain
@@ -691,7 +700,8 @@ export function Form (
                   checked={membership.autoRenewal}
                   onChange={() => {
                     setMembership({
-                      ...membership, autoRenewal: !membership.autoRenewal
+                      ...membership,
+                      autoRenewal: !membership.autoRenewal
                     });
                   }}
                 />

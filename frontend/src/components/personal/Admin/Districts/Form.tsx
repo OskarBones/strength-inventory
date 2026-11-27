@@ -1,7 +1,10 @@
 import { use, useActionState, useRef, useState } from 'react';
 
 import {
-  skipToken, useMutation, useQuery, useQueryClient
+  skipToken,
+  useMutation,
+  useQuery,
+  useQueryClient
 } from '@tanstack/react-query';
 import { TbEdit, TbPlus } from 'react-icons/tb';
 
@@ -14,6 +17,7 @@ import ErrorMessage from '@/components/ErrorMessage';
 import Loading from '@/components/Loading';
 import ReturnButton from '../ReturnButton';
 import SubmitButton from '../SubmitButton';
+import VisibleButton from '../VisibleButton';
 
 import { type DistrictFrontendPostAndPut, DistrictFrontendPostAndPutSchema }
   from '@strength-inventory/schemas/frontend';
@@ -57,7 +61,9 @@ export default function Form ({
   const postMutation = useMutation({
     mutationFn: (newDistrict: DistrictFrontendPostAndPut) =>
       postDistrict({
-        district: newDistrict, refresh: auth.refresh, logout: auth.logout
+        district: newDistrict,
+        refresh: auth.refresh,
+        logout: auth.logout
       }),
     onSuccess: async (newDistrictFromServer) => {
       await Promise.all([
@@ -71,16 +77,14 @@ export default function Form ({
       setSelectedDistrictId(newDistrictFromServer.id);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'district created'
-        });
+        dispatch({ type: 'success', message: 'district created' });
       }, 150);
     }
   });
 
   const putMutation = useMutation({
     mutationFn: ({ id, updatedDistrict }:
-    { id: string, updatedDistrict: DistrictFrontendPostAndPut; }) =>
+      { id: string, updatedDistrict: DistrictFrontendPostAndPut; }) =>
       putDistrict({
         id: id,
         district: updatedDistrict,
@@ -101,14 +105,13 @@ export default function Form ({
       ]);
       setFormMode('hidden');
       setTimeout(() => {
-        dispatch({
-          type: 'success', message: 'changes saved'
-        });
+        dispatch({ type: 'success', message: 'changes saved' });
       }, 150);
     }
   });
 
   interface DistrictProps {
+    visible: boolean,
     cityId: string
     name: string,
     referencePoint: string,
@@ -117,6 +120,7 @@ export default function Form ({
   }
 
   const [district, setDistrict] = useState<DistrictProps>({
+    visible: false,
     cityId: '',
     name: '',
     referencePoint: '',
@@ -124,6 +128,7 @@ export default function Form ({
     longitude: ''
   });
   const [originalDistrict, setOriginalDistrict] = useState<DistrictProps>({
+    visible: false,
     cityId: '',
     name: '',
     referencePoint: '',
@@ -148,7 +153,10 @@ export default function Form ({
     const req = Object.fromEntries(formData.entries());
 
     try {
-      const validatedDistrict = DistrictFrontendPostAndPutSchema.parse(req);
+      const validatedDistrict = DistrictFrontendPostAndPutSchema.parse({
+        ...req,
+        visible: district.visible
+      });
 
       if (formMode === 'create') {
         try {
@@ -163,7 +171,8 @@ export default function Form ({
       } else {  // formMode === 'edit'
         try {
           await putMutation.mutateAsync({
-            id: selectedDistrictId, updatedDistrict: validatedDistrict
+            id: selectedDistrictId,
+            updatedDistrict: validatedDistrict
           });
           return {
             success: true,
@@ -194,6 +203,7 @@ export default function Form ({
   selectedDistrictId is only defined in edit mode. */
   if (selectedDistrictId && districtQuery.isSuccess && firstRender) {
     const {
+      visible,
       cityId,
       name,
       referencePoint,
@@ -202,6 +212,7 @@ export default function Form ({
     } = districtQuery.data;
 
     setDistrict({
+      visible: visible,
       cityId: cityId,
       name: name,
       referencePoint: referencePoint,
@@ -213,6 +224,7 @@ export default function Form ({
         : ''
     });
     setOriginalDistrict({
+      visible: visible,
       cityId: cityId,
       name: name,
       referencePoint: referencePoint,
@@ -228,7 +240,7 @@ export default function Form ({
   }
 
   return (
-    <div className='flex flex-col min-h-0 overflow-y-scroll'>
+    <div className='flex flex-col gap-3 min-h-0 overflow-y-scroll'>
       <h3 className='flex self-center text-base'>
         {/* formMode is either 'create' or 'edit' */}
         {formMode === 'create'
@@ -251,6 +263,13 @@ export default function Form ({
           className='flex flex-col gap-3'
         >
           <div className='flex flex-col gap-1'>
+            <VisibleButton
+              visible={district.visible}
+              onClick={() => {
+                setDistrict({ ...district, visible: !district.visible });
+              }}
+            />
+
             <div className='flex flex-col'>
               <label htmlFor='cityId'>city*</label>
               <select
@@ -302,7 +321,8 @@ export default function Form ({
                 className='form-input'
                 onChange={(event) => {
                   setDistrict({
-                    ...district, referencePoint: event.target.value
+                    ...district,
+                    referencePoint: event.target.value
                   });
                 }}
               />

@@ -13,7 +13,9 @@ interface ListProps {
   setSelectedItemId: React.Dispatch<React.SetStateAction<string>>
   setFormMode: React.Dispatch<React.SetStateAction<string>>
   deleteMutationOptions: Omit<
-    UseMutationOptions<void, Error, string>, 'mutationKey'>
+    UseMutationOptions<void, Error, string>,
+    'mutationKey'
+  >
 }
 
 export default function List ({

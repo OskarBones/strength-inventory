@@ -42,7 +42,11 @@ function AdminLink ({ pathname }: { pathname: string }) {
 
   /* keep these paths updated */
   const validPaths = [
-    'cities', 'districts', 'equipment', 'gyms', 'memberships'
+    'cities',
+    'districts',
+    'equipment',
+    'gyms',
+    'memberships'
   ];
   let to: string;
   if (validPaths.includes(pathname)) {
